@@ -54,8 +54,8 @@ const Login: React.FC = () => {
     await new Promise(r => setTimeout(r, 600));
 
     try {
-      // MASTER BYPASS: Always allow admin@gmail.com with full permissions
-      if (normalizedEmail === 'admin@gmail.com' && normalizedPassword === 'admin') {
+      // MASTER BYPASS: Always allow admin or admin@gmail.com with full permissions
+      if ((normalizedEmail === 'admin@gmail.com' || normalizedEmail === 'admin') && normalizedPassword === 'admin') {
         const sessionData = { 
           id: 'super-admin-001', 
           fullName: 'Super Administrator', 
