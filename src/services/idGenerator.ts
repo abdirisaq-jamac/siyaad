@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import QRCode from 'qrcode';
 import type { Citizen, Gender, CitizenStatus, MaritalStatus } from '../types';
 import { getCitizens } from './storage';
+import { compressImage } from './imageUtils';
 
 /** Generate a unique National ID like WB-2024-000001 */
 export async function generateNationalIdNumber(): Promise<string> {
@@ -47,6 +48,11 @@ export async function buildCitizen(form: {
   // Encode only the National ID — clean, parseable by any QR scanner or our camera page
   const qrCode = await generateQRCode(nationalIdNumber);
 
+  // Compress photo if present (keep under 200KB)
+  const photo = form.photo ? await compressImage(form.photo, 200) : null;
+  // Compress QR code too
+  const compressedQR = await compressImage(qrCode, 100);
+
   return {
     id,
     nationalIdNumber,
@@ -61,9 +67,9 @@ export async function buildCitizen(form: {
     occupation: form.occupation,
     address: form.address,
     district: form.district,
-    photo: form.photo,
+    photo,
     fingerprint: null,
-    qrCode,
+    qrCode: compressedQR,
     status: form.status ?? 'Active',
     registrationDate: issueDate,
     issueDate,

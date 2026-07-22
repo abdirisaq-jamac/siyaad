@@ -34,8 +34,11 @@ export async function getCitizensByName(nameQuery: string): Promise<Citizen[]> {
 }
 
 export async function addCitizen(citizen: Citizen): Promise<Citizen> {
-  const { data, error } = await supabase.from('citizens').insert([citizen]).select().single();
-  if (error) throw new Error(error.message);
+  // Remove client-side timestamps so Supabase auto-generates them
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { ...citizenToInsert } = citizen;
+  const { data, error } = await supabase.from('citizens').insert([citizenToInsert]).select().single();
+  if (error) throw new Error(`Supabase insert error: ${error.message} | Code: ${error.code}`);
   return data as Citizen;
 }
 
