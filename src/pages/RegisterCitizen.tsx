@@ -203,7 +203,12 @@ export default function RegisterCitizen() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <div className="page-header" style={{ maxWidth: '1200px', margin: '0 auto 2rem' }}>
+      {/* Page Header */}
+      <div style={{
+        maxWidth: '1200px', margin: '0 auto 1.5rem',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        flexWrap: 'wrap', gap: '0.75rem',
+      }}>
         <div>
           <div className="page-title">{t('Citizen Registration')}</div>
           <div className="page-subtitle">Fill in citizen details to generate a secure National ID</div>
@@ -214,27 +219,38 @@ export default function RegisterCitizen() {
       </div>
 
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        {/* Tabs */}
-        <div style={{ display: 'inline-flex', gap: '1rem', marginBottom: '1.5rem', background: 'var(--bg-main)', padding: '0.5rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-          <button 
+        {/* Tabs - full width on mobile */}
+        <div style={{
+          display: 'flex', gap: '0.5rem', marginBottom: '1.5rem',
+          background: 'var(--bg-main)', padding: '0.4rem',
+          borderRadius: '12px', border: '1px solid var(--border-color)',
+          width: '100%', boxSizing: 'border-box',
+        }}>
+          <button
             className={`btn-secondary ${activeTab === 'form' ? 'active' : ''}`}
-            style={{ 
+            style={{
+              flex: 1,
+              justifyContent: 'center',
               background: activeTab === 'form' ? 'var(--bg-sidebar-hover)' : 'transparent',
               borderColor: activeTab === 'form' ? 'var(--border-color)' : 'transparent',
               color: activeTab === 'form' ? 'var(--primary-color)' : 'var(--text-muted)',
-              boxShadow: activeTab === 'form' ? 'var(--shadow-sm)' : 'none'
+              boxShadow: activeTab === 'form' ? 'var(--shadow-sm)' : 'none',
+              whiteSpace: 'nowrap', fontSize: '0.9rem',
             }}
             onClick={() => setActiveTab('form')}
           >
             <UserPlus size={16} /> {t('Registration Form')}
           </button>
-          <button 
+          <button
             className={`btn-secondary ${activeTab === 'preview' ? 'active' : ''}`}
-            style={{ 
+            style={{
+              flex: 1,
+              justifyContent: 'center',
               background: activeTab === 'preview' ? 'var(--bg-sidebar-hover)' : 'transparent',
               borderColor: activeTab === 'preview' ? 'var(--border-color)' : 'transparent',
               color: activeTab === 'preview' ? 'var(--primary-color)' : 'var(--text-muted)',
-              boxShadow: activeTab === 'preview' ? 'var(--shadow-sm)' : 'none'
+              boxShadow: activeTab === 'preview' ? 'var(--shadow-sm)' : 'none',
+              whiteSpace: 'nowrap', fontSize: '0.9rem',
             }}
             onClick={() => setActiveTab('preview')}
           >
@@ -263,7 +279,7 @@ export default function RegisterCitizen() {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', alignItems: 'start' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', alignItems: 'start' }}>
                   <Field id="fullName" label={t('Full Name')} required error={errors.fullName}>
                     <input id="fullName" className="form-input" placeholder="e.g. John Doe Smith" value={form.fullName}
                       onChange={e => set('fullName', e.target.value)} />
