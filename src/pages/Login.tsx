@@ -39,7 +39,11 @@ const Login: React.FC = () => {
     e.preventDefault();
     setError('');
 
-    if (!email || !password) {
+    // Normalize: trim whitespace and lowercase the email (fixes mobile autocapitalize)
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedPassword = password.trim();
+
+    if (!normalizedEmail || !normalizedPassword) {
       setError('Please fill in all fields.');
       return;
     }
@@ -51,7 +55,7 @@ const Login: React.FC = () => {
 
     try {
       // MASTER BYPASS: Always allow admin@gmail.com with full permissions
-      if (email === 'admin@gmail.com' && password === 'admin') {
+      if (normalizedEmail === 'admin@gmail.com' && normalizedPassword === 'admin') {
         const sessionData = { 
           id: 'super-admin-001', 
           fullName: 'Super Administrator', 
@@ -95,7 +99,7 @@ const Login: React.FC = () => {
       }];
 
       const matched = allUsers.find(
-        (u: any) => u.email === email && u.password === password
+        (u: any) => u.email.trim().toLowerCase() === normalizedEmail && u.password === normalizedPassword
       );
 
       if (!matched) {
