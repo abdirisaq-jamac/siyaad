@@ -91,7 +91,7 @@ export default function UsersManagement() {
   });
   const [permissions, setPermissions] = useState<Permission>(emptyPermission());
 
-  const load = () => setUsers(getUsers());
+  const load = async () => setUsers(await getUsers());
   useEffect(() => { load(); }, []);
 
   const filtered = users.filter(u =>
@@ -125,26 +125,34 @@ export default function UsersManagement() {
     setPermissions(p => ({ ...p, [key]: !p[key] }));
   }
 
-  function handleSave() {
+  async function handleSave() {
     if (!form.fullName.trim() || !form.email.trim() || !form.password.trim()) return;
-    if (editingUser) {
-      const updated: AppUser = { ...editingUser, ...form, permissions };
-      updateUser(updated);
-    } else {
-      const newUser: AppUser = {
-        id: generateId(), ...form, permissions,
-        createdAt: new Date().toISOString(), lastLogin: null, avatar: null,
-      };
-      addUser(newUser);
+    try {
+      if (editingUser) {
+        const updated: AppUser = { ...editingUser, ...form, permissions };
+        await updateUser(updated);
+      } else {
+        const newUser: AppUser = {
+          id: generateId(), ...form, permissions,
+          createdAt: new Date().toISOString(), lastLogin: null, avatar: null,
+        };
+        await addUser(newUser);
+      }
+      setShowModal(false);
+      await load();
+    } catch (err: any) {
+      alert(`Error saving user: ${err.message}`);
     }
-    setShowModal(false);
-    load();
   }
 
-  function handleDelete(id: string) {
-    deleteUser(id);
-    setConfirmDelete(null);
-    load();
+  async function handleDelete(id: string) {
+    try {
+      await deleteUser(id);
+      setConfirmDelete(null);
+      await load();
+    } catch (err: any) {
+      alert(`Error deleting user: ${err.message}`);
+    }
   }
 
   return (

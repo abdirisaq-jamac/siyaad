@@ -143,38 +143,28 @@ function seedDefaultUsers(): AppUser[] {
   ];
 }
 
-export function getUsers(): AppUser[] {
-  try {
-    const raw = localStorage.getItem(USERS_KEY);
-    if (!raw) {
-      const defaults = seedDefaultUsers();
-      localStorage.setItem(USERS_KEY, JSON.stringify(defaults));
-      return defaults;
-    }
-    return JSON.parse(raw) as AppUser[];
-  } catch {
-    return seedDefaultUsers();
+export async function getUsers(): Promise<AppUser[]> {
+  const { data, error } = await supabase.from('app_users').select('*').order('createdAt', { ascending: false });
+  if (error) {
+    console.error('Error fetching users:', error);
+    return [];
   }
+  return data as AppUser[];
 }
 
-export function saveUsers(users: AppUser[]): void {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+export async function addUser(user: AppUser): Promise<AppUser> {
+  const { data, error } = await supabase.from('app_users').insert([user]).select().single();
+  if (error) throw new Error(error.message);
+  return data as AppUser;
 }
 
-export function addUser(user: AppUser): AppUser {
-  const users = getUsers();
-  users.push(user);
-  saveUsers(users);
-  return user;
+export async function updateUser(updated: AppUser): Promise<AppUser> {
+  const { data, error } = await supabase.from('app_users').update(updated).eq('id', updated.id).select().single();
+  if (error) throw new Error(error.message);
+  return data as AppUser;
 }
 
-export function updateUser(updated: AppUser): AppUser {
-  const users = getUsers().map(u => u.id === updated.id ? updated : u);
-  saveUsers(users);
-  return updated;
-}
-
-export function deleteUser(id: string): void {
-  const users = getUsers().filter(u => u.id !== id);
-  saveUsers(users);
+export async function deleteUser(id: string): Promise<void> {
+  const { error } = await supabase.from('app_users').delete().eq('id', id);
+  if (error) throw new Error(error.message);
 }

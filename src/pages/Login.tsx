@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, Eye, EyeOff, Sun, Moon, CheckCircle2, Shield, Zap, Globe, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getUsers } from '../services/storage';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -79,24 +80,27 @@ const Login: React.FC = () => {
         return;
       }
 
-      // Load users from localStorage (created via Users Management page)
-      const raw = localStorage.getItem('app_users');
-      const users = raw ? JSON.parse(raw) : [];
-      const allUsers = users.length > 0 ? users : [{
-        id: 'super-admin-001',
-        fullName: 'Super Administrator',
-        email: 'admin@gmail.com',
-        password: 'admin',
-        role: 'Super Admin',
-        isActive: true,
-        permissions: {
-          viewDashboard: true, viewCitizens: true, registerCitizen: true,
-          editCitizen: true, deleteCitizen: true, viewIdCards: true,
-          exportIdCard: true, verifyQR: true, viewReports: true,
-          exportReports: true, viewSettings: true, editSettings: true,
-          viewUsers: true, manageUsers: true,
-        }
-      }];
+      // Load users from Supabase database
+      let users = await getUsers();
+      if (!users || users.length === 0) {
+        users = [{
+          id: 'super-admin-001',
+          fullName: 'Super Administrator',
+          email: 'admin@gmail.com',
+          password: 'admin',
+          role: 'Super Admin',
+          isActive: true,
+          permissions: {
+            viewDashboard: true, viewCitizens: true, registerCitizen: true,
+            editCitizen: true, deleteCitizen: true, viewIdCards: true,
+            exportIdCard: true, verifyQR: true, viewReports: true,
+            exportReports: true, viewSettings: true, editSettings: true,
+            viewUsers: true, manageUsers: true,
+          }
+        }];
+      }
+
+      const allUsers = users;
 
       const matched = allUsers.find(
         (u: any) => u.email.trim().toLowerCase() === normalizedEmail && u.password === normalizedPassword
