@@ -54,24 +54,18 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         zIndex: 5
       }}>
-        {settings?.watermarkUrl ? (
-          <div style={{
-            width: '100%', height: '100%',
-            borderRadius: '50%',
-            overflow: 'hidden',
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}>
-            <img 
-              src={settings.watermarkUrl} 
-              alt="Watermark" 
-              style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.15)' }} 
-            />
-          </div>
-        ) : (
-          <div style={{ width: '100%', height: '100%', borderRadius: '50%', border: '4px double #111', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', position: 'relative', boxShadow: 'inset 0 0 10px rgba(0,0,0,0.1)', display: 'flex' }}>
-            <div style={{ fontSize: 18, fontWeight: 900, color: '#111' }}>LOGO</div>
-          </div>
-        )}
+        <div style={{
+          width: '100%', height: '100%',
+          borderRadius: '50%',
+          overflow: 'hidden',
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <img 
+            src={settings?.watermarkUrl || '/logo-lascanood.jpg'} 
+            alt="Watermark" 
+            style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.15)' }} 
+          />
+        </div>
       </div>
 
       {/* Header */}
