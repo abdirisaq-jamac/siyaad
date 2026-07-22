@@ -298,16 +298,21 @@ const Login: React.FC = () => {
             {/* Username */}
             <div style={{ marginBottom: '1.25rem' }}>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: isDark ? '#cbd5e1' : '#334155', marginBottom: '8px', letterSpacing: '0.3px' }}>
-                Username
+                Email
               </label>
               <div style={{ position: 'relative' }}>
                 <User size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: isDark ? '#475569' : '#94a3b8' }} />
                 <input
-                  type="text"
+                  type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your username"
+                  placeholder="admin@gmail.com"
                   required
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  autoComplete="email"
+                  spellCheck={false}
+                  inputMode="email"
                   style={{
                     width: '100%', padding: '14px 16px 14px 48px', borderRadius: '14px',
                     border: `1.5px solid ${isDark ? '#1e293b' : '#e2e8f0'}`,
@@ -335,6 +340,9 @@ const Login: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  autoComplete="current-password"
                   style={{
                     width: '100%', padding: '14px 52px 14px 48px', borderRadius: '14px',
                     border: `1.5px solid ${isDark ? '#1e293b' : '#e2e8f0'}`,
