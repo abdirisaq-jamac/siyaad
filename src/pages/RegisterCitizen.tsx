@@ -14,11 +14,6 @@ const DISTRICTS = [
   'Widhwidh', 'Yagoori', 'Boocame'
 ];
 
-const OCCUPATIONS = [
-  'Government Employee', 'Teacher', 'Doctor', 'Engineer', 'Farmer',
-  'Merchant', 'Student', 'Driver', 'Security Officer', 'Nurse',
-  'Lawyer', 'Accountant', 'Business Owner', 'Unemployed', 'Other',
-];
 
 interface FormData {
   fullName: string;
@@ -327,17 +322,8 @@ export default function RegisterCitizen() {
                       onChange={e => set('phone', e.target.value)} />
                   </Field>
                   <Field id="occupation" label={t('Occupation')} required error={errors.occupation}>
-                    <input 
-                      id="occupation"
-                      list="occupations-datalist"
-                      className="form-input" 
-                      placeholder="Select or type occupation..." 
-                      value={form.occupation}
-                      onChange={e => set('occupation', e.target.value)} 
-                    />
-                    <datalist id="occupations-datalist">
-                      {OCCUPATIONS.map(o => <option key={o} value={o} />)}
-                    </datalist>
+                    <input id="occupation" className="form-input" placeholder="e.g. Teacher, Doctor" value={form.occupation}
+                      onChange={e => set('occupation', e.target.value)} />
                   </Field>
                   <Field id="district" label={t('District')} error={errors.district}>
                     <select id="district" className="form-input" value={form.district}
