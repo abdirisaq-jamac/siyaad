@@ -87,13 +87,32 @@ export default function CitizensList() {
 
     if (dataToExport.length === 0) return;
 
-    const header = ['National ID','Full Name','Father Name','Date of Birth','Gender','Phone','District','Status','Registered'];
+    // Helper: wrap value safely for Excel — prevents auto-conversion of dates/numbers
+    const safe = (v: string | null | undefined) => {
+      const str = (v ?? '').toString().replace(/"/g, '""');
+      // Force text format for dates, phone numbers, IDs using ="value" trick
+      return `"${str}"`;
+    };
+    // For fields Excel tends to auto-convert (dates, phone numbers), prefix with tab to lock as text
+    const asText = (v: string | null | undefined) => `="${(v ?? '').toString().replace(/"/g, '""')}"`;
+
+    const header = ['National ID', 'Full Name', 'Father Name', 'Date of Birth', 'Gender', 'Phone', 'District', 'Status', 'Registered'];
     const rows = dataToExport.map(c => [
-      c.nationalIdNumber, c.fullName, c.fatherName, c.dateOfBirth,
-      c.gender, c.phone, c.district, c.status, c.registrationDate,
+      asText(c.nationalIdNumber),  // prevent WB-2026-12345 being parsed
+      safe(c.fullName),
+      safe(c.fatherName),
+      asText(c.dateOfBirth),        // prevent YYYY-MM-DD becoming a date serial
+      safe(c.gender),
+      asText(c.phone),              // prevent 0612345678 losing leading zero or becoming scientific
+      safe(c.district),
+      safe(c.status),
+      asText(c.registrationDate),   // prevent date conversion
     ]);
-    const csv = [header, ...rows].map(r => r.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
+
+    // UTF-8 BOM (\uFEFF) ensures Excel opens with correct encoding
+    const BOM = '\uFEFF';
+    const csv = BOM + [header.map(h => `"${h}"`), ...rows].map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url; a.download = 'citizens.csv'; a.click();
