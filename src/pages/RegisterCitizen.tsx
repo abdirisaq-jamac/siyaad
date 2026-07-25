@@ -327,11 +327,17 @@ export default function RegisterCitizen() {
                       onChange={e => set('phone', e.target.value)} />
                   </Field>
                   <Field id="occupation" label={t('Occupation')} required error={errors.occupation}>
-                    <select id="occupation" className="form-input" value={form.occupation}
-                      onChange={e => set('occupation', e.target.value)}>
-                      <option value="">Select occupation…</option>
-                      {OCCUPATIONS.map(o => <option key={o} value={o}>{o}</option>)}
-                    </select>
+                    <input 
+                      id="occupation"
+                      list="occupations-datalist"
+                      className="form-input" 
+                      placeholder="Select or type occupation..." 
+                      value={form.occupation}
+                      onChange={e => set('occupation', e.target.value)} 
+                    />
+                    <datalist id="occupations-datalist">
+                      {OCCUPATIONS.map(o => <option key={o} value={o} />)}
+                    </datalist>
                   </Field>
                   <Field id="district" label={t('District')} error={errors.district}>
                     <select id="district" className="form-input" value={form.district}
@@ -345,9 +351,6 @@ export default function RegisterCitizen() {
                       <option value="Active">{t('Active')}</option>
                       <option value="Pending">{t('Pending')}</option>
                       <option value="Rejected">{t('Rejected')}</option>
-                      <option value="Expired">{t('Expired')}</option>
-                      <option value="Suspended">{t('Suspended')}</option>
-                      <option value="Revoked">{t('Revoked')}</option>
                     </select>
                   </Field>
 

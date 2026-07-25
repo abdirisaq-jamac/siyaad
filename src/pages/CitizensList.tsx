@@ -6,6 +6,19 @@ import { getCitizens, deleteCitizen } from '../services/storage';
 import type { Citizen } from '../types';
 import { format } from 'date-fns';
 
+const DISTRICTS = [
+  'Garowe', 'Bosaso', 'Gaalkacyo', 'Qardho', 'Buuhoodle', 'Xudun', 'Taleex',
+  'Laascaanood', 'Badhan', 'Dhahar', 'Eyl', 'Jariiban', 'Burtinle', 'Goldogob',
+  'Dangorayo', 'Iskushuban', 'Caluula', 'Bargaal', 'Qandala', 'Bandarbayla',
+  'Widhwidh', 'Yagoori', 'Boocame'
+];
+
+const OCCUPATIONS = [
+  'Government Employee', 'Teacher', 'Doctor', 'Engineer', 'Farmer',
+  'Merchant', 'Student', 'Driver', 'Security Officer', 'Nurse',
+  'Lawyer', 'Accountant', 'Business Owner', 'Unemployed', 'Other',
+];
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -25,6 +38,8 @@ export default function CitizensList() {
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [genderFilter, setGenderFilter] = useState('All');
+  const [districtFilter, setDistrictFilter] = useState('All');
+  const [occupationFilter, setOccupationFilter] = useState('');
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   
   // Pagination State
@@ -44,7 +59,7 @@ export default function CitizensList() {
   useEffect(() => { load(); }, []);
 
   // Reset to first page when filters change
-  useEffect(() => { setCurrentPage(1); }, [query, statusFilter, genderFilter]);
+  useEffect(() => { setCurrentPage(1); }, [query, statusFilter, genderFilter, districtFilter, occupationFilter]);
 
   // Sync pageInput with currentPage
   useEffect(() => { setPageInput(currentPage.toString()); }, [currentPage]);
@@ -56,7 +71,9 @@ export default function CitizensList() {
       c.phone.includes(q) || c.district.toLowerCase().includes(q);
     const matchS = statusFilter === 'All' || c.status === statusFilter;
     const matchG = genderFilter === 'All' || c.gender === genderFilter;
-    return matchQ && matchS && matchG;
+    const matchD = districtFilter === 'All' || c.district === districtFilter;
+    const matchO = !occupationFilter || (c.occupation && c.occupation.toLowerCase().includes(occupationFilter.toLowerCase()));
+    return matchQ && matchS && matchG && matchD && matchO;
   });
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
@@ -122,11 +139,28 @@ export default function CitizensList() {
         </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <select className="form-input" style={{ width: '140px', padding: '0.6rem 1rem' }} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-            {['All','Active','Pending','Rejected','Expired','Suspended','Revoked'].map(s => <option key={s} value={s}>{s === 'All' ? 'All Statuses' : s}</option>)}
+            {['All','Active','Pending','Rejected'].map(s => <option key={s} value={s}>{s === 'All' ? 'All Statuses' : s}</option>)}
           </select>
           <select className="form-input" style={{ width: '140px', padding: '0.6rem 1rem' }} value={genderFilter} onChange={e => setGenderFilter(e.target.value)}>
             {['All','Male','Female'].map(g => <option key={g} value={g}>{g === 'All' ? 'All Genders' : g}</option>)}
           </select>
+          <select className="form-input" style={{ width: '140px', padding: '0.6rem 1rem' }} value={districtFilter} onChange={e => setDistrictFilter(e.target.value)}>
+            <option value="All">All Districts</option>
+            {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
+          </select>
+          <div style={{ position: 'relative', width: '160px' }}>
+            <input 
+              list="occupations-list"
+              className="form-input" 
+              style={{ width: '100%', padding: '0.6rem 1rem' }} 
+              placeholder="All Occupations..."
+              value={occupationFilter} 
+              onChange={e => setOccupationFilter(e.target.value)}
+            />
+            <datalist id="occupations-list">
+              {OCCUPATIONS.map(o => <option key={o} value={o} />)}
+            </datalist>
+          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Rows per page:</span>
             <select 
@@ -220,10 +254,7 @@ export default function CitizensList() {
                     <td>
                       <span className={
                         c.status === 'Active' ? 'badge-active' :
-                        c.status === 'Pending' ? 'badge-pending' :
-                        c.status === 'Rejected' ? 'badge-rejected' :
-                        c.status === 'Expired' ? 'badge-expired' :
-                        c.status === 'Suspended' ? 'badge-suspended' : 'badge-revoked'
+                        c.status === 'Pending' ? 'badge-pending' : 'badge-rejected'
                       }>{c.status}</span>
                     </td>
                     <td style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>
