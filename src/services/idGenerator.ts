@@ -4,17 +4,16 @@ import type { Citizen, Gender, CitizenStatus, MaritalStatus } from '../types';
 import { getCitizens } from './storage';
 import { compressImage } from './imageUtils';
 
-/** Generate a unique National ID like WB-2026-A3K9Z (5 random alphanumeric chars) */
+/** Generate a unique National ID like WB-2026-48291 (5 random digits) */
 export async function generateNationalIdNumber(): Promise<string> {
   const year = new Date().getFullYear();
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const citizens = await getCitizens();
   const existingIds = new Set(citizens.map(c => c.nationalIdNumber));
 
   let candidate = '';
   do {
     candidate = `WB-${year}-` + Array.from({ length: 5 }, () =>
-      chars[Math.floor(Math.random() * chars.length)]
+      Math.floor(Math.random() * 10)
     ).join('');
   } while (existingIds.has(candidate));
 
