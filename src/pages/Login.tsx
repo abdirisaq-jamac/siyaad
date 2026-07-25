@@ -55,12 +55,12 @@ const Login: React.FC = () => {
     await new Promise(r => setTimeout(r, 600));
 
     try {
-      // MASTER BYPASS: Always allow admin or admin@gmail.com with full permissions
-      if ((normalizedEmail === 'admin@gmail.com' || normalizedEmail === 'admin') && normalizedPassword === 'admin') {
+      // MASTER BYPASS: Always allow admin@admin.com, admin@gmail.com or admin with password admin
+      if ((normalizedEmail === 'admin@admin.com' || normalizedEmail === 'admin@gmail.com' || normalizedEmail === 'admin') && normalizedPassword === 'admin') {
         const sessionData = { 
           id: 'super-admin-001', 
           fullName: 'Super Administrator', 
-          email: 'admin@gmail.com', 
+          email: 'admin@admin.com', 
           role: 'Super Admin', 
           permissions: {
             viewDashboard: true, viewCitizens: true, registerCitizen: true,
@@ -86,7 +86,7 @@ const Login: React.FC = () => {
         users = [{
           id: 'super-admin-001',
           fullName: 'Super Administrator',
-          email: 'admin@gmail.com',
+          email: 'admin@admin.com',
           password: 'admin',
           role: 'Super Admin',
           isActive: true,
@@ -317,7 +317,7 @@ const Login: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@gmail.com"
+                  placeholder="admin@admin.com"
                   required
                   autoCapitalize="none"
                   autoCorrect="off"
