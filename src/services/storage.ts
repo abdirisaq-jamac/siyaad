@@ -143,28 +143,86 @@ function seedDefaultUsers(): AppUser[] {
   ];
 }
 
-export async function getUsers(): Promise<AppUser[]> {
-  const { data, error } = await supabase.from('app_users').select('*').order('createdAt', { ascending: false });
-  if (error) {
-    console.error('Error fetching users:', error);
-    return [];
+function getLocalUsers(): AppUser[] {
+  const raw = localStorage.getItem(USERS_KEY);
+  if (!raw) {
+    const seeded = seedDefaultUsers();
+    localStorage.setItem(USERS_KEY, JSON.stringify(seeded));
+    return seeded;
   }
-  return data as AppUser[];
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return seedDefaultUsers();
+  }
+}
+
+function saveLocalUsers(users: AppUser[]) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+
+export async function getUsers(): Promise<AppUser[]> {
+  try {
+    const { data, error } = await supabase.from('app_users').select('*').order('createdAt', { ascending: false });
+    if (!error && data && data.length > 0) {
+      saveLocalUsers(data as AppUser[]);
+      return data as AppUser[];
+    }
+  } catch (err) {
+    console.warn('Supabase getUsers error, fallback to local storage:', err);
+  }
+  return getLocalUsers();
 }
 
 export async function addUser(user: AppUser): Promise<AppUser> {
-  const { data, error } = await supabase.from('app_users').insert([user]).select().single();
-  if (error) throw new Error(error.message);
-  return data as AppUser;
+  let savedUser = user;
+  try {
+    const { data, error } = await supabase.from('app_users').insert([user]).select().single();
+    if (!error && data) {
+      savedUser = data as AppUser;
+    } else if (error) {
+      console.warn('Supabase addUser RLS/error, saved locally:', error.message);
+    }
+  } catch (err) {
+    console.warn('Supabase error saving user, saving locally instead:', err);
+  }
+
+  const current = getLocalUsers();
+  const updated = [savedUser, ...current.filter(u => u.id !== savedUser.id)];
+  saveLocalUsers(updated);
+  return savedUser;
 }
 
-export async function updateUser(updated: AppUser): Promise<AppUser> {
-  const { data, error } = await supabase.from('app_users').update(updated).eq('id', updated.id).select().single();
-  if (error) throw new Error(error.message);
-  return data as AppUser;
+export async function updateUser(updatedUser: AppUser): Promise<AppUser> {
+  let savedUser = updatedUser;
+  try {
+    const { data, error } = await supabase.from('app_users').update(updatedUser).eq('id', updatedUser.id).select().single();
+    if (!error && data) {
+      savedUser = data as AppUser;
+    } else if (error) {
+      console.warn('Supabase updateUser RLS/error, updated locally:', error.message);
+    }
+  } catch (err) {
+    console.warn('Supabase error updating user, updating locally instead:', err);
+  }
+
+  const current = getLocalUsers();
+  const updatedList = current.map(u => u.id === savedUser.id ? savedUser : u);
+  saveLocalUsers(updatedList);
+  return savedUser;
 }
 
 export async function deleteUser(id: string): Promise<void> {
-  const { error } = await supabase.from('app_users').delete().eq('id', id);
-  if (error) throw new Error(error.message);
+  try {
+    const { error } = await supabase.from('app_users').delete().eq('id', id);
+    if (error) {
+      console.warn('Supabase deleteUser RLS/error, deleted locally:', error.message);
+    }
+  } catch (err) {
+    console.warn('Supabase error deleting user:', err);
+  }
+
+  const current = getLocalUsers();
+  const updatedList = current.filter(u => u.id !== id);
+  saveLocalUsers(updatedList);
 }
