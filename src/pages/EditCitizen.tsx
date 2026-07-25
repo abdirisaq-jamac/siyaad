@@ -81,10 +81,27 @@ export default function EditCitizen() {
   const navigate = useNavigate();
   const [form, setForm] = useState<Partial<Citizen> | null>(null);
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (id) getCitizenById(id).then(c => setForm(c || null)).catch(console.error);
+    if (id) {
+      getCitizenById(id)
+        .then(c => setForm(c || null))
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
   }, [id]);
+
+  if (loading) return (
+    <div style={{ textAlign: 'center', padding: '6rem 2rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ width: 52, height: 52, border: '4px solid var(--border-color)', borderTop: '4px solid var(--primary-color)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+        <div style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-muted)' }}>Loading citizen details...</div>
+      </div>
+    </div>
+  );
 
   if (!form) return (
     <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '4rem' }}>
@@ -208,7 +225,6 @@ export default function EditCitizen() {
               <Field id="status" label="Registration Status">
                 <select id="status" className="form-input" value={form.status} onChange={e => set('status', e.target.value as CitizenStatus)}>
                   <option value="Active">Active</option><option value="Pending">Pending</option><option value="Rejected">Rejected</option>
-                  <option value="Expired">Expired</option><option value="Suspended">Suspended</option><option value="Revoked">Revoked</option>
                 </select>
               </Field>
             </div>

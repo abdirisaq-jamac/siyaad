@@ -25,12 +25,29 @@ function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string;
 export default function CitizenDetails() {
   const { id } = useParams<{ id: string }>();
   const [citizen, setCitizen] = useState<Citizen | null>(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (id) getCitizenById(id).then(c => setCitizen(c || null)).catch(console.error);
+    if (id) {
+      getCitizenById(id)
+        .then(c => setCitizen(c || null))
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
   }, [id]);
+
+  if (loading) return (
+    <div style={{ textAlign: 'center', padding: '6rem 2rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ width: 52, height: 52, border: '4px solid var(--border-color)', borderTop: '4px solid var(--primary-color)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+        <div style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-muted)' }}>Loading citizen details...</div>
+      </div>
+    </div>
+  );
 
   if (!citizen) return (
     <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '4rem' }}>
@@ -302,13 +319,7 @@ export default function CitizenDetails() {
                 <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.25rem' }}>{citizen.occupation}</div>
               </div>
               <div style={{ marginTop: '1.25rem' }}>
-                <span className={
-                  citizen.status === 'Active' ? 'badge-active' : 
-                  citizen.status === 'Pending' ? 'badge-pending' : 
-                  citizen.status === 'Rejected' ? 'badge-rejected' :
-                  citizen.status === 'Expired' ? 'badge-expired' :
-                  citizen.status === 'Suspended' ? 'badge-suspended' : 'badge-revoked'
-                }
+                <span className={citizen.status === 'Active' ? 'badge-active' : citizen.status === 'Pending' ? 'badge-pending' : 'badge-rejected'}
                   style={{ display: 'inline-block', padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
                   {citizen.status} Status
                 </span>
