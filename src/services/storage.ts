@@ -143,35 +143,52 @@ function seedDefaultUsers(): AppUser[] {
   ];
 }
 
+function ensureSuperAdmin(users: AppUser[]): AppUser[] {
+  const seed = seedDefaultUsers()[0];
+  const hasSuperAdmin = users.some(u => u.role === 'Super Admin' || u.id === seed.id || u.email === seed.email);
+  if (!hasSuperAdmin) {
+    return [seed, ...users];
+  }
+  return users;
+}
+
 function getLocalUsers(): AppUser[] {
   const raw = localStorage.getItem(USERS_KEY);
-  if (!raw) {
-    const seeded = seedDefaultUsers();
-    localStorage.setItem(USERS_KEY, JSON.stringify(seeded));
-    return seeded;
+  let users: AppUser[] = [];
+  if (raw) {
+    try {
+      users = JSON.parse(raw);
+    } catch {
+      users = [];
+    }
   }
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return seedDefaultUsers();
-  }
+  users = ensureSuperAdmin(users);
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  return users;
 }
 
 function saveLocalUsers(users: AppUser[]) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  const ensured = ensureSuperAdmin(users);
+  localStorage.setItem(USERS_KEY, JSON.stringify(ensured));
 }
 
 export async function getUsers(): Promise<AppUser[]> {
+  let list: AppUser[] = [];
   try {
     const { data, error } = await supabase.from('app_users').select('*').order('createdAt', { ascending: false });
     if (!error && data && data.length > 0) {
-      saveLocalUsers(data as AppUser[]);
-      return data as AppUser[];
+      list = data as AppUser[];
+    } else {
+      list = getLocalUsers();
     }
   } catch (err) {
     console.warn('Supabase getUsers error, fallback to local storage:', err);
+    list = getLocalUsers();
   }
-  return getLocalUsers();
+
+  list = ensureSuperAdmin(list);
+  localStorage.setItem(USERS_KEY, JSON.stringify(list));
+  return list;
 }
 
 export async function addUser(user: AppUser): Promise<AppUser> {
