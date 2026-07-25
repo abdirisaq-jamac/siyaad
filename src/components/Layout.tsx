@@ -309,8 +309,7 @@ export function Topbar({ sidebarCollapsed, onMobileMenu }: TopbarProps) {
         alignItems: 'center',
         padding: '0 1.5rem',
         gap: '1.25rem',
-        position: 'sticky',
-        top: 0,
+        position: 'relative', // Changed from sticky to relative so it doesn't follow on scroll
         zIndex: 50,
       }}
     >
@@ -319,7 +318,7 @@ export function Topbar({ sidebarCollapsed, onMobileMenu }: TopbarProps) {
         <div style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
           {getLabel()}
         </div>
-        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+        <div style={{ fontSize: '0.8rem', color: 'var(--primary-color)', fontWeight: 700, letterSpacing: '0.02em' }}>
           {settings?.stateName || 'Waqooyi Bari'} National ID Management System
         </div>
       </div>
