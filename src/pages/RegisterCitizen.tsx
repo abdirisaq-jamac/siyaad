@@ -345,6 +345,9 @@ export default function RegisterCitizen() {
                       <option value="Active">{t('Active')}</option>
                       <option value="Pending">{t('Pending')}</option>
                       <option value="Rejected">{t('Rejected')}</option>
+                      <option value="Expired">{t('Expired')}</option>
+                      <option value="Suspended">{t('Suspended')}</option>
+                      <option value="Revoked">{t('Revoked')}</option>
                     </select>
                   </Field>
 

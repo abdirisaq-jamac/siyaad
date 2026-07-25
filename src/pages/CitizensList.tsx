@@ -122,7 +122,7 @@ export default function CitizensList() {
         </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <select className="form-input" style={{ width: '140px', padding: '0.6rem 1rem' }} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-            {['All','Active','Pending','Rejected'].map(s => <option key={s} value={s}>{s === 'All' ? 'All Statuses' : s}</option>)}
+            {['All','Active','Pending','Rejected','Expired','Suspended','Revoked'].map(s => <option key={s} value={s}>{s === 'All' ? 'All Statuses' : s}</option>)}
           </select>
           <select className="form-input" style={{ width: '140px', padding: '0.6rem 1rem' }} value={genderFilter} onChange={e => setGenderFilter(e.target.value)}>
             {['All','Male','Female'].map(g => <option key={g} value={g}>{g === 'All' ? 'All Genders' : g}</option>)}
@@ -220,7 +220,10 @@ export default function CitizensList() {
                     <td>
                       <span className={
                         c.status === 'Active' ? 'badge-active' :
-                        c.status === 'Pending' ? 'badge-pending' : 'badge-rejected'
+                        c.status === 'Pending' ? 'badge-pending' :
+                        c.status === 'Rejected' ? 'badge-rejected' :
+                        c.status === 'Expired' ? 'badge-expired' :
+                        c.status === 'Suspended' ? 'badge-suspended' : 'badge-revoked'
                       }>{c.status}</span>
                     </td>
                     <td style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>

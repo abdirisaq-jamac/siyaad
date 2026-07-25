@@ -53,7 +53,13 @@ export default function CitizenSummary({ citizen }: { citizen: Citizen }) {
           icon={<CheckCircle size={14} />}
           label="Status"
           value={citizen.status}
-          badge={citizen.status === 'Active' ? 'badge-active' : 'badge-pending'}
+          badge={
+            citizen.status === 'Active' ? 'badge-active' :
+            citizen.status === 'Pending' ? 'badge-pending' :
+            citizen.status === 'Rejected' ? 'badge-rejected' :
+            citizen.status === 'Expired' ? 'badge-expired' :
+            citizen.status === 'Suspended' ? 'badge-suspended' : 'badge-revoked'
+          }
         />
       </div>
     </section>

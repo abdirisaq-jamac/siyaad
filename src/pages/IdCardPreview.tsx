@@ -383,7 +383,13 @@ export default function IdCardPreview() {
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>{c.district}</div>
                     </td>
                     <td>
-                      <span className={c.status === 'Active' ? 'badge-active' : c.status === 'Pending' ? 'badge-pending' : 'badge-rejected'}>{c.status}</span>
+                      <span className={
+                        c.status === 'Active' ? 'badge-active' : 
+                        c.status === 'Pending' ? 'badge-pending' : 
+                        c.status === 'Rejected' ? 'badge-rejected' :
+                        c.status === 'Expired' ? 'badge-expired' :
+                        c.status === 'Suspended' ? 'badge-suspended' : 'badge-revoked'
+                      }>{c.status}</span>
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <button className="btn-primary" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setSelected(c)}>

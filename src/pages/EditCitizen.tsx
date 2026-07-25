@@ -208,6 +208,7 @@ export default function EditCitizen() {
               <Field id="status" label="Registration Status">
                 <select id="status" className="form-input" value={form.status} onChange={e => set('status', e.target.value as CitizenStatus)}>
                   <option value="Active">Active</option><option value="Pending">Pending</option><option value="Rejected">Rejected</option>
+                  <option value="Expired">Expired</option><option value="Suspended">Suspended</option><option value="Revoked">Revoked</option>
                 </select>
               </Field>
             </div>

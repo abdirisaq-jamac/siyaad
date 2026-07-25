@@ -302,7 +302,13 @@ export default function CitizenDetails() {
                 <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.25rem' }}>{citizen.occupation}</div>
               </div>
               <div style={{ marginTop: '1.25rem' }}>
-                <span className={citizen.status === 'Active' ? 'badge-active' : citizen.status === 'Pending' ? 'badge-pending' : 'badge-rejected'}
+                <span className={
+                  citizen.status === 'Active' ? 'badge-active' : 
+                  citizen.status === 'Pending' ? 'badge-pending' : 
+                  citizen.status === 'Rejected' ? 'badge-rejected' :
+                  citizen.status === 'Expired' ? 'badge-expired' :
+                  citizen.status === 'Suspended' ? 'badge-suspended' : 'badge-revoked'
+                }
                   style={{ display: 'inline-block', padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
                   {citizen.status} Status
                 </span>

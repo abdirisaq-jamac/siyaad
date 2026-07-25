@@ -317,6 +317,42 @@ body {
   align-items: center;
   gap: 0.25rem;
 }
+.badge-expired {
+  background: rgba(100, 116, 139, 0.15);
+  color: #64748b;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.badge-suspended {
+  background: rgba(234, 88, 12, 0.15);
+  color: #ea580c;
+  border: 1px solid rgba(234, 88, 12, 0.3);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.badge-revoked {
+  background: rgba(153, 27, 27, 0.15);
+  color: #991b1b;
+  border: 1px solid rgba(153, 27, 27, 0.3);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
 
 /* Sidebar Links */
 .sidebar-link {
