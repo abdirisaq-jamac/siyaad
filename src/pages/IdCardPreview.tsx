@@ -203,6 +203,7 @@ export default function IdCardPreview() {
   const [citizens, setCitizens] = useState<Citizen[]>([]);
   const [selected, setSelected] = useState<Citizen | null>(null);
   const [settings, setSettings] = useState<AppSettings | null>(null);
+  const [loading, setLoading] = useState(true);
   const [showBack, setShowBack] = useState(false);
   const [query, setQuery] = useState('');
   const [pdfLoading, setPdfLoading] = useState(false);
@@ -214,6 +215,7 @@ export default function IdCardPreview() {
   const [pageInput, setPageInput] = useState('1');
 
   useEffect(() => {
+    setLoading(true);
     getSettings().then(setSettings).catch(console.error);
     getCitizens().then(all => {
       setCitizens(all);
@@ -221,7 +223,7 @@ export default function IdCardPreview() {
         const c = all.find(x => x.id === id);
         if (c) setSelected(c);
       }
-    }).catch(console.error);
+    }).catch(console.error).finally(() => setLoading(false));
   }, [id]);
 
   useEffect(() => { setCurrentPage(1); }, [query]);
@@ -336,7 +338,22 @@ export default function IdCardPreview() {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={7} style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{
+                        width: 52, height: 52,
+                        border: '4px solid var(--border-color)',
+                        borderTop: '4px solid var(--primary-color)',
+                        borderRadius: '50%',
+                        animation: 'spin 0.8s linear infinite',
+                      }} />
+                      <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-muted)' }}>Loading citizens...</div>
+                    </div>
+                  </td>
+                </tr>
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={7} style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-muted)' }}>
                     <div style={{ background: 'var(--bg-main)', width: 80, height: 80, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
