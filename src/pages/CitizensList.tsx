@@ -6,19 +6,6 @@ import { getCitizens, deleteCitizen } from '../services/storage';
 import type { Citizen } from '../types';
 import { format } from 'date-fns';
 
-const DISTRICTS = [
-  'Garowe', 'Bosaso', 'Gaalkacyo', 'Qardho', 'Buuhoodle', 'Xudun', 'Taleex',
-  'Laascaanood', 'Badhan', 'Dhahar', 'Eyl', 'Jariiban', 'Burtinle', 'Goldogob',
-  'Dangorayo', 'Iskushuban', 'Caluula', 'Bargaal', 'Qandala', 'Bandarbayla',
-  'Widhwidh', 'Yagoori', 'Boocame'
-];
-
-const OCCUPATIONS = [
-  'Government Employee', 'Teacher', 'Doctor', 'Engineer', 'Farmer',
-  'Merchant', 'Student', 'Driver', 'Security Officer', 'Nurse',
-  'Lawyer', 'Accountant', 'Business Owner', 'Unemployed', 'Other',
-];
-
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -39,7 +26,7 @@ export default function CitizensList() {
   const [statusFilter, setStatusFilter] = useState('All');
   const [genderFilter, setGenderFilter] = useState('All');
   const [districtFilter, setDistrictFilter] = useState('All');
-  const [occupationFilter, setOccupationFilter] = useState('');
+  const [selectedCitizens, setSelectedCitizens] = useState<Set<string>>(new Set());
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   
   // Pagination State
@@ -59,7 +46,7 @@ export default function CitizensList() {
   useEffect(() => { load(); }, []);
 
   // Reset to first page when filters change
-  useEffect(() => { setCurrentPage(1); }, [query, statusFilter, genderFilter, districtFilter, occupationFilter]);
+  useEffect(() => { setCurrentPage(1); }, [query, statusFilter, genderFilter, districtFilter]);
 
   // Sync pageInput with currentPage
   useEffect(() => { setPageInput(currentPage.toString()); }, [currentPage]);
@@ -72,9 +59,10 @@ export default function CitizensList() {
     const matchS = statusFilter === 'All' || c.status === statusFilter;
     const matchG = genderFilter === 'All' || c.gender === genderFilter;
     const matchD = districtFilter === 'All' || c.district === districtFilter;
-    const matchO = !occupationFilter || (c.occupation && c.occupation.toLowerCase().includes(occupationFilter.toLowerCase()));
-    return matchQ && matchS && matchG && matchD && matchO;
+    return matchQ && matchS && matchG && matchD;
   });
+
+  const allDistricts = Array.from(new Set(citizens.map(c => c.district))).filter(Boolean).sort();
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -93,8 +81,14 @@ export default function CitizensList() {
   }
 
   function exportCSV() {
+    const dataToExport = selectedCitizens.size > 0 
+      ? filtered.filter(c => selectedCitizens.has(c.id))
+      : filtered;
+
+    if (dataToExport.length === 0) return;
+
     const header = ['National ID','Full Name','Father Name','Date of Birth','Gender','Phone','District','Status','Registered'];
-    const rows = filtered.map(c => [
+    const rows = dataToExport.map(c => [
       c.nationalIdNumber, c.fullName, c.fatherName, c.dateOfBirth,
       c.gender, c.phone, c.district, c.status, c.registrationDate,
     ]);
@@ -106,6 +100,25 @@ export default function CitizensList() {
     URL.revokeObjectURL(url);
   }
 
+  function handleSelectAll(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.checked) {
+      const newSet = new Set(selectedCitizens);
+      currentItems.forEach(c => newSet.add(c.id));
+      setSelectedCitizens(newSet);
+    } else {
+      const newSet = new Set(selectedCitizens);
+      currentItems.forEach(c => newSet.delete(c.id));
+      setSelectedCitizens(newSet);
+    }
+  }
+
+  function handleSelectOne(id: string, checked: boolean) {
+    const newSet = new Set(selectedCitizens);
+    if (checked) newSet.add(id);
+    else newSet.delete(id);
+    setSelectedCitizens(newSet);
+  }
+
   return (
     <motion.div initial="hidden" animate="visible" variants={containerVariants}>
       <motion.div variants={itemVariants} className="page-header">
@@ -114,8 +127,13 @@ export default function CitizensList() {
           <div className="page-subtitle">{filtered.length} of {citizens.length} citizens found</div>
         </div>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-secondary" onClick={exportCSV}>
-            <Download size={18} /> Export CSV
+          <motion.button 
+            whileHover={{ scale: 1.05 }} 
+            whileTap={{ scale: 0.95 }} 
+            className="btn-secondary" 
+            onClick={exportCSV}
+          >
+            <Download size={18} /> {selectedCitizens.size > 0 ? `Export CSV (${selectedCitizens.size})` : 'Export CSV'}
           </motion.button>
           <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary" onClick={() => navigate('/register')}>
             <UserPlus size={18} /> Register New
@@ -146,21 +164,8 @@ export default function CitizensList() {
           </select>
           <select className="form-input" style={{ width: '140px', padding: '0.6rem 1rem' }} value={districtFilter} onChange={e => setDistrictFilter(e.target.value)}>
             <option value="All">All Districts</option>
-            {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
+            {allDistricts.map(d => <option key={d} value={d}>{d}</option>)}
           </select>
-          <div style={{ position: 'relative', width: '160px' }}>
-            <input 
-              list="occupations-list"
-              className="form-input" 
-              style={{ width: '100%', padding: '0.6rem 1rem' }} 
-              placeholder="All Occupations..."
-              value={occupationFilter} 
-              onChange={e => setOccupationFilter(e.target.value)}
-            />
-            <datalist id="occupations-list">
-              {OCCUPATIONS.map(o => <option key={o} value={o} />)}
-            </datalist>
-          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Rows per page:</span>
             <select 
@@ -186,6 +191,14 @@ export default function CitizensList() {
           <table className="data-table">
             <thead>
               <tr>
+                <th style={{ width: 40 }}>
+                  <input 
+                    type="checkbox"
+                    checked={currentItems.length > 0 && currentItems.every(c => selectedCitizens.has(c.id))}
+                    onChange={handleSelectAll}
+                    style={{ cursor: 'pointer' }}
+                  />
+                </th>
                 <th style={{ width: 40 }}>#</th>
                 <th style={{ width: 70 }}>Photo</th>
                 <th>Citizen Details</th>
@@ -199,7 +212,7 @@ export default function CitizensList() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+                  <td colSpan={9} style={{ textAlign: 'center', padding: '4rem 2rem' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
                       <div style={{
                         width: 52, height: 52,
@@ -214,7 +227,7 @@ export default function CitizensList() {
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={8} style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-muted)' }}>
+                  <td colSpan={9} style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-muted)' }}>
                     <div style={{ background: 'var(--bg-main)', width: 80, height: 80, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
                       <UserPlus size={40} style={{ opacity: 0.5, color: 'var(--primary-color)' }} />
                     </div>
@@ -225,6 +238,14 @@ export default function CitizensList() {
               ) : (
                 currentItems.map((c, i) => (
                   <tr key={c.id}>
+                    <td>
+                      <input 
+                        type="checkbox"
+                        checked={selectedCitizens.has(c.id)}
+                        onChange={(e) => handleSelectOne(c.id, e.target.checked)}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    </td>
                     <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: 600 }}>{indexOfFirstItem + i + 1}</td>
                     <td>
                       {c.photo ? (
