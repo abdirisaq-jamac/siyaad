@@ -7,7 +7,6 @@ import {
 import type { AppUser, UserRole, Permission } from '../types';
 import { getUsers, addUser, updateUser, deleteUser, buildDefaultPermissions } from '../services/storage';
 import { format } from 'date-fns';
-import { v4 as uuidv4 } from 'uuid';
 
 const ROLES: UserRole[] = ['Super Admin', 'Admin', 'Editor', 'Data Entry', 'Viewer'];
 
@@ -73,11 +72,12 @@ const emptyPermission = (): Permission => ({
 });
 
 function generateId() {
-  return uuidv4();
+  return 'usr-' + Math.random().toString(36).slice(2, 10);
 }
 
 export default function UsersManagement() {
   const [users, setUsers] = useState<AppUser[]>([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState<AppUser | null>(null);
@@ -92,7 +92,15 @@ export default function UsersManagement() {
   });
   const [permissions, setPermissions] = useState<Permission>(emptyPermission());
 
-  const load = async () => setUsers(await getUsers());
+  const load = async () => {
+    setLoading(true);
+    try {
+      const res = await getUsers();
+      setUsers(res);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => { load(); }, []);
 
   const filtered = users.filter(u =>
@@ -198,7 +206,16 @@ export default function UsersManagement() {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{ width: 44, height: 44, border: '4px solid var(--border-color)', borderTop: '4px solid var(--primary-color)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                      <div style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: '0.95rem' }}>Loading users...</div>
+                    </div>
+                  </td>
+                </tr>
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={8} style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
                     <Users size={48} style={{ opacity: 0.2, margin: '0 auto 1rem', display: 'block', color: 'var(--primary-color)' }} />
