@@ -318,7 +318,7 @@ export function Topbar({ sidebarCollapsed, onMobileMenu }: TopbarProps) {
         <div style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
           {getLabel()}
         </div>
-        <div style={{ fontSize: '0.8rem', color: 'var(--primary-color)', fontWeight: 700, letterSpacing: '0.02em' }}>
+        <div style={{ fontSize: '0.8rem', color: 'white', fontWeight: 700, letterSpacing: '0.02em' }}>
           {settings?.stateName || 'Waqooyi Bari'} National ID Management System
         </div>
       </div>
