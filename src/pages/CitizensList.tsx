@@ -21,6 +21,7 @@ const itemVariants = {
 
 export default function CitizensList() {
   const [citizens, setCitizens] = useState<Citizen[]>([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [genderFilter, setGenderFilter] = useState('All');
@@ -33,7 +34,13 @@ export default function CitizensList() {
   
   const navigate = useNavigate();
 
-  const load = () => getCitizens().then(setCitizens).catch(console.error);
+  const load = () => {
+    setLoading(true);
+    getCitizens()
+      .then(setCitizens)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  };
   useEffect(() => { load(); }, []);
 
   // Reset to first page when filters change
@@ -156,15 +163,29 @@ export default function CitizensList() {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{
+                        width: 52, height: 52,
+                        border: '4px solid var(--border-color)',
+                        borderTop: '4px solid var(--primary-color)',
+                        borderRadius: '50%',
+                        animation: 'spin 0.8s linear infinite',
+                      }} />
+                      <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-muted)' }}>Loading citizens...</div>
+                    </div>
+                  </td>
+                </tr>
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={8} style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-muted)' }}>
                     <div style={{ background: 'var(--bg-main)', width: 80, height: 80, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
                       <UserPlus size={40} style={{ opacity: 0.5, color: 'var(--primary-color)' }} />
                     </div>
                     <div style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: '0.5rem' }}>No citizens found</div>
-                    <div style={{ fontSize: '0.9rem' }}>Try adjusting your search or filters to find what you're looking for.</div>
-                    <button className="btn-primary" style={{ marginTop: '1.5rem' }} onClick={() => { setQuery(''); setStatusFilter('All'); setGenderFilter('All'); }}>Clear Filters</button>
+                    <div style={{ fontSize: '0.9rem' }}>Try adjusting your search or filters.</div>
                   </td>
                 </tr>
               ) : (
