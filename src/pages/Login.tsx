@@ -96,7 +96,10 @@ const Login: React.FC = () => {
             exportIdCard: true, verifyQR: true, viewReports: true,
             exportReports: true, viewSettings: true, editSettings: true,
             viewUsers: true, manageUsers: true,
-          }
+          },
+          createdAt: new Date().toISOString(),
+          lastLogin: null,
+          avatar: null
         }];
       }
 
