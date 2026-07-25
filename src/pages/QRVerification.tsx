@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { QrCode, Search, CheckCircle, XCircle, User, Hash, Calendar, MapPin, Phone, Sun, Moon } from 'lucide-react';
+import React, { useState } from 'react';
+import { QrCode, Search, CheckCircle, XCircle, User } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { getCitizenByNationalId, getCitizensByName } from '../services/storage';
 import type { Citizen } from '../types';
 import { format } from 'date-fns';
@@ -45,120 +46,159 @@ export default function QRVerification() {
 // Removed toggleTheme function
 
   
-  return (
-  <main className="container mx-auto min-h-screen flex items-start justify-center p-4 relative z-0">
-        <div className="w-full max-w-3xl relative z-20">
-          <div className="flex justify-end mb-4"></div>
-        <section className="mb-6 text-center">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">QR Code Verification</h1>
-          <p className="text-gray-600 dark:text-gray-300">Verify citizen identity by National ID or QR code</p>
-        </section>
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
 
-        <section className="bg-transparent rounded-xl shadow-md p-6 mb-6 relative z-20">
-          <div className="flex flex-col items-center mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-teal-600 to-indigo-600 rounded-full flex items-center justify-center mb-2">
-              <QrCode size={32} className="text-white" />
-            </div>
-            <div className="font-bold text-lg text-gray-800 dark:text-gray-100">Identity Verification Portal</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">Enter National ID Number to verify citizen</div>
-          </div>
-          <div className="flex gap-2">
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 }
+  };
+
+  return (
+    <motion.div initial="hidden" animate="visible" variants={containerVariants} style={{ maxWidth: '850px', margin: '0 auto', padding: '2rem 1rem' }}>
+      <motion.div variants={itemVariants} style={{ textAlign: 'center', marginBottom: '3rem' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 80, height: 80, borderRadius: '50%', background: 'var(--primary-gradient)', color: 'white', marginBottom: '1.5rem', boxShadow: 'var(--shadow-md)' }}>
+          <QrCode size={40} />
+        </div>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>Identity Verification</h1>
+        <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', maxWidth: '500px', margin: '0 auto' }}>Enter a National ID Number or a 3-part full name to verify a citizen's identity instantly.</p>
+      </motion.div>
+
+      <motion.div variants={itemVariants} className="glass-card" style={{ padding: '2rem', marginBottom: '2.5rem' }}>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{
+            flex: '1 1 300px', background: 'var(--bg-main)', border: '2px solid var(--border-color)',
+            borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem 1.5rem',
+            transition: 'all 0.3s ease'
+          }} className="focus-within:border-primary">
+            <Search size={22} style={{ color: 'var(--text-muted)' }} />
             <input
-              className="flex-1 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-800 dark:bg-gray-700 text-white"
               placeholder="e.g. WB-2024-000001 or Full Name"
               value={query}
               onChange={e => setQuery(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSearch()}
+              style={{ background: 'none', border: 'none', outline: 'none', color: 'var(--text-main)', fontSize: '1.1rem', width: '100%', fontWeight: 500 }}
             />
-            <button
-              className="bg-blue-600 text-white font-medium px-4 py-2 rounded hover:bg-blue-700 transition"
-              onClick={handleSearch}
-            >
-              <Search size={16} className="inline mr-1" /> Verify
-            </button>
           </div>
-          <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
-            💡 Enter National ID or a 3‑part Full Name (Magaca oo sadexan) to search.
-          </p>
-        </section>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="btn-primary"
+            style={{ padding: '1.1rem 2rem', fontSize: '1.1rem', borderRadius: '12px' }}
+            onClick={handleSearch}
+          >
+            Verify Now
+          </motion.button>
+        </div>
+      </motion.div>
 
+      <AnimatePresence mode="wait">
         {multiResults.length > 0 && (
-          <section className="bg-transparent rounded-xl shadow-md p-6 mb-6">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">
-              Multiple Citizens Found ({multiResults.length})
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">Please select the correct citizen from the list below:</p>
-            <div className="flex flex-col gap-2">
+          <motion.div key="multi" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="glass-card" style={{ padding: '2rem', marginBottom: '2rem' }}>
+            <div style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-main)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <User size={24} style={{ color: 'var(--primary-color)' }} /> Multiple Citizens Found ({multiResults.length})
+            </div>
+            <div style={{ display: 'grid', gap: '1rem' }}>
               {multiResults.map(c => (
-                <div
+                <motion.div
+                  whileHover={{ scale: 1.01, backgroundColor: 'var(--bg-main)' }}
+                  whileTap={{ scale: 0.99 }}
                   key={c.id}
-                  className="flex items-center gap-3 p-3 rounded cursor-pointer bg-transparent hover:bg-gray-100 dark:hover:bg-gray-600 transition"
+                  style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', padding: '1rem 1.5rem', borderRadius: '12px', cursor: 'pointer', border: '1px solid var(--border-color)', transition: 'all 0.2s' }}
                   onClick={() => { setResult(c); setMultiResults([]); }}
                 >
                   {c.photo ? (
-                    <img src={c.photo} alt="" className="w-12 h-12 rounded-full object-cover" />
+                    <img src={c.photo} alt="" style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--border-color)' }} />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 to-teal-600 flex items-center justify-center text-white font-bold">
+                    <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--primary-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '1.25rem' }}>
                       {c.fullName.charAt(0)}
                     </div>
                   )}
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-800 dark:text-gray-100">{c.fullName}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">ID: <span className="text-yellow-600">{c.nationalIdNumber}</span></div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-main)' }}>{c.fullName}</div>
+                    <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>ID: <code style={{ color: 'var(--primary-color)', fontWeight: 700 }}>{c.nationalIdNumber}</code> • {c.district}</div>
                   </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">{c.district}</div>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </section>
+          </motion.div>
         )}
 
         {result === 'not-found' && (
-          <section className="bg-transparent rounded-xl shadow-md p-6 text-center">
-            <XCircle size={48} className="text-red-500 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">No Record Found</h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              The National ID number <code className="text-yellow-600">{query}</code> does not match any registered citizen.
+          <motion.div key="not-found" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card" style={{ padding: '4rem 2rem', textAlign: 'center' }}>
+            <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(239, 68, 68, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+              <XCircle size={40} style={{ color: '#ef4444' }} />
+            </div>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.75rem' }}>No Record Found</h3>
+            <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', maxWidth: '400px', margin: '0 auto' }}>
+              The National ID or Name <strong style={{ color: 'var(--text-main)' }}>"{query}"</strong> does not match any registered citizen in our system.
             </p>
-          </section>
+          </motion.div>
         )}
 
         {result && result !== 'not-found' && (
-          <section className="bg-transparent rounded-xl shadow-md p-6">
-            <div className="flex items-start gap-4 mb-4">
-              <div className="flex-shrink-0">
+          <motion.div key="found" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="glass-card" style={{ padding: '3rem 2rem', overflow: 'hidden', position: 'relative' }}>
+            {/* Success Background Elements */}
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '6px', background: 'var(--primary-gradient)' }} />
+            <div style={{ position: 'absolute', top: 20, right: 20, color: 'var(--primary-color)', opacity: 0.1 }}>
+              <CheckCircle size={120} />
+            </div>
+
+            <div style={{ display: 'flex', gap: '3rem', alignItems: 'center', position: 'relative', zIndex: 10, flexWrap: 'wrap' }}>
+              <div style={{ flexShrink: 0, margin: '0 auto' }}>
                 {result.photo ? (
-                  <img src={result.photo} alt="" className="w-32 h-40 object-cover rounded border-4 border-teal-600" />
+                  <img src={result.photo} alt="" style={{ width: 150, height: 190, objectFit: 'cover', borderRadius: '16px', border: '4px solid var(--bg-main)', boxShadow: 'var(--shadow-md)' }} />
                 ) : (
-                  <div className="w-32 h-40 bg-gradient-to-br from-indigo-600 to-teal-600 rounded flex items-center justify-center text-4xl font-extrabold text-white">
+                  <div style={{ width: 150, height: 190, borderRadius: '16px', background: 'var(--primary-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '4rem', border: '4px solid var(--bg-main)', boxShadow: 'var(--shadow-md)' }}>
                     {result.fullName.charAt(0)}
                   </div>
                 )}
+                <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
+                  <span className={result.status === 'Active' ? 'badge-active' : result.status === 'Pending' ? 'badge-pending' : 'badge-rejected'} style={{ fontSize: '0.85rem', padding: '0.4rem 1rem' }}>
+                    <CheckCircle size={14} style={{ display: 'inline', marginRight: '4px' }} /> Verified {result.status}
+                  </span>
+                </div>
               </div>
-              <div className="flex-1 grid gap-1">
-                <div className="font-semibold text-gray-800 dark:text-gray-100">First: {result.fullName.split(' ')[0] || ''}</div>
-                <div className="font-semibold text-gray-800 dark:text-gray-100">Middle: {result.fullName.split(' ')[1] || ''}</div>
-                <div className="font-semibold text-gray-800 dark:text-gray-100">Last: {result.fullName.split(' ')[2] || ''}</div>
+              
+              <div style={{ flex: 1, minWidth: '300px' }}>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--primary-color)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>Citizen Identity Confirmed</div>
+                <h2 style={{ fontSize: '2.25rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '1.5rem', lineHeight: 1.1 }}>{result.fullName}</h2>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.25rem' }}>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>National ID</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>{result.nationalIdNumber}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Gender</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>{result.gender}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>District</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>{result.district}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Date of Birth</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>{format(new Date(result.dateOfBirth), 'dd MMM yyyy')}</div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '2.5rem', flexWrap: 'wrap' }}>
+                  <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-secondary" onClick={() => navigate(`/citizens/${result.id}`)}>
+                    View Full Profile
+                  </motion.button>
+                  <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary" onClick={() => navigate(`/id-cards/${result.id}`)}>
+                    View ID Card
+                  </motion.button>
+                </div>
               </div>
             </div>
-            <div className="flex justify-end gap-2">
-              <button
-                className="bg-gray-300 text-gray-800 font-medium px-4 py-2 rounded hover:bg-gray-400 transition"
-                onClick={() => navigate(`/citizens/${result.id}`)}
-              >
-                View Full Profile
-              </button>
-              <button
-                className="bg-blue-600 text-white font-medium px-4 py-2 rounded hover:bg-blue-700 transition"
-                onClick={() => navigate(`/id-cards/${result.id}`)}
-              >
-                View ID Card
-              </button>
-            </div>
-          </section>
+          </motion.div>
         )}
-      </div>
-    </main>
+      </AnimatePresence>
+    </motion.div>
   );
 }
 
