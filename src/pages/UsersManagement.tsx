@@ -72,8 +72,7 @@ const emptyPermission = (): Permission => ({
   viewUsers: false, manageUsers: false,
 });
 
-// Generate proper UUID v4 required by Supabase uuid column
-function generateId(): string {
+function generateId() {
   return uuidv4();
 }
 
