@@ -7,6 +7,7 @@ import {
 import type { AppUser, UserRole, Permission } from '../types';
 import { getUsers, addUser, updateUser, deleteUser, buildDefaultPermissions } from '../services/storage';
 import { format } from 'date-fns';
+import { v4 as uuidv4 } from 'uuid';
 
 const ROLES: UserRole[] = ['Super Admin', 'Admin', 'Editor', 'Data Entry', 'Viewer'];
 
@@ -71,8 +72,9 @@ const emptyPermission = (): Permission => ({
   viewUsers: false, manageUsers: false,
 });
 
-function generateId() {
-  return 'usr-' + Math.random().toString(36).slice(2, 10);
+// Generate proper UUID v4 required by Supabase uuid column
+function generateId(): string {
+  return uuidv4();
 }
 
 export default function UsersManagement() {
