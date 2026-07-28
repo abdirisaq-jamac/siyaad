@@ -80,7 +80,6 @@ export default function CitizensList() {
 
   const allDistricts = Array.from(new Set(citizens.map(c => c.district))).filter(Boolean).sort();
   const allOccupations = Array.from(new Set(citizens.map(c => c.occupation))).filter(Boolean).sort();
-  const allMaritalStatuses = Array.from(new Set(citizens.map(c => c.maritalStatus))).filter(Boolean).sort();
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -216,9 +215,9 @@ export default function CitizensList() {
                   style={{ 
                     position: 'absolute', top: '100%', left: 0, marginTop: '0.5rem', 
                     background: 'var(--bg-card)', border: '1px solid var(--border-color)', 
-                    borderRadius: '16px', padding: '1.5rem', boxShadow: '0 10px 40px rgba(0,0,0,0.1)', 
-                    display: 'flex', flexDirection: 'column', gap: '1.25rem', zIndex: 50,
-                    minWidth: '400px'
+                    borderRadius: '16px', padding: '1.25rem', boxShadow: '0 10px 40px rgba(0,0,0,0.1)', 
+                    display: 'flex', flexDirection: 'column', gap: '1rem', zIndex: 50,
+                    minWidth: '260px'
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
@@ -234,38 +233,38 @@ export default function CitizensList() {
                     )}
                   </div>
                   
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                      <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Status</label>
-                      <select className="form-input" style={{ width: '100%', padding: '0.6rem 1rem' }} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                      <label style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Status</label>
+                      <select className="form-input" style={{ width: '100%', padding: '0.5rem 0.75rem', fontSize: '0.85rem' }} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
                         {['All','Active','Pending','Rejected'].map(s => <option key={s} value={s}>{s === 'All' ? 'All Statuses' : s}</option>)}
                       </select>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                      <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Gender</label>
-                      <select className="form-input" style={{ width: '100%', padding: '0.6rem 1rem' }} value={genderFilter} onChange={e => setGenderFilter(e.target.value)}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                      <label style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Gender</label>
+                      <select className="form-input" style={{ width: '100%', padding: '0.5rem 0.75rem', fontSize: '0.85rem' }} value={genderFilter} onChange={e => setGenderFilter(e.target.value)}>
                         {['All','Male','Female'].map(g => <option key={g} value={g}>{g === 'All' ? 'All Genders' : g}</option>)}
                       </select>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                      <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>District</label>
-                      <select className="form-input" style={{ width: '100%', padding: '0.6rem 1rem' }} value={districtFilter} onChange={e => setDistrictFilter(e.target.value)}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                      <label style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>District</label>
+                      <select className="form-input" style={{ width: '100%', padding: '0.5rem 0.75rem', fontSize: '0.85rem' }} value={districtFilter} onChange={e => setDistrictFilter(e.target.value)}>
                         <option value="All">All Districts</option>
                         {allDistricts.map(d => <option key={d} value={d}>{d}</option>)}
                       </select>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                      <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Occupation</label>
-                      <select className="form-input" style={{ width: '100%', padding: '0.6rem 1rem' }} value={occupationFilter} onChange={e => setOccupationFilter(e.target.value)}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                      <label style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Occupation</label>
+                      <select className="form-input" style={{ width: '100%', padding: '0.5rem 0.75rem', fontSize: '0.85rem' }} value={occupationFilter} onChange={e => setOccupationFilter(e.target.value)}>
                         <option value="All">All Occupations</option>
                         {allOccupations.map(o => <option key={o} value={o}>{o}</option>)}
                       </select>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', gridColumn: '1 / -1' }}>
-                      <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Marital Status</label>
-                      <select className="form-input" style={{ width: '100%', padding: '0.6rem 1rem' }} value={maritalFilter} onChange={e => setMaritalFilter(e.target.value)}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                      <label style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Marital Status</label>
+                      <select className="form-input" style={{ width: '100%', padding: '0.5rem 0.75rem', fontSize: '0.85rem' }} value={maritalFilter} onChange={e => setMaritalFilter(e.target.value)}>
                         <option value="All">All Marital Statuses</option>
-                        {allMaritalStatuses.map(m => <option key={m} value={m}>{m}</option>)}
+                        {['Single', 'Married', 'Divorced', 'Widowed'].map(m => <option key={m} value={m}>{m}</option>)}
                       </select>
                     </div>
                   </div>
