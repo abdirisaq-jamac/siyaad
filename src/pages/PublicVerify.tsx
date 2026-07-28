@@ -4,7 +4,16 @@ import { motion } from 'framer-motion';
 import { CheckCircle, XCircle, Shield, User, Calendar, MapPin, Phone, Briefcase, Heart } from 'lucide-react';
 import { getCitizenByNationalId } from '../services/storage';
 import type { Citizen } from '../types';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
+
+function safeFormat(dateStr: string, formatStr: string) {
+  try {
+    const d = new Date(dateStr);
+    return isValid(d) ? format(d, formatStr) : 'Unknown Date';
+  } catch {
+    return 'Unknown Date';
+  }
+}
 
 export default function PublicVerify() {
   const { nationalId } = useParams<{ nationalId: string }>();
@@ -112,7 +121,7 @@ export default function PublicVerify() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 {[
                   { icon: <User size={15} />, label: 'Gender', value: citizen.gender },
-                  { icon: <Calendar size={15} />, label: 'Date of Birth', value: format(new Date(citizen.dateOfBirth), 'dd MMM yyyy') },
+                  { icon: <Calendar size={15} />, label: 'Date of Birth', value: safeFormat(citizen.dateOfBirth, 'dd MMM yyyy') },
                   { icon: <MapPin size={15} />, label: 'District', value: citizen.district },
                   { icon: <Phone size={15} />, label: 'Phone', value: citizen.phone },
                   { icon: <Briefcase size={15} />, label: 'Occupation', value: citizen.occupation || '—' },
@@ -131,11 +140,11 @@ export default function PublicVerify() {
               <div style={{ marginTop: '1.25rem', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '0.85rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                   <div style={{ color: '#64748b', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.25rem' }}>ID Valid Until</div>
-                  <div style={{ color: 'white', fontWeight: 700 }}>{format(new Date(citizen.expiryDate), 'dd MMM yyyy')}</div>
+                  <div style={{ color: 'white', fontWeight: 700 }}>{safeFormat(citizen.expiryDate, 'dd MMM yyyy')}</div>
                 </div>
                 <div>
                   <div style={{ color: '#64748b', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.25rem' }}>Issue Date</div>
-                  <div style={{ color: 'white', fontWeight: 700 }}>{format(new Date(citizen.issueDate), 'dd MMM yyyy')}</div>
+                  <div style={{ color: 'white', fontWeight: 700 }}>{safeFormat(citizen.issueDate, 'dd MMM yyyy')}</div>
                 </div>
               </div>
             </div>
@@ -143,7 +152,7 @@ export default function PublicVerify() {
 
           {/* Footer */}
           <div style={{ textAlign: 'center', marginTop: '1.5rem', color: 'rgba(255,255,255,0.3)', fontSize: '0.75rem' }}>
-            Verified on {format(new Date(), 'dd MMM yyyy, HH:mm')} · Waqooyi Bari National ID System
+            Verified on {safeFormat(new Date().toISOString(), 'dd MMM yyyy, HH:mm')} · Waqooyi Bari National ID System
           </div>
         </motion.div>
       )}
