@@ -217,7 +217,7 @@ export default function CitizensList() {
                     background: 'var(--bg-card)', border: '1px solid var(--border-color)', 
                     borderRadius: '16px', padding: '1.25rem', boxShadow: '0 10px 40px rgba(0,0,0,0.1)', 
                     display: 'flex', flexDirection: 'column', gap: '1rem', zIndex: 50,
-                    minWidth: '260px'
+                    minWidth: '340px'
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
@@ -233,7 +233,7 @@ export default function CitizensList() {
                     )}
                   </div>
                   
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                       <label style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Status</label>
                       <select className="form-input" style={{ width: '100%', padding: '0.5rem 0.75rem', fontSize: '0.85rem' }} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
@@ -260,7 +260,7 @@ export default function CitizensList() {
                         {allOccupations.map(o => <option key={o} value={o}>{o}</option>)}
                       </select>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', gridColumn: '1 / -1' }}>
                       <label style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Marital Status</label>
                       <select className="form-input" style={{ width: '100%', padding: '0.5rem 0.75rem', fontSize: '0.85rem' }} value={maritalFilter} onChange={e => setMaritalFilter(e.target.value)}>
                         <option value="All">All Marital Statuses</option>
