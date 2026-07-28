@@ -116,28 +116,28 @@ export function buildDefaultPermissions(role: UserRole): Permission {
   const all: Permission = {
     viewDashboard: true, viewCitizens: true, registerCitizen: true,
     editCitizen: true, deleteCitizen: true, viewIdCards: true,
-    exportIdCard: true, verifyQR: true, viewReports: true,
+    exportIdCard: true, savePNG: true, exportPDF: true, verifyQR: true, viewReports: true,
     exportReports: true, viewSettings: true, editSettings: true,
     viewUsers: true, manageUsers: true,
   };
   const viewer: Permission = {
     viewDashboard: true, viewCitizens: true, registerCitizen: false,
     editCitizen: false, deleteCitizen: false, viewIdCards: true,
-    exportIdCard: false, verifyQR: true, viewReports: true,
+    exportIdCard: false, savePNG: false, exportPDF: false, verifyQR: true, viewReports: true,
     exportReports: false, viewSettings: false, editSettings: false,
     viewUsers: false, manageUsers: false,
   };
   const dataEntry: Permission = {
     viewDashboard: true, viewCitizens: true, registerCitizen: true,
     editCitizen: true, deleteCitizen: false, viewIdCards: true,
-    exportIdCard: false, verifyQR: true, viewReports: false,
+    exportIdCard: false, savePNG: false, exportPDF: false, verifyQR: true, viewReports: false,
     exportReports: false, viewSettings: false, editSettings: false,
     viewUsers: false, manageUsers: false,
   };
   const editor: Permission = {
     viewDashboard: true, viewCitizens: true, registerCitizen: true,
     editCitizen: true, deleteCitizen: true, viewIdCards: true,
-    exportIdCard: true, verifyQR: true, viewReports: true,
+    exportIdCard: true, savePNG: true, exportPDF: true, verifyQR: true, viewReports: true,
     exportReports: true, viewSettings: true, editSettings: false,
     viewUsers: false, manageUsers: false,
   };

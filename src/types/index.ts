@@ -47,7 +47,7 @@ export interface DashboardStats {
 
 // ── Users & Permissions ───────────────────────────────────────────────────────
 
-export type UserRole = 'Super Admin' | 'Admin' | 'Editor' | 'Viewer' | 'Data Entry';
+export type UserRole = string;
 
 export interface Permission {
   // Dashboard
@@ -60,6 +60,8 @@ export interface Permission {
   // ID Cards
   viewIdCards: boolean;
   exportIdCard: boolean;
+  savePNG: boolean;
+  exportPDF: boolean;
   // QR
   verifyQR: boolean;
   // Reports

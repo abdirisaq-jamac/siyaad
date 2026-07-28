@@ -8,9 +8,9 @@ import type { AppUser, UserRole, Permission } from '../types';
 import { getUsers, addUser, updateUser, deleteUser, buildDefaultPermissions } from '../services/storage';
 import { format } from 'date-fns';
 
-const ROLES: UserRole[] = ['Super Admin', 'Admin', 'Editor', 'Data Entry', 'Viewer'];
+const ROLE_SUGGESTIONS = ['Super Admin', 'Admin', 'Editor', 'Data Entry', 'Viewer'];
 
-const ROLE_COLORS: Record<UserRole, { bg: string; text: string }> = {
+const ROLE_COLORS: Record<string, { bg: string; text: string }> = {
   'Super Admin': { bg: 'rgba(139,92,246,0.15)', text: '#8b5cf6' },
   'Admin':       { bg: 'rgba(37,99,235,0.15)',  text: '#2563eb' },
   'Editor':      { bg: 'rgba(16,185,129,0.15)', text: '#10b981' },
@@ -37,6 +37,8 @@ const PERMISSION_GROUPS = [
     keys: [
       { key: 'viewIdCards',  label: 'View ID Cards' },
       { key: 'exportIdCard', label: 'Export ID Card' },
+      { key: 'savePNG',      label: 'Save as PNG' },
+      { key: 'exportPDF',    label: 'Export as PDF' },
     ],
   },
   {
@@ -66,7 +68,7 @@ const PERMISSION_GROUPS = [
 const emptyPermission = (): Permission => ({
   viewDashboard: false, viewCitizens: false, registerCitizen: false,
   editCitizen: false, deleteCitizen: false, viewIdCards: false,
-  exportIdCard: false, verifyQR: false, viewReports: false,
+  exportIdCard: false, savePNG: false, exportPDF: false, verifyQR: false, viewReports: false,
   exportReports: false, viewSettings: false, editSettings: false,
   viewUsers: false, manageUsers: false,
 });
@@ -372,19 +374,27 @@ export default function UsersManagement() {
                     {/* Role */}
                     <div>
                       <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', display: 'block', marginBottom: '0.5rem' }}>Role</label>
-                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                        {ROLES.map(r => {
-                          const rc = ROLE_COLORS[r];
+                      <input
+                        className="form-input"
+                        value={form.role}
+                        onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
+                        placeholder="e.g. Viewer, Admin, Officer…"
+                        style={{ marginBottom: '0.6rem' }}
+                      />
+                      <div style={{ fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quick-fill:</div>
+                      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                        {ROLE_SUGGESTIONS.map(r => {
+                          const rc = ROLE_COLORS[r] || { bg: 'rgba(100,116,139,0.15)', text: '#64748b' };
                           const selected = form.role === r;
                           return (
                             <button key={r} type="button" onClick={() => handleRoleChange(r)}
-                              style={{ padding: '0.45rem 1rem', borderRadius: 20, border: selected ? `2px solid ${rc.text}` : '2px solid var(--border-color)', background: selected ? rc.bg : 'transparent', color: selected ? rc.text : 'var(--text-muted)', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', transition: 'all 0.2s' }}>
+                              style={{ padding: '0.35rem 0.85rem', borderRadius: 20, border: selected ? `2px solid ${rc.text}` : '1px solid var(--border-color)', background: selected ? rc.bg : 'var(--bg-main)', color: selected ? rc.text : 'var(--text-muted)', fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer', transition: 'all 0.2s' }}>
                               {r}
                             </button>
                           );
                         })}
                       </div>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>Selecting a role auto-sets permissions (you can adjust in the Permissions tab)</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>Clicking a suggestion fills the role and auto-sets default permissions</div>
                     </div>
                     {/* Status */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-main)', padding: '1rem', borderRadius: 12, border: '1px solid var(--border-color)' }}>
