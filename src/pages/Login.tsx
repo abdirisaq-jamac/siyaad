@@ -317,7 +317,7 @@ const Login: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@admin.com"
+                  placeholder="Enter your email"
                   required
                   autoCapitalize="none"
                   autoCorrect="off"
@@ -349,7 +349,7 @@ const Login: React.FC = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="Enter your password"
                   required
                   autoCapitalize="none"
                   autoCorrect="off"
