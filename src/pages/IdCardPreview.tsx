@@ -7,6 +7,7 @@ import type { Citizen, AppSettings, AppUser } from '../types';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { QRCodeSVG } from 'qrcode.react';
 
 // ─── Card Face Components ──────────────────────────────────────────────────
 
@@ -213,9 +214,13 @@ function CardBack({ citizen, settings }: { citizen: Citizen, settings?: AppSetti
 
         {/* QR Code */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          {citizen.qrCode && (
-            <img src={citizen.qrCode} alt="QR" style={{ width: 60, height: 60, padding: 2, background: 'white', border: '1px solid #ccc' }} />
-          )}
+          <div style={{ background: 'white', padding: '4px', border: '1px solid #ccc', borderRadius: '4px', display: 'flex' }}>
+            <QRCodeSVG 
+              value={`https://siyaad-livid.vercel.app/verify/${citizen.nationalIdNumber}`} 
+              size={60} 
+              level="H" 
+            />
+          </div>
         </div>
       </div>
     </div>
