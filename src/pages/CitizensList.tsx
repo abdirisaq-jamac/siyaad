@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Trash2, Edit, Eye, UserPlus, Download, Filter, AlertTriangle } from 'lucide-react';
@@ -29,6 +29,17 @@ export default function CitizensList() {
   const [selectedCitizens, setSelectedCitizens] = useState<Set<string>>(new Set());
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setShowFilters(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -176,16 +187,18 @@ export default function CitizensList() {
           />
         </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-          <div style={{ position: 'relative' }}>
+          <div ref={filterRef} style={{ position: 'relative' }}>
             <button 
+              type="button"
               className="btn-secondary" 
               onClick={() => setShowFilters(!showFilters)}
-              style={{ padding: '0.6rem 1rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}
+              style={{ padding: '0.6rem 1rem', display: 'flex', gap: '0.5rem', alignItems: 'center', minWidth: '140px', justifyContent: 'space-between' }}
             >
-              <Filter size={18} /> Filters
-              {(statusFilter !== 'All' || genderFilter !== 'All' || districtFilter !== 'All') && (
+              <span>{statusFilter === 'All' ? 'All Statuses' : statusFilter}</span>
+              {(genderFilter !== 'All' || districtFilter !== 'All') && (
                 <span style={{ background: 'var(--primary-color)', width: 8, height: 8, borderRadius: '50%', display: 'inline-block' }}></span>
               )}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </button>
             
             <AnimatePresence>
