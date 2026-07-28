@@ -134,7 +134,10 @@ export default function Dashboard() {
       </motion.div>
 
       {/* Stats */}
-      <motion.div variants={itemVariants} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
+      <motion.div 
+        variants={itemVariants} 
+        className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8"
+      >
         {stats.map((s, i) => (
           <motion.div 
             key={i} 
@@ -294,13 +297,7 @@ export default function Dashboard() {
                     <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-main)' }}>{c.fullName}</div>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.1rem', fontWeight: 500 }}>{c.nationalIdNumber}</div>
                   </div>
-                  <span className={
-                    c.status === 'Active' ? 'badge-active' : 
-                    c.status === 'Pending' ? 'badge-pending' : 
-                    c.status === 'Rejected' ? 'badge-rejected' :
-                    c.status === 'Expired' ? 'badge-expired' :
-                    c.status === 'Suspended' ? 'badge-suspended' : 'badge-revoked'
-                  }>
+                  <span className={c.status === 'Active' ? 'badge-active' : c.status === 'Pending' ? 'badge-pending' : 'badge-rejected'}>
                     {c.status}
                   </span>
                 </motion.div>

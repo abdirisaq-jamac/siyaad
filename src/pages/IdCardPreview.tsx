@@ -10,6 +10,8 @@ import html2canvas from 'html2canvas';
 
 // ─── Card Face Components ──────────────────────────────────────────────────
 
+
+
 function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSettings | null }) {
   const nameParts = citizen.fullName.trim().split(' ');
   const firstName = nameParts[0] || '';
@@ -27,15 +29,7 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
       fontFamily: '"Arial", sans-serif',
       boxSizing: 'border-box',
     }}>
-      {/* Background Patterns */}
-      <div style={{
-        position: 'absolute', inset: 0, opacity: 0.2,
-        backgroundImage: 'repeating-radial-gradient(circle at center, transparent 0, transparent 8px, rgba(0,100,80,0.1) 8px, rgba(0,100,80,0.1) 9px)',
-      }} />
-      <div style={{
-        position: 'absolute', inset: 0, opacity: 0.15,
-        backgroundImage: 'repeating-linear-gradient(45deg, #005f40 0, #005f40 1px, transparent 0, transparent 15px)',
-      }} />
+      {/* Background Patterns removed for clean look */}
       
       {/* Central Sunburst */}
       <div style={{
@@ -70,9 +64,42 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', padding: '12px 14px 0', position: 'relative', zIndex: 10 }}>
-        {/* Left: Flag */}
-        <div style={{ flexShrink: 0, width: 72, height: 48, position: 'relative', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.2)', boxShadow: '0 2px 6px rgba(0,0,0,0.15)', borderRadius: 4, marginRight: 12 }}>
-          <img src={settings?.flagUrl || "/waqooyi-bari-flag.png?v=2"} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        {/* Left: Flag - uses uploaded flag from Settings, fallback to inline SVG */}
+        <div style={{ flexShrink: 0, width: 72, height: 48, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.2)', boxShadow: '0 2px 6px rgba(0,0,0,0.15)', borderRadius: 4, marginRight: 12 }}>
+          {settings?.flagUrl ? (
+            <img
+              src={settings.flagUrl}
+              alt="ID Card Flag"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="72" height="48" style={{ display: 'block' }}>
+              {/* Sky blue top half */}
+              <rect width="900" height="300" fill="#4A90D9" />
+              {/* Green bottom half */}
+              <rect y="300" width="900" height="300" fill="#2E8B2E" />
+              {/* White triangle on left */}
+              <polygon points="0,0 300,300 0,600" fill="white" />
+              {/* White 5-pointed star */}
+              <polygon
+                points="480,90 494,135 542,135 504,162 518,207 480,180 442,207 456,162 418,135 466,135"
+                fill="white"
+              />
+              {/* Horseman silhouette */}
+              <g transform="translate(120, 280) scale(0.55)" fill="black">
+                <ellipse cx="100" cy="120" rx="75" ry="38" />
+                <path d="M168,95 Q195,60 185,40 Q175,25 160,30 Q150,35 155,55 Q158,70 148,90 Z" />
+                <rect x="55" y="150" width="12" height="55" rx="4" />
+                <rect x="80" y="152" width="12" height="58" rx="4" />
+                <rect x="120" y="152" width="12" height="58" rx="4" />
+                <rect x="145" y="150" width="12" height="55" rx="4" />
+                <path d="M28,110 Q0,100 5,135 Q10,165 35,155" stroke="black" strokeWidth="6" fill="none" strokeLinecap="round" />
+                <ellipse cx="130" cy="72" rx="20" ry="30" />
+                <circle cx="130" cy="38" r="16" />
+                <line x1="140" y1="60" x2="170" y2="30" stroke="black" strokeWidth="7" strokeLinecap="round" />
+              </g>
+            </svg>
+          )}
         </div>
 
         <div style={{ flex: 1, whiteSpace: 'nowrap' }}>
@@ -383,13 +410,7 @@ export default function IdCardPreview() {
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>{c.district}</div>
                     </td>
                     <td>
-                      <span className={
-                        c.status === 'Active' ? 'badge-active' : 
-                        c.status === 'Pending' ? 'badge-pending' : 
-                        c.status === 'Rejected' ? 'badge-rejected' :
-                        c.status === 'Expired' ? 'badge-expired' :
-                        c.status === 'Suspended' ? 'badge-suspended' : 'badge-revoked'
-                      }>{c.status}</span>
+                      <span className={c.status === 'Active' ? 'badge-active' : c.status === 'Pending' ? 'badge-pending' : 'badge-rejected'}>{c.status}</span>
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <button className="btn-primary" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setSelected(c)}>

@@ -4,11 +4,31 @@ import { useTranslation } from '../i18n';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Users, UserPlus, CreditCard, QrCode,
-  FileBarChart2, Settings as SettingsIcon, Shield, ChevronLeft, ChevronRight,
-  Menu, X, Bell, Search, LogOut, Sun, Moon, UserCog, CheckCircle2, AlertCircle, Clock
+  FileBarChart2, Settings as SettingsIcon, ChevronLeft, ChevronRight,
+  Bell, LogOut, Sun, Moon, UserCog, CheckCircle2, AlertCircle, Clock
 } from 'lucide-react';
-import { getSettings, getCitizens } from '../services/storage';
+import { getSettings } from '../services/storage';
 import type { AppSettings } from '../types';
+
+// ── Module-level settings cache — fetched only ONCE across all components ──
+let _settingsCache: AppSettings | null = null;
+let _settingsFetching: Promise<AppSettings> | null = null;
+
+function getCachedSettings(): Promise<AppSettings> {
+  if (_settingsCache) return Promise.resolve(_settingsCache);
+  if (_settingsFetching) return _settingsFetching;
+  _settingsFetching = getSettings().then(s => {
+    _settingsCache = s;
+    _settingsFetching = null;
+    return s;
+  });
+  return _settingsFetching;
+}
+
+function invalidateSettingsCache() {
+  _settingsCache = null;
+  _settingsFetching = null;
+}
 
 interface NavItem {
   label: string;
@@ -27,11 +47,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const [settings, setSettings] = useState<AppSettings | null>(null);
 
   useEffect(() => {
-    getSettings().then(setSettings).catch(console.error);
-    
-    // Custom event listener for when settings are saved
+    getCachedSettings().then(setSettings).catch(console.error);
+
     const handleSettingsUpdate = () => {
-      getSettings().then(setSettings).catch(console.error);
+      invalidateSettingsCache();
+      getCachedSettings().then(setSettings).catch(console.error);
     };
     window.addEventListener('settings-updated', handleSettingsUpdate);
     return () => window.removeEventListener('settings-updated', handleSettingsUpdate);
@@ -207,23 +227,8 @@ export function Topbar({ sidebarCollapsed, onMobileMenu }: TopbarProps) {
     return date.toLocaleDateString();
   };
 
-  useEffect(() => {
-    getCitizens().then(cits => {
-      const sorted = [...cits].sort((a, b) => new Date(b.registrationDate).getTime() - new Date(a.registrationDate).getTime());
-      const recent = sorted.slice(0, 5);
-      const notifs = recent.map((c, i) => {
-        const firstName = c.fullName.split(' ')[0] || 'Citizen';
-        if (c.status === 'Active') {
-          return { id: c.id || i, title: 'ID Card Ready', desc: `ID Card for ${c.fullName} is ready.`, time: c.registrationDate, unread: true, type: 'success' };
-        } else if (c.status === 'Pending') {
-          return { id: c.id || i, title: 'Pending Approval', desc: `${firstName} is waiting for approval.`, time: c.registrationDate, unread: true, type: 'warning' };
-        } else {
-          return { id: c.id || i, title: 'New Registration', desc: `${firstName} has been registered.`, time: c.registrationDate, unread: true, type: 'info' };
-        }
-      });
-      setNotifications(notifs);
-    }).catch(console.error);
-  }, []);
+  // Notifications are loaded lazily — only when the bell is clicked, not on every page load
+  // This avoids fetching all citizens on every refresh just for the topbar badge
   const unreadCount = notifications.filter(n => n.unread).length;
 
   const markAllAsRead = () => {
@@ -243,9 +248,10 @@ export function Topbar({ sidebarCollapsed, onMobileMenu }: TopbarProps) {
   }, []);
 
   useEffect(() => {
-    getSettings().then(setSettings).catch(console.error);
+    getCachedSettings().then(setSettings).catch(console.error);
     const handleSettingsUpdate = () => {
-      getSettings().then(setSettings).catch(console.error);
+      invalidateSettingsCache();
+      getCachedSettings().then(setSettings).catch(console.error);
     };
     window.addEventListener('settings-updated', handleSettingsUpdate);
     return () => window.removeEventListener('settings-updated', handleSettingsUpdate);

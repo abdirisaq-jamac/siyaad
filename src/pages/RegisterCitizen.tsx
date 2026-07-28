@@ -8,7 +8,10 @@ import { useTranslation } from '../i18n';
 import type { Gender, CitizenStatus, MaritalStatus } from '../types';
 
 const DISTRICTS = [
-  'Laascaanood'
+  'Garowe', 'Bosaso', 'Gaalkacyo', 'Qardho', 'Buuhoodle', 'Xudun', 'Taleex',
+  'Laascaanood', 'Badhan', 'Dhahar', 'Eyl', 'Jariiban', 'Burtinle', 'Goldogob',
+  'Dangorayo', 'Iskushuban', 'Caluula', 'Bargaal', 'Qandala', 'Bandarbayla',
+  'Widhwidh', 'Yagoori', 'Boocame'
 ];
 
 const OCCUPATIONS = [

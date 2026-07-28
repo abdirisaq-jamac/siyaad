@@ -70,16 +70,42 @@ const DEFAULT_SETTINGS: AppSettings = {
   accentColor: '#1a4a8a',
 };
 
+// Large image blobs are stored in localStorage to avoid Supabase column size limits.
+// Only text/scalar settings go to Supabase.
+const IMAGE_KEYS = ['flagUrl', 'logoUrl', 'watermarkUrl'] as const;
+const LOCAL_IMAGES_KEY = 'app_settings_images';
+
+function loadLocalImages(): Pick<AppSettings, 'flagUrl' | 'logoUrl' | 'watermarkUrl'> {
+  try {
+    const raw = localStorage.getItem(LOCAL_IMAGES_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch { /* ignore */ }
+  return { flagUrl: null, logoUrl: null, watermarkUrl: null };
+}
+
+function saveLocalImages(settings: AppSettings) {
+  const images = { flagUrl: settings.flagUrl, logoUrl: settings.logoUrl, watermarkUrl: settings.watermarkUrl };
+  localStorage.setItem(LOCAL_IMAGES_KEY, JSON.stringify(images));
+}
+
 export async function getSettings(): Promise<AppSettings> {
+  const images = loadLocalImages();
   const { data, error } = await supabase.from('app_settings').select('*').eq('id', 1).single();
-  if (error || !data) return DEFAULT_SETTINGS;
-  return data as AppSettings;
+  const base = (error || !data) ? DEFAULT_SETTINGS : (data as AppSettings);
+  // Merge: images from localStorage override whatever Supabase might return
+  return { ...base, ...images };
 }
 
 export async function saveSettings(settings: AppSettings): Promise<AppSettings> {
-  const { data, error } = await supabase.from('app_settings').upsert({ id: 1, ...settings }).select().single();
+  // Always save images locally (they're too large for Supabase text columns)
+  saveLocalImages(settings);
+  // Only send scalar fields to Supabase — strip image blobs
+  const scalarSettings: Partial<AppSettings> = { ...settings };
+  IMAGE_KEYS.forEach(k => { scalarSettings[k] = null; });
+  const { data, error } = await supabase.from('app_settings').upsert({ id: 1, ...scalarSettings }).select().single();
   if (error) throw new Error(error.message);
-  return data as AppSettings;
+  // Return full merged settings (scalar from Supabase + images from local)
+  return { ...(data as AppSettings), ...loadLocalImages() };
 }
 
 // ── Users Management (localStorage-based) ────────────────────────────────────

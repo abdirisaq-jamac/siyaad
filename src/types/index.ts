@@ -2,7 +2,7 @@
 
 export type Gender = 'Male' | 'Female';
 export type MaritalStatus = 'Single' | 'Married' | 'Divorced' | 'Widowed';
-export type CitizenStatus = 'Active' | 'Pending' | 'Rejected' | 'Expired' | 'Suspended' | 'Revoked';
+export type CitizenStatus = 'Active' | 'Pending' | 'Rejected';
 
 export interface Citizen {
   id: string;
