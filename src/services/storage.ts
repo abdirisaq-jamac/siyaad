@@ -157,7 +157,7 @@ function seedDefaultUsers(): AppUser[] {
     {
       id: 'super-admin-001',
       fullName: 'Super Administrator',
-      email: 'admin@admin.com',
+      username: 'admin',
       password: 'admin',
       role: 'Super Admin',
       permissions: buildDefaultPermissions('Super Admin'),
@@ -171,12 +171,15 @@ function seedDefaultUsers(): AppUser[] {
 
 function ensureSuperAdmin(users: AppUser[]): AppUser[] {
   const seed = seedDefaultUsers()[0];
-  const hasSuperAdmin = users.some(u => u.role === 'Super Admin' || u.id === seed.id || u.email === seed.email || u.email === 'admin@gmail.com');
+  let updatedUsers = users.map(u => {
+    const legacyUser = u as any;
+    return (legacyUser.email === 'admin@gmail.com' || legacyUser.email === 'admin@admin.com' || u.username === 'admin@admin.com' ? { ...u, username: 'admin', email: undefined } : u);
+  });
+  const hasSuperAdmin = updatedUsers.some(u => u.role === 'Super Admin' || u.id === seed.id || u.username === seed.username || u.username === 'admin');
   if (!hasSuperAdmin) {
-    return [seed, ...users];
+    updatedUsers.unshift(seed);
   }
-  // Update any existing super admin with old email admin@gmail.com to admin@admin.com
-  return users.map(u => (u.email === 'admin@gmail.com' ? { ...u, email: 'admin@admin.com' } : u));
+  return updatedUsers;
 }
 
 function getLocalUsers(): AppUser[] {

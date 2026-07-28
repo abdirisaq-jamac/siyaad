@@ -97,7 +97,7 @@ export default function UsersManagement() {
 
   // Form state
   const [form, setForm] = useState({
-    fullName: '', email: '', password: '',
+    fullName: '', username: '', password: '',
     role: 'Viewer' as UserRole, isActive: true,
   });
   const [permissions, setPermissions] = useState<Permission>(emptyPermission());
@@ -123,13 +123,13 @@ export default function UsersManagement() {
 
   const filtered = users.filter(u =>
     u.fullName.toLowerCase().includes(query.toLowerCase()) ||
-    u.email.toLowerCase().includes(query.toLowerCase()) ||
+    u.username?.toLowerCase().includes(query.toLowerCase()) ||
     u.role.toLowerCase().includes(query.toLowerCase())
   );
 
   function openAdd() {
     setEditingUser(null);
-    setForm({ fullName: '', email: '', password: '', role: 'Viewer', isActive: true });
+    setForm({ fullName: '', username: '', password: '', role: 'Viewer', isActive: true });
     setPermissions(buildDefaultPermissions('Viewer'));
     setActiveTab('info');
     setShowModal(true);
@@ -137,7 +137,7 @@ export default function UsersManagement() {
 
   function openEdit(user: AppUser) {
     setEditingUser(user);
-    setForm({ fullName: user.fullName, email: user.email, password: user.password, role: user.role, isActive: user.isActive });
+    setForm({ fullName: user.fullName, username: user.username || (user as any).email || '', password: user.password, role: user.role, isActive: user.isActive });
     setPermissions({ ...user.permissions });
     setActiveTab('info');
     setShowModal(true);
@@ -153,7 +153,7 @@ export default function UsersManagement() {
   }
 
   async function handleSave() {
-    if (!form.fullName.trim() || !form.email.trim() || !form.password.trim()) return;
+    if (!form.fullName.trim() || !form.username.trim() || !form.password.trim()) return;
     try {
       if (editingUser) {
         const updated: AppUser = { ...editingUser, ...form, permissions };
@@ -204,7 +204,7 @@ export default function UsersManagement() {
         <Search size={18} style={{ color: 'var(--text-muted)' }} />
         <input
           value={query} onChange={e => setQuery(e.target.value)}
-          placeholder="Search by name, email or role…"
+          placeholder="Search by name, username or role…"
           style={{ background: 'none', border: 'none', outline: 'none', color: 'var(--text-main)', fontSize: '0.95rem', width: '100%' }}
         />
       </div>
@@ -260,7 +260,7 @@ export default function UsersManagement() {
                           }}>{u.fullName.charAt(0)}</div>
                           <div>
                             <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>{u.fullName}</div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{u.email}</div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{u.username || (u as any).email}</div>
                           </div>
                         </div>
                       </td>
@@ -363,10 +363,10 @@ export default function UsersManagement() {
                       <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', display: 'block', marginBottom: '0.5rem' }}>Full Name *</label>
                       <input className="form-input" value={form.fullName} onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))} placeholder="e.g. Ahmed Abdi" />
                     </div>
-                    {/* Email */}
+                    {/* Username */}
                     <div>
-                      <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', display: 'block', marginBottom: '0.5rem' }}>Email Address *</label>
-                      <input className="form-input" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="user@example.com" />
+                      <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', display: 'block', marginBottom: '0.5rem' }}>Username *</label>
+                      <input className="form-input" type="text" value={form.username} onChange={e => setForm(f => ({ ...f, username: e.target.value }))} placeholder="e.g. ahmed" />
                     </div>
                     {/* Password */}
                     <div>
@@ -467,7 +467,7 @@ export default function UsersManagement() {
               <div style={{ padding: '1.25rem 1.75rem', borderTop: '1px solid var(--border-color)', display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
                 <button className="btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
                 <button className="btn-primary" onClick={handleSave}
-                  disabled={!form.fullName.trim() || !form.email.trim() || !form.password.trim()}>
+                  disabled={!form.fullName.trim() || !form.username.trim() || !form.password.trim()}>
                   <Check size={16} /> {editingUser ? 'Save Changes' : 'Create User'}
                 </button>
               </div>

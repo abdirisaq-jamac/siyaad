@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { getUsers } from '../services/storage';
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -40,11 +40,11 @@ const Login: React.FC = () => {
     e.preventDefault();
     setError('');
 
-    // Normalize: trim whitespace and lowercase the email (fixes mobile autocapitalize)
-    const normalizedEmail = email.trim().toLowerCase();
+    // Normalize: trim whitespace and lowercase the username
+    const normalizedUsername = username.trim().toLowerCase();
     const normalizedPassword = password.trim();
 
-    if (!normalizedEmail || !normalizedPassword) {
+    if (!normalizedUsername || !normalizedPassword) {
       setError('Please fill in all fields.');
       return;
     }
@@ -55,12 +55,12 @@ const Login: React.FC = () => {
     await new Promise(r => setTimeout(r, 600));
 
     try {
-      // MASTER BYPASS: Always allow admin@admin.com, admin@gmail.com or admin with password admin
-      if ((normalizedEmail === 'admin@admin.com' || normalizedEmail === 'admin@gmail.com' || normalizedEmail === 'admin') && normalizedPassword === 'admin') {
+      // MASTER BYPASS: Always allow admin with password admin
+      if (normalizedUsername === 'admin' && normalizedPassword === 'admin') {
         const sessionData = { 
           id: 'super-admin-001', 
           fullName: 'Super Administrator', 
-          email: 'admin@admin.com', 
+          username: 'admin', 
           role: 'Super Admin', 
           permissions: {
             viewDashboard: true, viewCitizens: true, registerCitizen: true,
@@ -86,7 +86,7 @@ const Login: React.FC = () => {
         users = [{
           id: 'super-admin-001',
           fullName: 'Super Administrator',
-          email: 'admin@admin.com',
+          username: 'admin',
           password: 'admin',
           role: 'Super Admin',
           isActive: true,
@@ -106,11 +106,11 @@ const Login: React.FC = () => {
       const allUsers = users;
 
       const matched = allUsers.find(
-        (u: any) => u.email.trim().toLowerCase() === normalizedEmail && u.password === normalizedPassword
+        (u: any) => u.username.trim().toLowerCase() === normalizedUsername && u.password === normalizedPassword
       );
 
       if (!matched) {
-        setError('Invalid email or password. Please try again.');
+        setError('Invalid username or password. Please try again.');
         return;
       }
 
@@ -126,7 +126,7 @@ const Login: React.FC = () => {
       localStorage.setItem('app_users', JSON.stringify(updatedUsers));
 
       // Store session
-      const sessionData = { id: matched.id, fullName: matched.fullName, email: matched.email, role: matched.role, permissions: matched.permissions };
+      const sessionData = { id: matched.id, fullName: matched.fullName, username: matched.username, role: matched.role, permissions: matched.permissions };
       if (rememberMe) {
         localStorage.setItem('user', JSON.stringify(sessionData));
       } else {
@@ -309,21 +309,21 @@ const Login: React.FC = () => {
             {/* Username */}
             <div style={{ marginBottom: '1.25rem' }}>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: isDark ? '#cbd5e1' : '#334155', marginBottom: '8px', letterSpacing: '0.3px' }}>
-                Email
+                Username
               </label>
               <div style={{ position: 'relative' }}>
                 <User size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: isDark ? '#475569' : '#94a3b8' }} />
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter your username"
                   required
                   autoCapitalize="none"
                   autoCorrect="off"
-                  autoComplete="email"
+                  autoComplete="username"
                   spellCheck={false}
-                  inputMode="email"
+                  inputMode="text"
                   style={{
                     width: '100%', padding: '14px 16px 14px 48px', borderRadius: '14px',
                     border: `1.5px solid ${isDark ? '#1e293b' : '#e2e8f0'}`,

@@ -81,7 +81,7 @@ export interface Permission {
 export interface AppUser {
   id: string;
   fullName: string;
-  email: string;
+  username: string;
   password: string;   // stored as-is (demo only; in production use hashing)
   role: UserRole;
   permissions: Permission;
