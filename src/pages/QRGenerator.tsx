@@ -23,9 +23,10 @@ export default function QRGenerator() {
       const c = await getCitizenById(id);
       if (!c) { setLoading(false); return; }
       setCitizen(c);
-      // Encode the National ID — works offline, readable by any QR app,
-      // and our QRVerification camera scanner resolves it to the full citizen record.
-      const qr = await generateQRCode(c.nationalIdNumber);
+      // Encode the public URL so any mobile scanner opens the verification page directly.
+      const baseUrl = 'https://siyaad-livid.vercel.app';
+      const qrData = `${baseUrl}/verify/${c.nationalIdNumber}`;
+      const qr = await generateQRCode(qrData);
       setQrUrl(qr);
       setLoading(false);
     })();
@@ -104,7 +105,7 @@ export default function QRGenerator() {
           </div>
 
           <div style={{ marginTop: '1.25rem', fontSize: '0.85rem', color: '#64748b', lineHeight: 1.5 }}>
-            Scan-gareeya QR code-ka mobile-ka, kaddib ku fur <strong>QR Verification</strong> page-ka si aad xogta oo dhamaysan u aragto.
+            Scan-gareeya QR code-ka mobile-ka, wuxuu toos kuugu geynayaa <strong>Website-ka</strong> si aad xogta oo dhamaysan u aragto.
           </div>
           <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#94a3b8', background: '#f1f5f9', padding: '0.3rem 0.75rem', borderRadius: 6, display: 'inline-block' }}>
             National ID: <strong>{citizen.nationalIdNumber}</strong>

@@ -9,6 +9,7 @@ import { getCitizenById } from '../services/storage';
 import type { Citizen } from '../types';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';
+import { QRCodeSVG } from 'qrcode.react';
 
 function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
@@ -331,9 +332,13 @@ export default function CitizenDetails() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '1rem' }}>
                 <QrCode size={18} style={{ color: 'var(--primary-color)' }} /> Verification QR
               </div>
-              {citizen.qrCode ? (
+              {citizen.nationalIdNumber ? (
                 <div style={{ background: 'white', padding: '0.75rem', borderRadius: '12px', display: 'inline-block', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-sm)' }}>
-                  <img src={citizen.qrCode} alt="QR Code" style={{ width: 140, height: 140, display: 'block' }} />
+                  <QRCodeSVG 
+                    value={`https://siyaad-livid.vercel.app/verify/${citizen.nationalIdNumber}`} 
+                    size={140} 
+                    level="H" 
+                  />
                 </div>
               ) : (
                 <div style={{ width: 140, height: 140, background: 'var(--bg-main)', border: '2px dashed var(--border-color)', borderRadius: '12px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>No QR Generated</div>

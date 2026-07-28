@@ -111,8 +111,9 @@ export default function EditCitizen() {
     if (!form?.id) return;
     setSaving(true);
     try {
-      // Regenerate QR with new data
-      const qrData = JSON.stringify({ id: form.id, nationalId: form.nationalIdNumber, name: form.fullName, dob: form.dateOfBirth, gender: form.gender });
+      // Regenerate QR with new URL data
+      const baseUrl = 'https://siyaad-livid.vercel.app';
+      const qrData = `${baseUrl}/verify/${form.nationalIdNumber}`;
       const qrCode = await generateQRCode(qrData);
       await updateCitizen({ ...form, qrCode } as Citizen);
       navigate(`/citizens/${form.id}`);
