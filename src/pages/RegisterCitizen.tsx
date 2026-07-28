@@ -7,18 +7,7 @@ import { addCitizen, getCitizens } from '../services/storage';
 import { useTranslation } from '../i18n';
 import type { Gender, CitizenStatus, MaritalStatus } from '../types';
 
-const DISTRICTS = [
-  'Garowe', 'Bosaso', 'Gaalkacyo', 'Qardho', 'Buuhoodle', 'Xudun', 'Taleex',
-  'Laascaanood', 'Badhan', 'Dhahar', 'Eyl', 'Jariiban', 'Burtinle', 'Goldogob',
-  'Dangorayo', 'Iskushuban', 'Caluula', 'Bargaal', 'Qandala', 'Bandarbayla',
-  'Widhwidh', 'Yagoori', 'Boocame'
-];
 
-const OCCUPATIONS = [
-  'Government Employee', 'Teacher', 'Doctor', 'Engineer', 'Farmer',
-  'Merchant', 'Student', 'Driver', 'Security Officer', 'Nurse',
-  'Lawyer', 'Accountant', 'Business Owner', 'Unemployed', 'Other',
-];
 
 interface FormData {
   fullName: string;
@@ -39,8 +28,8 @@ interface FormData {
 const initial: FormData = {
   fullName: '', fatherName: '', motherName: '',
   dateOfBirth: '', placeOfBirth: '', gender: 'Male', maritalStatus: 'Single',
-  phone: '', occupation: '', address: '',
-  district: DISTRICTS[0], status: 'Active',
+  phone: '+252 ', occupation: '', address: '',
+  district: '', status: 'Active',
   photo: null,
 };
 
@@ -327,17 +316,12 @@ export default function RegisterCitizen() {
                       onChange={e => set('phone', e.target.value)} />
                   </Field>
                   <Field id="occupation" label={t('Occupation')} required error={errors.occupation}>
-                    <select id="occupation" className="form-input" value={form.occupation}
-                      onChange={e => set('occupation', e.target.value)}>
-                      <option value="">Select occupation…</option>
-                      {OCCUPATIONS.map(o => <option key={o} value={o}>{o}</option>)}
-                    </select>
+                    <input id="occupation" type="text" className="form-input" placeholder="e.g. Teacher, Doctor" value={form.occupation}
+                      onChange={e => set('occupation', e.target.value)} />
                   </Field>
                   <Field id="district" label={t('District')} error={errors.district}>
-                    <select id="district" className="form-input" value={form.district}
-                      onChange={e => set('district', e.target.value)}>
-                      {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
-                    </select>
+                    <input id="district" type="text" className="form-input" placeholder="e.g. Garowe" value={form.district}
+                      onChange={e => set('district', e.target.value)} />
                   </Field>
                   <Field id="status" label={t('Registration Status')} error={errors.status}>
                     <select id="status" className="form-input" value={form.status}

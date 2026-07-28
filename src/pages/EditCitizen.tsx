@@ -6,16 +6,7 @@ import { getCitizenById, updateCitizen } from '../services/storage';
 import type { Citizen, Gender, CitizenStatus } from '../types';
 import { generateQRCode } from '../services/idGenerator';
 
-const DISTRICTS = [
-  'Garowe', 'Bosaso', 'Gaalkacyo', 'Qardho', 'Buuhoodle', 'Xudun', 'Taleex',
-  'Laascaanood', 'Badhan', 'Dhahar', 'Eyl', 'Jariiban', 'Burtinle', 'Goldogob',
-  'Dangorayo', 'Iskushuban', 'Caluula', 'Bargaal', 'Qandala', 'Bandarbayla',
-  'Widhwidh', 'Yagoori', 'Boocame'
-];
-const OCCUPATIONS = [
-  'Government Employee','Teacher','Doctor','Engineer','Farmer','Merchant',
-  'Student','Driver','Security Officer','Nurse','Lawyer','Accountant','Business Owner','Unemployed','Other',
-];
+
 
 function PhotoUpload({ value, onChange, label, icon }: { value: string | null; onChange: (v: string | null) => void; label: string; icon: React.ReactNode }) {
   const ref = useRef<HTMLInputElement>(null);
@@ -174,9 +165,7 @@ export default function EditCitizen() {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 <Field id="district" label="District">
-                  <select id="district" className="form-input" value={form.district || ''} onChange={e => set('district', e.target.value)}>
-                    {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
-                  </select>
+                  <input id="district" type="text" className="form-input" placeholder="e.g. Garowe" value={form.district || ''} onChange={e => set('district', e.target.value)} />
                 </Field>
                 <Field id="address" label="Full Address">
                   <textarea id="address" className="form-input" rows={4} value={form.address || ''} onChange={e => set('address', e.target.value)} style={{ resize: 'vertical' }} />
@@ -217,10 +206,7 @@ export default function EditCitizen() {
 
               <Field id="phone" label="Phone"><input id="phone" className="form-input" value={form.phone || ''} onChange={e => set('phone', e.target.value)} /></Field>
               <Field id="occupation" label="Occupation">
-                <select id="occupation" className="form-input" value={form.occupation || ''} onChange={e => set('occupation', e.target.value)}>
-                  <option value="">Select…</option>
-                  {OCCUPATIONS.map(o => <option key={o} value={o}>{o}</option>)}
-                </select>
+                <input id="occupation" type="text" className="form-input" placeholder="e.g. Teacher, Doctor" value={form.occupation || ''} onChange={e => set('occupation', e.target.value)} />
               </Field>
               <Field id="status" label="Registration Status">
                 <select id="status" className="form-input" value={form.status} onChange={e => set('status', e.target.value as CitizenStatus)}>
