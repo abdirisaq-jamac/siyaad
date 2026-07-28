@@ -92,9 +92,15 @@ export default function UsersManagement() {
   });
   const [permissions, setPermissions] = useState<Permission>(emptyPermission());
 
+  const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
+
   const load = async () => {
     setLoading(true);
     try {
+      const rawUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+      if (rawUser) {
+        try { setCurrentUser(JSON.parse(rawUser)); } catch (e) {}
+      }
       const res = await getUsers();
       setUsers(res);
     } finally {
@@ -102,6 +108,8 @@ export default function UsersManagement() {
     }
   };
   useEffect(() => { load(); }, []);
+
+  const canManage = currentUser?.role === 'Super Admin' || currentUser?.permissions?.manageUsers === true;
 
   const filtered = users.filter(u =>
     u.fullName.toLowerCase().includes(query.toLowerCase()) ||
@@ -174,9 +182,11 @@ export default function UsersManagement() {
           </div>
           <div className="page-subtitle">{users.length} users registered · manage roles & permissions</div>
         </div>
-        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary" onClick={openAdd}>
-          <UserPlus size={18} /> Add User
-        </motion.button>
+        {canManage && (
+          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary" onClick={openAdd}>
+            <UserPlus size={18} /> Add User
+          </motion.button>
+        )}
       </div>
 
       {/* Search bar */}
@@ -272,17 +282,21 @@ export default function UsersManagement() {
                       </td>
                       <td>
                         <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                            onClick={() => openEdit(u)}
-                            style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '0.5rem', cursor: 'pointer', color: '#f59e0b' }}>
-                            <Edit size={15} />
-                          </motion.button>
-                          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                            onClick={() => setConfirmDelete(u.id)}
-                            disabled={u.id === 'super-admin-001'}
-                            style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '0.5rem', cursor: u.id === 'super-admin-001' ? 'not-allowed' : 'pointer', color: '#ef4444', opacity: u.id === 'super-admin-001' ? 0.3 : 1 }}>
-                            <Trash2 size={15} />
-                          </motion.button>
+                          {canManage && (
+                            <>
+                              <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+                                onClick={() => openEdit(u)}
+                                style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '0.5rem', cursor: 'pointer', color: '#f59e0b' }}>
+                                <Edit size={15} />
+                              </motion.button>
+                              <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+                                onClick={() => setConfirmDelete(u.id)}
+                                disabled={u.id === 'super-admin-001'}
+                                style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '0.5rem', cursor: u.id === 'super-admin-001' ? 'not-allowed' : 'pointer', color: '#ef4444', opacity: u.id === 'super-admin-001' ? 0.3 : 1 }}>
+                                <Trash2 size={15} />
+                              </motion.button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>

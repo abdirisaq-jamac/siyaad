@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Trash2, Edit, Eye, UserPlus, Download, Filter, AlertTriangle } from 'lucide-react';
 import { getCitizens, deleteCitizen } from '../services/storage';
-import type { Citizen } from '../types';
+import type { Citizen, AppUser } from '../types';
 import { format } from 'date-fns';
 
 const containerVariants = {
@@ -50,6 +50,8 @@ export default function CitizensList() {
   
   const navigate = useNavigate();
 
+  const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
+
   const load = () => {
     setLoading(true);
     getCitizens()
@@ -57,7 +59,13 @@ export default function CitizensList() {
       .catch(console.error)
       .finally(() => setLoading(false));
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => { 
+    const rawUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+    if (rawUser) {
+      try { setCurrentUser(JSON.parse(rawUser)); } catch (e) {}
+    }
+    load(); 
+  }, []);
 
   // Reset to first page when filters change
   useEffect(() => { setCurrentPage(1); }, [query, statusFilter, genderFilter, districtFilter, occupationFilter, maritalFilter]);
@@ -397,20 +405,24 @@ export default function CitizensList() {
                           onClick={() => navigate(`/citizens/${c.id}`)}
                           style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.5rem', cursor: 'pointer', color: 'var(--primary-color)', transition: 'all 0.2s' }}
                         ><Eye size={16} /></motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.1, backgroundColor: 'rgba(245, 158, 11, 0.1)' }}
-                          whileTap={{ scale: 0.9 }}
-                          title="Edit"
-                          onClick={() => navigate(`/citizens/${c.id}/edit`)}
-                          style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.5rem', cursor: 'pointer', color: '#f59e0b', transition: 'all 0.2s' }}
-                        ><Edit size={16} /></motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.1, backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
-                          whileTap={{ scale: 0.9 }}
-                          title="Delete"
-                          onClick={() => setConfirmDelete(c.id)}
-                          style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.5rem', cursor: 'pointer', color: '#ef4444', transition: 'all 0.2s' }}
-                        ><Trash2 size={16} /></motion.button>
+                        {(currentUser?.role === 'Super Admin' || currentUser?.permissions?.editCitizen === true) && (
+                          <motion.button
+                            whileHover={{ scale: 1.1, backgroundColor: 'rgba(245, 158, 11, 0.1)' }}
+                            whileTap={{ scale: 0.9 }}
+                            title="Edit"
+                            onClick={() => navigate(`/citizens/${c.id}/edit`)}
+                            style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.5rem', cursor: 'pointer', color: '#f59e0b', transition: 'all 0.2s' }}
+                          ><Edit size={16} /></motion.button>
+                        )}
+                        {(currentUser?.role === 'Super Admin' || currentUser?.permissions?.deleteCitizen === true) && (
+                          <motion.button
+                            whileHover={{ scale: 1.1, backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
+                            whileTap={{ scale: 0.9 }}
+                            title="Delete"
+                            onClick={() => setConfirmDelete(c.id)}
+                            style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.5rem', cursor: 'pointer', color: '#ef4444', transition: 'all 0.2s' }}
+                          ><Trash2 size={16} /></motion.button>
+                        )}
                       </div>
                     </td>
                   </tr>
