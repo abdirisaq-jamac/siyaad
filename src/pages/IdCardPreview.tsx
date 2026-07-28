@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Printer, Download, RotateCcw, CreditCard, Search, FileText } from 'lucide-react';
 import { getCitizenById, getCitizens, getSettings } from '../services/storage';
-import type { Citizen, AppSettings } from '../types';
+import type { Citizen, AppSettings, AppUser } from '../types';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -235,6 +235,7 @@ export default function IdCardPreview() {
   const [query, setQuery] = useState('');
   const [pdfLoading, setPdfLoading] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -243,6 +244,9 @@ export default function IdCardPreview() {
 
   useEffect(() => {
     setLoading(true);
+    // Read logged-in user for permission checks
+    const rawUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+    if (rawUser) { try { setCurrentUser(JSON.parse(rawUser)); } catch (e) {} }
     getSettings().then(setSettings).catch(console.error);
     getCitizens().then(all => {
       setCitizens(all);
@@ -489,10 +493,14 @@ export default function IdCardPreview() {
 
               <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
                 <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-secondary" onClick={handlePrint}><Printer size={16} /> Print</motion.button>
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary" onClick={handleDownloadPDF} disabled={pdfLoading} style={{ opacity: pdfLoading ? 0.7 : 1 }}>
-                  {pdfLoading ? <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><div className="spinner" style={{ width: 14, height: 14, border: '2px solid white', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>Generating PDF...</span> : <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><FileText size={16} /> Export PDF</span>}
-                </motion.button>
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-secondary" onClick={handleDownload}><Download size={16} /> Save PNG</motion.button>
+                {(currentUser?.role === 'Super Admin' || currentUser?.permissions?.exportPDF === true) && (
+                  <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary" onClick={handleDownloadPDF} disabled={pdfLoading} style={{ opacity: pdfLoading ? 0.7 : 1 }}>
+                    {pdfLoading ? <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><div className="spinner" style={{ width: 14, height: 14, border: '2px solid white', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>Generating PDF...</span> : <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><FileText size={16} /> Export PDF</span>}
+                  </motion.button>
+                )}
+                {(currentUser?.role === 'Super Admin' || currentUser?.permissions?.savePNG === true) && (
+                  <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-secondary" onClick={handleDownload}><Download size={16} /> Save PNG</motion.button>
+                )}
               </div>
 
             </motion.div>
