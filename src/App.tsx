@@ -14,6 +14,7 @@ import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import UsersManagement from './pages/UsersManagement';
+import PublicVerify from './pages/PublicVerify';
 
 // A simple protected route wrapper
 const ProtectedRoute = () => {
@@ -54,6 +55,8 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          {/* Public QR verification — no login required */}
+          <Route path="/verify/:nationalId" element={<PublicVerify />} />
           
           <Route element={<ProtectedRoute />}>
             <Route element={<AppShell />}>

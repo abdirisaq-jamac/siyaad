@@ -53,8 +53,9 @@ export async function buildCitizen(form: {
   const expiryDate = new Date(now.setFullYear(now.getFullYear() + 10))
     .toISOString().split('T')[0];
 
-  // Encode only the National ID — clean, parseable by any QR scanner or our camera page
-  const qrCode = await generateQRCode(nationalIdNumber);
+  // Encode full public URL so scanning opens the verification page directly
+  const baseUrl = 'https://siyaad-livid.vercel.app';
+  const qrCode = await generateQRCode(`${baseUrl}/verify/${nationalIdNumber}`);
 
   // Compress photo if present (keep under 200KB)
   const photo = form.photo ? await compressImage(form.photo, 200) : null;
