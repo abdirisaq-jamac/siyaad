@@ -30,6 +30,8 @@ const PERMISSION_GROUPS = [
       { key: 'registerCitizen', label: 'Register Citizen' },
       { key: 'editCitizen',     label: 'Edit Citizen' },
       { key: 'deleteCitizen',   label: 'Delete Citizen' },
+      { key: 'printProfile',    label: 'Print Profile' },
+      { key: 'exportProfile',   label: 'Export Profile (PDF)' },
     ],
   },
   {
@@ -42,9 +44,15 @@ const PERMISSION_GROUPS = [
     ],
   },
   {
-    group: 'QR & Reports',
+    group: 'QR',
     keys: [
-      { key: 'verifyQR',      label: 'Verify QR Code' },
+      { key: 'verifyQR',   label: 'Verify QR' },
+      { key: 'generateQR', label: 'Generate QR' },
+    ],
+  },
+  {
+    group: 'Reports',
+    keys: [
       { key: 'viewReports',   label: 'View Reports' },
       { key: 'exportReports', label: 'Export Reports' },
     ],
@@ -67,8 +75,8 @@ const PERMISSION_GROUPS = [
 
 const emptyPermission = (): Permission => ({
   viewDashboard: false, viewCitizens: false, registerCitizen: false,
-  editCitizen: false, deleteCitizen: false, viewIdCards: false,
-  exportIdCard: false, savePNG: false, exportPDF: false, verifyQR: false, viewReports: false,
+  editCitizen: false, deleteCitizen: false, printProfile: false, exportProfile: false, viewIdCards: false,
+  exportIdCard: false, savePNG: false, exportPDF: false, verifyQR: false, generateQR: false, viewReports: false,
   exportReports: false, viewSettings: false, editSettings: false,
   viewUsers: false, manageUsers: false,
 });

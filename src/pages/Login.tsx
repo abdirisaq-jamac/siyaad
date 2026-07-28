@@ -64,8 +64,8 @@ const Login: React.FC = () => {
           role: 'Super Admin', 
           permissions: {
             viewDashboard: true, viewCitizens: true, registerCitizen: true,
-            editCitizen: true, deleteCitizen: true, viewIdCards: true,
-            exportIdCard: true, savePNG: true, exportPDF: true, verifyQR: true, viewReports: true,
+            editCitizen: true, deleteCitizen: true, printProfile: true, exportProfile: true, viewIdCards: true,
+            exportIdCard: true, savePNG: true, exportPDF: true, verifyQR: true, generateQR: true, viewReports: true,
             exportReports: true, viewSettings: true, editSettings: true,
             viewUsers: true, manageUsers: true,
           }
@@ -92,8 +92,8 @@ const Login: React.FC = () => {
           isActive: true,
           permissions: {
             viewDashboard: true, viewCitizens: true, registerCitizen: true,
-            editCitizen: true, deleteCitizen: true, viewIdCards: true,
-            exportIdCard: true, savePNG: true, exportPDF: true, verifyQR: true, viewReports: true,
+            editCitizen: true, deleteCitizen: true, printProfile: true, exportProfile: true, viewIdCards: true,
+            exportIdCard: true, savePNG: true, exportPDF: true, verifyQR: true, generateQR: true, viewReports: true,
             exportReports: true, viewSettings: true, editSettings: true,
             viewUsers: true, manageUsers: true,
           },

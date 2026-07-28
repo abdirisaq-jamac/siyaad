@@ -6,7 +6,7 @@ import {
   User, Phone, MapPin, Briefcase, Calendar, Hash, Shield, QrCode
 } from 'lucide-react';
 import { getCitizenById } from '../services/storage';
-import type { Citizen } from '../types';
+import type { Citizen, AppUser } from '../types';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';
 import { QRCodeSVG } from 'qrcode.react';
@@ -30,7 +30,11 @@ export default function CitizenDetails() {
   const navigate = useNavigate();
   const printRef = useRef<HTMLDivElement>(null);
 
+  const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
+
   useEffect(() => {
+    const rawUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+    if (rawUser) { try { setCurrentUser(JSON.parse(rawUser)); } catch(e){} }
     if (id) {
       getCitizenById(id)
         .then(c => setCitizen(c || null))
@@ -285,10 +289,18 @@ export default function CitizenDetails() {
           </div>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-secondary" onClick={handlePrint}><Printer size={16} /> Print Profile</motion.button>
-          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-secondary" onClick={handleDownloadPDF}><Download size={16} /> Export PDF</motion.button>
-          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-secondary" onClick={() => navigate(`/citizens/${citizen.id}/edit`)}><Edit size={16} /> Edit Record</motion.button>
-          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-secondary" onClick={() => navigate(`/qr/${citizen.id}`)}><QrCode size={16} /> Generate QR</motion.button>
+          {(currentUser?.role === 'Super Admin' || currentUser?.permissions?.printProfile === true) && (
+            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-secondary" onClick={handlePrint}><Printer size={16} /> Print Profile</motion.button>
+          )}
+          {(currentUser?.role === 'Super Admin' || currentUser?.permissions?.exportProfile === true) && (
+            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-secondary" onClick={handleDownloadPDF}><Download size={16} /> Export PDF</motion.button>
+          )}
+          {(currentUser?.role === 'Super Admin' || currentUser?.permissions?.editCitizen === true) && (
+            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-secondary" onClick={() => navigate(`/citizens/${citizen.id}/edit`)}><Edit size={16} /> Edit Record</motion.button>
+          )}
+          {(currentUser?.role === 'Super Admin' || currentUser?.permissions?.generateQR === true) && (
+            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-secondary" onClick={() => navigate(`/qr/${citizen.id}`)}><QrCode size={16} /> Generate QR</motion.button>
+          )}
           <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary" onClick={() => navigate(`/id-cards/${citizen.id}`)}><CreditCard size={16} /> View ID Card</motion.button>
         </div>
       </div>

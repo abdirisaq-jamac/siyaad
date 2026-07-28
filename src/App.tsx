@@ -71,7 +71,7 @@ export default function App() {
               <Route path="qr-verify" element={<RequirePermission permission="verifyQR"><QRVerification /></RequirePermission>} />
               <Route path="reports" element={<RequirePermission permission="viewReports"><Reports /></RequirePermission>} />
               <Route path="settings" element={<RequirePermission permission="viewSettings"><Settings /></RequirePermission>} />
-              <Route path="qr/:id" element={<RequirePermission permission="viewIdCards"><QRGenerator /></RequirePermission>} />
+              <Route path="qr/:id" element={<RequirePermission permission="generateQR"><QRGenerator /></RequirePermission>} />
               <Route path="users" element={<RequirePermission permission="viewUsers"><UsersManagement /></RequirePermission>} />
             </Route>
           </Route>

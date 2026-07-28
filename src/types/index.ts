@@ -57,6 +57,8 @@ export interface Permission {
   registerCitizen: boolean;
   editCitizen: boolean;
   deleteCitizen: boolean;
+  printProfile: boolean;
+  exportProfile: boolean;
   // ID Cards
   viewIdCards: boolean;
   exportIdCard: boolean;
@@ -64,6 +66,7 @@ export interface Permission {
   exportPDF: boolean;
   // QR
   verifyQR: boolean;
+  generateQR: boolean;
   // Reports
   viewReports: boolean;
   exportReports: boolean;
