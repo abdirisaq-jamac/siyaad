@@ -28,6 +28,7 @@ export default function CitizensList() {
   const [districtFilter, setDistrictFilter] = useState('All');
   const [selectedCitizens, setSelectedCitizens] = useState<Set<string>>(new Set());
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -175,16 +176,56 @@ export default function CitizensList() {
           />
         </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-          <select className="form-input" style={{ width: '140px', padding: '0.6rem 1rem' }} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-            {['All','Active','Pending','Rejected'].map(s => <option key={s} value={s}>{s === 'All' ? 'All Statuses' : s}</option>)}
-          </select>
-          <select className="form-input" style={{ width: '140px', padding: '0.6rem 1rem' }} value={genderFilter} onChange={e => setGenderFilter(e.target.value)}>
-            {['All','Male','Female'].map(g => <option key={g} value={g}>{g === 'All' ? 'All Genders' : g}</option>)}
-          </select>
-          <select className="form-input" style={{ width: '140px', padding: '0.6rem 1rem' }} value={districtFilter} onChange={e => setDistrictFilter(e.target.value)}>
-            <option value="All">All Districts</option>
-            {allDistricts.map(d => <option key={d} value={d}>{d}</option>)}
-          </select>
+          <div style={{ position: 'relative' }}>
+            <button 
+              className="btn-secondary" 
+              onClick={() => setShowFilters(!showFilters)}
+              style={{ padding: '0.6rem 1rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}
+            >
+              <Filter size={18} /> Filters
+              {(statusFilter !== 'All' || genderFilter !== 'All' || districtFilter !== 'All') && (
+                <span style={{ background: 'var(--primary-color)', width: 8, height: 8, borderRadius: '50%', display: 'inline-block' }}></span>
+              )}
+            </button>
+            
+            <AnimatePresence>
+              {showFilters && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  style={{ 
+                    position: 'absolute', top: '100%', left: 0, marginTop: '0.5rem', 
+                    background: 'var(--bg-card)', border: '1px solid var(--border-color)', 
+                    borderRadius: '12px', padding: '1rem', boxShadow: 'var(--shadow-lg)', 
+                    display: 'flex', flexDirection: 'column', gap: '1rem', zIndex: 50,
+                    minWidth: '220px'
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Status</label>
+                    <select className="form-input" style={{ width: '100%', padding: '0.6rem 1rem' }} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+                      {['All','Active','Pending','Rejected'].map(s => <option key={s} value={s}>{s === 'All' ? 'All Statuses' : s}</option>)}
+                    </select>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Gender</label>
+                    <select className="form-input" style={{ width: '100%', padding: '0.6rem 1rem' }} value={genderFilter} onChange={e => setGenderFilter(e.target.value)}>
+                      {['All','Male','Female'].map(g => <option key={g} value={g}>{g === 'All' ? 'All Genders' : g}</option>)}
+                    </select>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>District</label>
+                    <select className="form-input" style={{ width: '100%', padding: '0.6rem 1rem' }} value={districtFilter} onChange={e => setDistrictFilter(e.target.value)}>
+                      <option value="All">All Districts</option>
+                      {allDistricts.map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Rows per page:</span>
             <select 
