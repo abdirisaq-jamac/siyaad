@@ -192,22 +192,22 @@ function CardBack({ citizen, settings }: { citizen: Citizen, settings?: AppSetti
              <div style={{ fontSize: 8, color: '#777', marginTop: 2 }}>This card is the property of the Government of {settings?.stateName || 'Waqooyi Bari'}. If found, please return to the nearest police station.</div>
            </div>
 
-           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 5 }}>
+           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 5 }}>
              <div>
-               <div style={{ fontSize: 8, color: '#555' }}>Father's Name</div>
-               <div style={{ fontSize: 10, fontWeight: 'bold' }}>{citizen.fatherName}</div>
+               <div style={{ fontSize: 8, color: '#555', lineHeight: 1 }}>Father's Name</div>
+               <div style={{ fontSize: 10, fontWeight: 'bold', lineHeight: 1, marginTop: 2 }}>{citizen.fatherName}</div>
              </div>
              <div>
-               <div style={{ fontSize: 8, color: '#555' }}>Mother's Name</div>
-               <div style={{ fontSize: 10, fontWeight: 'bold' }}>{citizen.motherName}</div>
+               <div style={{ fontSize: 8, color: '#555', lineHeight: 1 }}>Mother's Name</div>
+               <div style={{ fontSize: 10, fontWeight: 'bold', lineHeight: 1, marginTop: 2 }}>{citizen.motherName}</div>
              </div>
              <div>
-               <div style={{ fontSize: 8, color: '#555' }}>District</div>
-               <div style={{ fontSize: 10, fontWeight: 'bold' }}>{citizen.district}</div>
+               <div style={{ fontSize: 8, color: '#555', lineHeight: 1 }}>District</div>
+               <div style={{ fontSize: 10, fontWeight: 'bold', lineHeight: 1, marginTop: 2 }}>{citizen.district}</div>
              </div>
              <div>
-               <div style={{ fontSize: 8, color: '#555' }}>Expiry Date</div>
-               <div style={{ fontSize: 10, fontWeight: 'bold', color: '#b30000' }}>{format(new Date(citizen.expiryDate), 'dd-MM-yyyy')}</div>
+               <div style={{ fontSize: 8, color: '#555', lineHeight: 1 }}>Expiry Date</div>
+               <div style={{ fontSize: 10, fontWeight: 'bold', color: '#b30000', lineHeight: 1, marginTop: 2 }}>{format(new Date(citizen.expiryDate), 'dd-MM-yyyy')}</div>
              </div>
            </div>
         </div>

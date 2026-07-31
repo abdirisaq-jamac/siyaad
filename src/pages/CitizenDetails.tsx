@@ -223,7 +223,7 @@ export default function CitizenDetails() {
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(15, 23, 42);
-      pdf.text(field.value || '—', x + 2, y + 6);
+      pdf.text(field.value || '—', x + 2, y + 6, { maxWidth: colW - 4 });
 
       // Move y down after every 2 fields
       if (col === 1) {

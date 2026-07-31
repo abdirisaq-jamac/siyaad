@@ -189,10 +189,10 @@ export default function EditCitizen() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
               <div style={{ gridColumn: '1 / -1' }}>
-                <Field id="fullName" label="Full Name" required><input id="fullName" className="form-input" value={form.fullName || ''} onChange={e => set('fullName', e.target.value)} required /></Field>
+                <Field id="fullName" label="Full Name" required><textarea id="fullName" className="form-input" rows={2} style={{ resize: 'none' }} value={form.fullName || ''} onChange={e => set('fullName', e.target.value)} required /></Field>
               </div>
-              <Field id="fatherName" label="Father Name" required><input id="fatherName" className="form-input" value={form.fatherName || ''} onChange={e => set('fatherName', e.target.value)} required /></Field>
-              <Field id="motherName" label="Mother Name" required><input id="motherName" className="form-input" value={form.motherName || ''} onChange={e => set('motherName', e.target.value)} required /></Field>
+              <Field id="fatherName" label="Father Name" required><textarea id="fatherName" className="form-input" rows={2} style={{ resize: 'none' }} value={form.fatherName || ''} onChange={e => set('fatherName', e.target.value)} required /></Field>
+              <Field id="motherName" label="Mother Name" required><textarea id="motherName" className="form-input" rows={2} style={{ resize: 'none' }} value={form.motherName || ''} onChange={e => set('motherName', e.target.value)} required /></Field>
               
               <div style={{ gridColumn: '1 / -1', height: '1px', background: 'var(--border-color)', margin: '0.5rem 0' }}></div>
 
@@ -207,7 +207,7 @@ export default function EditCitizen() {
 
               <Field id="phone" label="Phone"><input id="phone" className="form-input" value={form.phone || ''} onChange={e => set('phone', e.target.value)} /></Field>
               <Field id="occupation" label="Occupation">
-                <input id="occupation" type="text" className="form-input" placeholder="e.g. Teacher, Doctor" value={form.occupation || ''} onChange={e => set('occupation', e.target.value)} />
+                <textarea id="occupation" className="form-input" rows={2} style={{ resize: 'none' }} placeholder="e.g. Teacher, Doctor" value={form.occupation || ''} onChange={e => set('occupation', e.target.value)} />
               </Field>
               <Field id="status" label="Registration Status">
                 <select id="status" className="form-input" value={form.status} onChange={e => set('status', e.target.value as CitizenStatus)}>

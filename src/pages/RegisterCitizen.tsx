@@ -270,15 +270,15 @@ export default function RegisterCitizen() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', alignItems: 'start' }}>
                   <Field id="fullName" label={t('Full Name')} required error={errors.fullName}>
-                    <input id="fullName" className="form-input" placeholder="e.g. John Doe Smith" value={form.fullName}
+                    <textarea id="fullName" className="form-input" rows={2} style={{ resize: 'none' }} placeholder="e.g. John Doe Smith" value={form.fullName}
                       onChange={e => set('fullName', e.target.value)} />
                   </Field>
                   <Field id="fatherName" label={t('Father Name')} required error={errors.fatherName}>
-                    <input id="fatherName" className="form-input" placeholder="Father's full name" value={form.fatherName}
+                    <textarea id="fatherName" className="form-input" rows={2} style={{ resize: 'none' }} placeholder="Father's full name" value={form.fatherName}
                       onChange={e => set('fatherName', e.target.value)} />
                   </Field>
                   <Field id="motherName" label={t('Mother Name')} required error={errors.motherName}>
-                    <input id="motherName" className="form-input" placeholder="Mother's full name" value={form.motherName}
+                    <textarea id="motherName" className="form-input" rows={2} style={{ resize: 'none' }} placeholder="Mother's full name" value={form.motherName}
                       onChange={e => set('motherName', e.target.value)} />
                   </Field>
                   
@@ -289,7 +289,7 @@ export default function RegisterCitizen() {
                       onChange={e => set('dateOfBirth', e.target.value)} />
                   </Field>
                   <Field id="placeOfBirth" label={t('Place of Birth')} required error={errors.placeOfBirth}>
-                    <input id="placeOfBirth" className="form-input" placeholder="City, Region" value={form.placeOfBirth}
+                    <textarea id="placeOfBirth" className="form-input" rows={2} style={{ resize: 'none' }} placeholder="City, Region" value={form.placeOfBirth}
                       onChange={e => set('placeOfBirth', e.target.value)} />
                   </Field>
                   <Field id="gender" label={t('Gender')} error={errors.gender}>
@@ -316,7 +316,7 @@ export default function RegisterCitizen() {
                       onChange={e => set('phone', e.target.value)} />
                   </Field>
                   <Field id="occupation" label={t('Occupation')} required error={errors.occupation}>
-                    <input id="occupation" type="text" className="form-input" placeholder="e.g. Teacher, Doctor" value={form.occupation}
+                    <textarea id="occupation" className="form-input" rows={2} style={{ resize: 'none' }} placeholder="e.g. Teacher, Doctor" value={form.occupation}
                       onChange={e => set('occupation', e.target.value)} />
                   </Field>
                   <Field id="district" label={t('District')} error={errors.district}>
