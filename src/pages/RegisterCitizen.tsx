@@ -278,18 +278,24 @@ export default function RegisterCitizen() {
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', alignItems: 'start' }}>
-                  <Field id="fullName" label={t('Full Name')} required error={errors.fullName}>
-                    <input id="fullName" className="form-input" style={{ fontSize: autoFs(form.fullName) }} placeholder="e.g. John Doe Smith" value={form.fullName}
-                      onChange={e => set('fullName', e.target.value)} />
-                  </Field>
-                  <Field id="fatherName" label={t('Father Name')} required error={errors.fatherName}>
-                    <input id="fatherName" className="form-input" style={{ fontSize: autoFs(form.fatherName) }} placeholder="Father's full name" value={form.fatherName}
-                      onChange={e => set('fatherName', e.target.value)} />
-                  </Field>
-                  <Field id="motherName" label={t('Mother Name')} required error={errors.motherName}>
-                    <input id="motherName" className="form-input" style={{ fontSize: autoFs(form.motherName) }} placeholder="Mother's full name" value={form.motherName}
-                      onChange={e => set('motherName', e.target.value)} />
-                  </Field>
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <Field id="fullName" label={t('Full Name')} required error={errors.fullName}>
+                      <input id="fullName" className="form-input" style={{ fontSize: autoFs(form.fullName) }} placeholder="e.g. John Doe Smith" value={form.fullName}
+                        onChange={e => set('fullName', e.target.value)} />
+                    </Field>
+                  </div>
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <Field id="fatherName" label={t('Father Name')} required error={errors.fatherName}>
+                      <input id="fatherName" className="form-input" style={{ fontSize: autoFs(form.fatherName) }} placeholder="Father's full name" value={form.fatherName}
+                        onChange={e => set('fatherName', e.target.value)} />
+                    </Field>
+                  </div>
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <Field id="motherName" label={t('Mother Name')} required error={errors.motherName}>
+                      <input id="motherName" className="form-input" style={{ fontSize: autoFs(form.motherName) }} placeholder="Mother's full name" value={form.motherName}
+                        onChange={e => set('motherName', e.target.value)} />
+                    </Field>
+                  </div>
                   
                   <div style={{ gridColumn: '1 / -1', height: '1px', background: 'var(--border-color)', margin: '0.5rem 0' }}></div>
 

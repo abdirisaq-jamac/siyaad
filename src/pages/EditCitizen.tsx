@@ -200,8 +200,12 @@ export default function EditCitizen() {
               <div style={{ gridColumn: '1 / -1' }}>
                 <Field id="fullName" label="Full Name" required><input id="fullName" className="form-input" style={{ fontSize: autoFs(form.fullName || '') }} value={form.fullName || ''} onChange={e => set('fullName', e.target.value)} required /></Field>
               </div>
-              <Field id="fatherName" label="Father Name" required><input id="fatherName" className="form-input" style={{ fontSize: autoFs(form.fatherName || '') }} value={form.fatherName || ''} onChange={e => set('fatherName', e.target.value)} required /></Field>
-              <Field id="motherName" label="Mother Name" required><input id="motherName" className="form-input" style={{ fontSize: autoFs(form.motherName || '') }} value={form.motherName || ''} onChange={e => set('motherName', e.target.value)} required /></Field>
+              <div style={{ gridColumn: '1 / -1' }}>
+                <Field id="fatherName" label="Father Name" required><input id="fatherName" className="form-input" style={{ fontSize: autoFs(form.fatherName || '') }} value={form.fatherName || ''} onChange={e => set('fatherName', e.target.value)} required /></Field>
+              </div>
+              <div style={{ gridColumn: '1 / -1' }}>
+                <Field id="motherName" label="Mother Name" required><input id="motherName" className="form-input" style={{ fontSize: autoFs(form.motherName || '') }} value={form.motherName || ''} onChange={e => set('motherName', e.target.value)} required /></Field>
+              </div>
               
               <div style={{ gridColumn: '1 / -1', height: '1px', background: 'var(--border-color)', margin: '0.5rem 0' }}></div>
 
