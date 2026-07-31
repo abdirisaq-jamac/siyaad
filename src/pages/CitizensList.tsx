@@ -118,8 +118,8 @@ export default function CitizensList() {
       // Force text format for dates, phone numbers, IDs using ="value" trick
       return `"${str}"`;
     };
-    // For fields Excel tends to auto-convert (dates, phone numbers), prefix with tab to lock as text
-    const asText = (v: string | null | undefined) => `="${(v ?? '').toString().replace(/"/g, '""')}"`;
+    // For fields Excel tends to auto-convert, use standard quotes (removes Excel ="value" formula trick)
+    const asText = (v: string | null | undefined) => `"${(v ?? '').toString().replace(/"/g, '""')}"`;
 
     const header = ['National ID', 'Full Name', 'Father Name', 'Date of Birth', 'Gender', 'Phone', 'District', 'Status', 'Registered'];
     const rows = dataToExport.map(c => [
