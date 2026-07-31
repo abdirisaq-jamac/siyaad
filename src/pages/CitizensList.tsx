@@ -375,7 +375,7 @@ export default function CitizensList() {
                       )}
                     </td>
                     <td>
-                      <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.95rem' }}>{c.fullName}</div>
+                      <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: c.fullName.length > 30 ? '0.78rem' : '0.95rem', wordBreak: 'break-word', maxWidth: 200 }}>{c.fullName}</div>
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>{c.gender} • {c.occupation}</div>
                     </td>
                     <td>

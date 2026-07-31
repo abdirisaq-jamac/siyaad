@@ -67,6 +67,15 @@ const Field = ({ id: fid, label, children, required }: { id: string; label: stri
   </motion.div>
 );
 
+// Auto-shrink font size for long text so full name is always visible
+function autoFs(text: string, base: number = 0.95): string {
+  const len = text?.length || 0;
+  if (len <= 20) return `${base}rem`;
+  if (len <= 30) return `${base * 0.88}rem`;
+  if (len <= 40) return `${base * 0.78}rem`;
+  return `${Math.max(base * 0.65, 0.6)}rem`;
+}
+
 export default function EditCitizen() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -189,10 +198,10 @@ export default function EditCitizen() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
               <div style={{ gridColumn: '1 / -1' }}>
-                <Field id="fullName" label="Full Name" required><textarea id="fullName" className="form-input" rows={2} style={{ resize: 'none' }} value={form.fullName || ''} onChange={e => set('fullName', e.target.value)} required /></Field>
+                <Field id="fullName" label="Full Name" required><input id="fullName" className="form-input" style={{ fontSize: autoFs(form.fullName || '') }} value={form.fullName || ''} onChange={e => set('fullName', e.target.value)} required /></Field>
               </div>
-              <Field id="fatherName" label="Father Name" required><textarea id="fatherName" className="form-input" rows={2} style={{ resize: 'none' }} value={form.fatherName || ''} onChange={e => set('fatherName', e.target.value)} required /></Field>
-              <Field id="motherName" label="Mother Name" required><textarea id="motherName" className="form-input" rows={2} style={{ resize: 'none' }} value={form.motherName || ''} onChange={e => set('motherName', e.target.value)} required /></Field>
+              <Field id="fatherName" label="Father Name" required><input id="fatherName" className="form-input" style={{ fontSize: autoFs(form.fatherName || '') }} value={form.fatherName || ''} onChange={e => set('fatherName', e.target.value)} required /></Field>
+              <Field id="motherName" label="Mother Name" required><input id="motherName" className="form-input" style={{ fontSize: autoFs(form.motherName || '') }} value={form.motherName || ''} onChange={e => set('motherName', e.target.value)} required /></Field>
               
               <div style={{ gridColumn: '1 / -1', height: '1px', background: 'var(--border-color)', margin: '0.5rem 0' }}></div>
 
@@ -207,7 +216,7 @@ export default function EditCitizen() {
 
               <Field id="phone" label="Phone"><input id="phone" className="form-input" value={form.phone || ''} onChange={e => set('phone', e.target.value)} /></Field>
               <Field id="occupation" label="Occupation">
-                <textarea id="occupation" className="form-input" rows={2} style={{ resize: 'none' }} placeholder="e.g. Teacher, Doctor" value={form.occupation || ''} onChange={e => set('occupation', e.target.value)} />
+                <input id="occupation" className="form-input" style={{ fontSize: autoFs(form.occupation || '') }} placeholder="e.g. Teacher, Doctor" value={form.occupation || ''} onChange={e => set('occupation', e.target.value)} />
               </Field>
               <Field id="status" label="Registration Status">
                 <select id="status" className="form-input" value={form.status} onChange={e => set('status', e.target.value as CitizenStatus)}>

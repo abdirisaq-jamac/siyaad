@@ -127,8 +127,8 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
           
           <div>
             <div style={{ fontSize: 8, color: '#333', lineHeight: 1 }}>Magaca / Name</div>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#111', lineHeight: 1.1, textTransform: 'uppercase' }}>{firstName}</div>
-            <div style={{ fontSize: 11, fontWeight: 800, color: '#111', lineHeight: 1.1, textTransform: 'uppercase' }}>{restName}</div>
+            <div style={{ fontSize: firstName.length > 12 ? 8 : 10, fontWeight: 700, color: '#111', lineHeight: 1.1, textTransform: 'uppercase' }}>{firstName}</div>
+            <div style={{ fontSize: restName.length > 20 ? 8 : restName.length > 14 ? 9 : 11, fontWeight: 800, color: '#111', lineHeight: 1.1, textTransform: 'uppercase', wordBreak: 'break-word' as const }}>{restName}</div>
           </div>
 
           <div>
@@ -410,7 +410,7 @@ export default function IdCardPreview() {
                       )}
                     </td>
                     <td>
-                      <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.95rem' }}>{c.fullName}</div>
+                      <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: c.fullName.length > 30 ? '0.78rem' : '0.95rem', wordBreak: 'break-word', maxWidth: 200 }}>{c.fullName}</div>
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>{c.gender} • {c.occupation}</div>
                     </td>
                     <td><code style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', padding: '0.3rem 0.6rem', borderRadius: '6px', fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 600 }}>{c.nationalIdNumber}</code></td>

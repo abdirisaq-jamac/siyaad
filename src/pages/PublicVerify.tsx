@@ -110,7 +110,7 @@ export default function PublicVerify() {
                 )}
                 <div>
                   <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.4rem' }}>Full Name</div>
-                  <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'white', lineHeight: 1.2, marginBottom: '0.5rem' }}>{citizen.fullName}</div>
+                  <div style={{ fontSize: citizen.fullName.length > 30 ? '1.1rem' : '1.6rem', fontWeight: 800, color: 'white', lineHeight: 1.2, marginBottom: '0.5rem', wordBreak: 'break-word' }}>{citizen.fullName}</div>
                   <div style={{ fontFamily: 'monospace', fontSize: '0.85rem', fontWeight: 700, color: '#93c5fd', background: 'rgba(96,165,250,0.1)', padding: '0.25rem 0.75rem', borderRadius: 8, display: 'inline-block' }}>
                     {citizen.nationalIdNumber}
                   </div>

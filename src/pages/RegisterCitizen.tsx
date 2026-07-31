@@ -123,6 +123,15 @@ const Field = ({ id, label, error, children, required }: { id: string; label: st
   </motion.div>
 );
 
+// Auto-shrink font size for long text so full name is always visible
+function autoFs(text: string, base: number = 0.95): string {
+  const len = text?.length || 0;
+  if (len <= 20) return `${base}rem`;
+  if (len <= 30) return `${base * 0.88}rem`;
+  if (len <= 40) return `${base * 0.78}rem`;
+  return `${Math.max(base * 0.65, 0.6)}rem`;
+}
+
 export default function RegisterCitizen() {
   const { t } = useTranslation();
   const [form, setForm] = useState<FormData>(initial);
@@ -270,15 +279,15 @@ export default function RegisterCitizen() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', alignItems: 'start' }}>
                   <Field id="fullName" label={t('Full Name')} required error={errors.fullName}>
-                    <textarea id="fullName" className="form-input" rows={2} style={{ resize: 'none' }} placeholder="e.g. John Doe Smith" value={form.fullName}
+                    <input id="fullName" className="form-input" style={{ fontSize: autoFs(form.fullName) }} placeholder="e.g. John Doe Smith" value={form.fullName}
                       onChange={e => set('fullName', e.target.value)} />
                   </Field>
                   <Field id="fatherName" label={t('Father Name')} required error={errors.fatherName}>
-                    <textarea id="fatherName" className="form-input" rows={2} style={{ resize: 'none' }} placeholder="Father's full name" value={form.fatherName}
+                    <input id="fatherName" className="form-input" style={{ fontSize: autoFs(form.fatherName) }} placeholder="Father's full name" value={form.fatherName}
                       onChange={e => set('fatherName', e.target.value)} />
                   </Field>
                   <Field id="motherName" label={t('Mother Name')} required error={errors.motherName}>
-                    <textarea id="motherName" className="form-input" rows={2} style={{ resize: 'none' }} placeholder="Mother's full name" value={form.motherName}
+                    <input id="motherName" className="form-input" style={{ fontSize: autoFs(form.motherName) }} placeholder="Mother's full name" value={form.motherName}
                       onChange={e => set('motherName', e.target.value)} />
                   </Field>
                   
@@ -289,7 +298,7 @@ export default function RegisterCitizen() {
                       onChange={e => set('dateOfBirth', e.target.value)} />
                   </Field>
                   <Field id="placeOfBirth" label={t('Place of Birth')} required error={errors.placeOfBirth}>
-                    <textarea id="placeOfBirth" className="form-input" rows={2} style={{ resize: 'none' }} placeholder="City, Region" value={form.placeOfBirth}
+                    <input id="placeOfBirth" className="form-input" style={{ fontSize: autoFs(form.placeOfBirth) }} placeholder="City, Region" value={form.placeOfBirth}
                       onChange={e => set('placeOfBirth', e.target.value)} />
                   </Field>
                   <Field id="gender" label={t('Gender')} error={errors.gender}>
@@ -316,7 +325,7 @@ export default function RegisterCitizen() {
                       onChange={e => set('phone', e.target.value)} />
                   </Field>
                   <Field id="occupation" label={t('Occupation')} required error={errors.occupation}>
-                    <textarea id="occupation" className="form-input" rows={2} style={{ resize: 'none' }} placeholder="e.g. Teacher, Doctor" value={form.occupation}
+                    <input id="occupation" className="form-input" style={{ fontSize: autoFs(form.occupation) }} placeholder="e.g. Teacher, Doctor" value={form.occupation}
                       onChange={e => set('occupation', e.target.value)} />
                   </Field>
                   <Field id="district" label={t('District')} error={errors.district}>
@@ -399,15 +408,15 @@ export default function RegisterCitizen() {
                 <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('Full Name')}</span>
-                    <span style={{ fontSize: '1rem', color: 'var(--text-main)', fontWeight: 700 }}>{form.fullName || '—'}</span>
+                    <span style={{ fontSize: autoFs(form.fullName, 1), color: 'var(--text-main)', fontWeight: 700, wordBreak: 'break-word' }}>{form.fullName || '—'}</span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('Father Name')}</span>
-                    <span style={{ fontSize: '1rem', color: 'var(--text-main)', fontWeight: 500 }}>{form.fatherName || '—'}</span>
+                    <span style={{ fontSize: autoFs(form.fatherName, 1), color: 'var(--text-main)', fontWeight: 500, wordBreak: 'break-word' }}>{form.fatherName || '—'}</span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('Mother Name')}</span>
-                    <span style={{ fontSize: '1rem', color: 'var(--text-main)', fontWeight: 500 }}>{form.motherName || '—'}</span>
+                    <span style={{ fontSize: autoFs(form.motherName, 1), color: 'var(--text-main)', fontWeight: 500, wordBreak: 'break-word' }}>{form.motherName || '—'}</span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('Date of Birth')}</span>
