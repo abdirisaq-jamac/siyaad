@@ -12,9 +12,9 @@ export async function generateNationalIdNumber(): Promise<string> {
 
   let candidate = '';
   do {
-    candidate = `WB-${year}-` + Array.from({ length: 5 }, () =>
-      Math.floor(Math.random() * 10)
-    ).join('');
+    const randomHex = uuidv4().split('-')[0].toUpperCase();
+    const randomPart2 = uuidv4().split('-')[1].toUpperCase();
+    candidate = `WB-${year}-${randomHex}${randomPart2}`;
   } while (existingIds.has(candidate));
 
   return candidate;

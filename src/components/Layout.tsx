@@ -307,15 +307,17 @@ export function Topbar({ sidebarCollapsed, onMobileMenu }: TopbarProps) {
 
   return (
     <header
-      className="no-print bg-glass"
+      className="no-print"
       style={{
         height: 72,
+        background: 'var(--bg-card)',
         borderBottom: '1px solid var(--border-color)',
         display: 'flex',
         alignItems: 'center',
         padding: '0 1.5rem',
         gap: '1.25rem',
-        position: 'relative', // Changed from sticky to relative so it doesn't follow on scroll
+        position: 'sticky',
+        top: 0,
         zIndex: 50,
       }}
     >
