@@ -67,9 +67,9 @@ const Field = ({ id: fid, label, children, required }: { id: string; label: stri
   </motion.div>
 );
 
-// Fixed font size for text
-function autoFs(text: string, base: number = 0.95): string {
-  return `${base}rem`;
+// Fixed font size for text to prevent mobile zoom
+function autoFs(text: string, base: number = 1): string {
+  return `16px`;
 }
 
 export default function EditCitizen() {
