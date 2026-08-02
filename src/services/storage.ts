@@ -1,4 +1,4 @@
-import type { Citizen, AppSettings, AppUser, Permission, UserRole } from '../types';
+import type { Citizen, AppSettings, AppUser, Permission, UserRole, UserSession } from '../types';
 
 import { supabase } from '../supabase';
 
@@ -275,20 +275,23 @@ export async function deleteUser(id: string): Promise<void> {
 }
 
 // ── User Sessions (localStorage-based) ────────────────────────────────────────
-import type { UserSession } from '../types';
 
 const SESSIONS_KEY = 'app_user_sessions';
 
-export function getUserSessions(): UserSession[] {
+export function getUserSessions(userId?: string): UserSession[] {
   const raw = localStorage.getItem(SESSIONS_KEY);
+  let sessions: UserSession[] = [];
   if (raw) {
     try {
-      return JSON.parse(raw);
+      sessions = JSON.parse(raw);
     } catch {
-      return [];
+      sessions = [];
     }
   }
-  return [];
+  if (userId) {
+    return sessions.filter(s => s.userId === userId);
+  }
+  return sessions;
 }
 
 export function addSession(session: UserSession): void {

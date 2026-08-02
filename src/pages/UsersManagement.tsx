@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, UserPlus, Edit, Trash2, Shield, Search, X,
-  Check, AlertTriangle, Eye, EyeOff, ChevronDown, Key
+  Check, AlertTriangle, Eye, EyeOff, ChevronDown, Key, Clock, Monitor, Smartphone, Tablet
 } from 'lucide-react';
-import type { AppUser, UserRole, Permission } from '../types';
-import { getUsers, addUser, updateUser, deleteUser, buildDefaultPermissions } from '../services/storage';
+import type { AppUser, UserRole, Permission, UserSession } from '../types';
+import { getUsers, addUser, updateUser, deleteUser, buildDefaultPermissions, getUserSessions } from '../services/storage';
 import { format } from 'date-fns';
 
 const ROLE_SUGGESTIONS = ['Super Admin', 'Admin', 'Editor', 'Data Entry', 'Viewer'];
@@ -94,6 +94,8 @@ export default function UsersManagement() {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [showPw, setShowPw] = useState(false);
   const [activeTab, setActiveTab] = useState<'info' | 'permissions'>('info');
+  const [viewSessionsUser, setViewSessionsUser] = useState<AppUser | null>(null);
+  const [userSessions, setUserSessions] = useState<UserSession[]>([]);
 
   // Form state
   const [form, setForm] = useState({
@@ -141,6 +143,11 @@ export default function UsersManagement() {
     setPermissions({ ...user.permissions });
     setActiveTab('info');
     setShowModal(true);
+  }
+
+  function openSessions(user: AppUser) {
+    setViewSessionsUser(user);
+    setUserSessions(getUserSessions(user.id));
   }
 
   function handleRoleChange(role: UserRole) {
@@ -295,7 +302,14 @@ export default function UsersManagement() {
                           {canManage && (
                             <>
                               <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+                                onClick={() => openSessions(u)}
+                                title="View Session History"
+                                style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '0.5rem', cursor: 'pointer', color: 'var(--primary-color)' }}>
+                                <Clock size={15} />
+                              </motion.button>
+                              <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                                 onClick={() => openEdit(u)}
+                                title="Edit User"
                                 style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '0.5rem', cursor: 'pointer', color: '#f59e0b' }}>
                                 <Edit size={15} />
                               </motion.button>
@@ -493,6 +507,80 @@ export default function UsersManagement() {
               <div style={{ display: 'flex', gap: '1rem' }}>
                 <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setConfirmDelete(null)}>Cancel</button>
                 <button className="btn-danger" style={{ flex: 1 }} onClick={() => handleDelete(confirmDelete)}>Delete User</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Session History Modal */}
+      <AnimatePresence>
+        {viewSessionsUser && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '1rem' }}>
+            <motion.div initial={{ scale: 0.9, y: 30 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 30 }}
+              className="glass-card"
+              style={{ width: '100%', maxWidth: 800, maxHeight: '90vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: 'var(--bg-card)', padding: 0 }}>
+              
+              <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 12, background: 'var(--primary-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Clock size={18} color="white" />
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-main)' }}>Session History</div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{viewSessionsUser.fullName}</div>
+                  </div>
+                </div>
+                <button onClick={() => setViewSessionsUser(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '0.25rem' }}>
+                  <X size={22} />
+                </button>
+              </div>
+
+              <div style={{ padding: '1.5rem', overflowY: 'auto', flex: 1 }}>
+                <div style={{ overflowX: 'auto', borderRadius: '12px', border: '1px solid var(--border-color)', background: 'var(--bg-main)' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                    <thead>
+                      <tr style={{ background: 'var(--bg-card)', borderBottom: '1px solid var(--border-color)' }}>
+                        <th style={{ padding: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Device</th>
+                        <th style={{ padding: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>System</th>
+                        <th style={{ padding: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Login Time</th>
+                        <th style={{ padding: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Logout Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {userSessions.map((s, i) => (
+                        <tr key={s.id || i} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                          <td style={{ padding: '1rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500, color: 'var(--text-main)' }}>
+                              {s.deviceType === 'Mobile' ? <Smartphone size={16} /> : s.deviceType === 'Tablet' ? <Tablet size={16} /> : <Monitor size={16} />}
+                              {s.deviceType}
+                            </div>
+                          </td>
+                          <td style={{ padding: '1rem' }}>
+                            <div style={{ fontWeight: 500, color: 'var(--text-main)' }}>{s.browser}</div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{s.os}</div>
+                          </td>
+                          <td style={{ padding: '1rem' }}>
+                            <div style={{ fontWeight: 500, color: 'var(--text-main)' }}>{new Date(s.loginTime).toLocaleString()}</div>
+                          </td>
+                          <td style={{ padding: '1rem' }}>
+                            {s.logoutTime ? (
+                              <div style={{ fontWeight: 500, color: 'var(--text-main)' }}>{new Date(s.logoutTime).toLocaleString()}</div>
+                            ) : (
+                              <span style={{ padding: '0.2rem 0.6rem', background: 'rgba(16,185,129,0.1)', color: '#10b981', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700 }}>Active</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                      {userSessions.length === 0 && (
+                        <tr>
+                          <td colSpan={4} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>No sessions recorded for this user.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </motion.div>
           </motion.div>
