@@ -8,9 +8,9 @@ export default function SessionLogs() {
   const [sessions, setSessions] = useState<UserSession[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const load = () => {
+  const load = async () => {
     setLoading(true);
-    const data = getUserSessions();
+    const data = await getUserSessions();
     setSessions(data);
     setLoading(false);
   };

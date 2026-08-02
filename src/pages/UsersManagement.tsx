@@ -145,9 +145,11 @@ export default function UsersManagement() {
     setShowModal(true);
   }
 
-  function openSessions(user: AppUser) {
+  async function openSessions(user: AppUser) {
     setViewSessionsUser(user);
-    setUserSessions(getUserSessions(user.id));
+    setUserSessions([]);
+    const sessions = await getUserSessions(user.id);
+    setUserSessions(sessions);
   }
 
   function handleRoleChange(role: UserRole) {

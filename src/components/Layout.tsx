@@ -296,13 +296,13 @@ export function Topbar({ sidebarCollapsed, onMobileMenu }: TopbarProps) {
 
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // End session
     const rawUser = localStorage.getItem('user') || sessionStorage.getItem('user');
     if (rawUser) {
       try {
         const u = JSON.parse(rawUser);
-        if (u.sessionId) endSession(u.sessionId);
+        if (u.sessionId) await endSession(u.sessionId);
       } catch (e) {}
     }
     // Clear authentication flags

@@ -105,7 +105,7 @@ const Login: React.FC = () => {
         localStorage.setItem('isAuthenticated', 'true');
         
         const { browser, os, deviceType, deviceInfo } = getDeviceDetails();
-        addSession({
+        await addSession({
           id: sessionId,
           userId: sessionData.id,
           username: sessionData.username,
@@ -177,7 +177,7 @@ const Login: React.FC = () => {
       localStorage.setItem('isAuthenticated', 'true');
       
       const { browser, os, deviceType, deviceInfo } = getDeviceDetails();
-      addSession({
+      await addSession({
         id: sessionId,
         userId: matched.id,
         username: matched.username,

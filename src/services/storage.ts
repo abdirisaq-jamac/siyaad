@@ -274,36 +274,42 @@ export async function deleteUser(id: string): Promise<void> {
   saveLocalUsers(updatedList);
 }
 
-// ── User Sessions (localStorage-based) ────────────────────────────────────────
+// ── User Sessions (Supabase-based) ────────────────────────────────────────────
 
-const SESSIONS_KEY = 'app_user_sessions';
-
-export function getUserSessions(userId?: string): UserSession[] {
-  const raw = localStorage.getItem(SESSIONS_KEY);
-  let sessions: UserSession[] = [];
-  if (raw) {
-    try {
-      sessions = JSON.parse(raw);
-    } catch {
-      sessions = [];
-    }
+export async function getUserSessions(userId?: string): Promise<UserSession[]> {
+  try {
+    let query = supabase
+      .from('user_sessions')
+      .select('*')
+      .order('loginTime', { ascending: false })
+      .limit(200);
+    if (userId) query = query.eq('userId', userId);
+    const { data, error } = await query;
+    if (error) throw error;
+    return (data || []) as UserSession[];
+  } catch (err) {
+    console.warn('getUserSessions error:', err);
+    return [];
   }
-  if (userId) {
-    return sessions.filter(s => s.userId === userId);
-  }
-  return sessions;
 }
 
-export function addSession(session: UserSession): void {
-  const sessions = getUserSessions();
-  sessions.unshift(session);
-  localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+export async function addSession(session: UserSession): Promise<void> {
+  try {
+    const { error } = await supabase.from('user_sessions').insert([session]);
+    if (error) throw error;
+  } catch (err) {
+    console.warn('addSession error:', err);
+  }
 }
 
-export function endSession(sessionId: string): void {
-  const sessions = getUserSessions();
-  const updated = sessions.map(s => 
-    s.id === sessionId ? { ...s, logoutTime: new Date().toISOString() } : s
-  );
-  localStorage.setItem(SESSIONS_KEY, JSON.stringify(updated));
+export async function endSession(sessionId: string): Promise<void> {
+  try {
+    const { error } = await supabase
+      .from('user_sessions')
+      .update({ logoutTime: new Date().toISOString() })
+      .eq('id', sessionId);
+    if (error) throw error;
+  } catch (err) {
+    console.warn('endSession error:', err);
+  }
 }
