@@ -123,13 +123,9 @@ const Field = ({ id, label, error, children, required }: { id: string; label: st
   </motion.div>
 );
 
-// Auto-shrink font size for long text so full name is always visible
+// Fixed font size for text
 function autoFs(text: string, base: number = 0.95): string {
-  const len = text?.length || 0;
-  if (len <= 20) return `${base}rem`;
-  if (len <= 30) return `${base * 0.88}rem`;
-  if (len <= 40) return `${base * 0.78}rem`;
-  return `${Math.max(base * 0.65, 0.6)}rem`;
+  return `${base}rem`;
 }
 
 export default function RegisterCitizen() {
