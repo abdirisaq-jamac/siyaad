@@ -328,7 +328,7 @@ export default function CitizenDetails() {
                 </div>
               </div>
               <div style={{ marginTop: '1.5rem' }}>
-                <div style={{ fontWeight: 800, fontSize: citizen.fullName.length > 30 ? '1rem' : '1.3rem', color: 'var(--text-main)', lineHeight: 1.2, wordBreak: 'break-word' }}>{citizen.fullName}</div>
+                <div style={{ fontWeight: 800, fontSize: '1.3rem', color: 'var(--text-main)', lineHeight: 1.2, wordBreak: 'break-word' }}>{citizen.fullName}</div>
                 <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.25rem' }}>{citizen.occupation}</div>
               </div>
               <div style={{ marginTop: '1.25rem' }}>
