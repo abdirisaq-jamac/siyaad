@@ -69,7 +69,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     { label: t('QR Verification'),  path: '/qr-verify',       icon: <QrCode size={18} />, required: 'verifyQR' },
     { label: t('Reports'),          path: '/reports',         icon: <FileBarChart2 size={18} />, required: 'viewReports' },
     { label: t('Users'),            path: '/users',           icon: <UserCog size={18} />, required: 'viewUsers' },
-    { label: t('Session Logs'),     path: '/sessions',        icon: <Clock size={18} />, required: 'viewUsers' },
     { label: t('Settings'),         path: '/settings',        icon: <SettingsIcon size={18} />, required: 'viewSettings' },
   ].filter(item => !userPerms || userPerms[item.required]);
 

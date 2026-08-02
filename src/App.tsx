@@ -15,7 +15,7 @@ import Settings from './pages/Settings';
 import Login from './pages/Login';
 import UsersManagement from './pages/UsersManagement';
 import PublicVerify from './pages/PublicVerify';
-import SessionLogs from './pages/SessionLogs';
+
 
 // A simple protected route wrapper
 const ProtectedRoute = () => {
@@ -74,7 +74,7 @@ export default function App() {
               <Route path="settings" element={<RequirePermission permission="viewSettings"><Settings /></RequirePermission>} />
               <Route path="qr/:id" element={<RequirePermission permission="generateQR"><QRGenerator /></RequirePermission>} />
               <Route path="users" element={<RequirePermission permission="viewUsers"><UsersManagement /></RequirePermission>} />
-              <Route path="sessions" element={<RequirePermission permission="viewUsers"><SessionLogs /></RequirePermission>} />
+
             </Route>
           </Route>
         </Routes>
