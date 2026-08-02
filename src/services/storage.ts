@@ -273,3 +273,34 @@ export async function deleteUser(id: string): Promise<void> {
   const updatedList = current.filter(u => u.id !== id);
   saveLocalUsers(updatedList);
 }
+
+// ── User Sessions (localStorage-based) ────────────────────────────────────────
+import type { UserSession } from '../types';
+
+const SESSIONS_KEY = 'app_user_sessions';
+
+export function getUserSessions(): UserSession[] {
+  const raw = localStorage.getItem(SESSIONS_KEY);
+  if (raw) {
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
+export function addSession(session: UserSession): void {
+  const sessions = getUserSessions();
+  sessions.unshift(session);
+  localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+}
+
+export function endSession(sessionId: string): void {
+  const sessions = getUserSessions();
+  const updated = sessions.map(s => 
+    s.id === sessionId ? { ...s, logoutTime: new Date().toISOString() } : s
+  );
+  localStorage.setItem(SESSIONS_KEY, JSON.stringify(updated));
+}

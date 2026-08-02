@@ -2,7 +2,32 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, Eye, EyeOff, Sun, Moon, CheckCircle2, Shield, Zap, Globe, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getUsers } from '../services/storage';
+import { getUsers, addSession } from '../services/storage';
+
+function getDeviceDetails() {
+  const ua = navigator.userAgent;
+  let browser = 'Unknown';
+  if (ua.includes('Firefox')) browser = 'Firefox';
+  else if (ua.includes('SamsungBrowser')) browser = 'Samsung Browser';
+  else if (ua.includes('Opera') || ua.includes('OPR')) browser = 'Opera';
+  else if (ua.includes('Edg')) browser = 'Edge';
+  else if (ua.includes('Chrome')) browser = 'Chrome';
+  else if (ua.includes('Safari')) browser = 'Safari';
+
+  let os = 'Unknown';
+  if (ua.includes('Win')) os = 'Windows';
+  else if (ua.includes('Mac')) os = 'MacOS';
+  else if (ua.includes('X11')) os = 'UNIX';
+  else if (ua.includes('Linux')) os = 'Linux';
+  if (ua.includes('Android')) os = 'Android';
+  if (ua.includes('like Mac')) os = 'iOS';
+
+  const isMobile = /Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua);
+  const isTablet = /(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua);
+  const deviceType = isTablet ? 'Tablet' : isMobile ? 'Mobile' : 'Desktop';
+
+  return { browser, os, deviceType, deviceInfo: `${deviceType} - ${os} (${browser})` };
+}
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -70,12 +95,28 @@ const Login: React.FC = () => {
             viewUsers: true, manageUsers: true,
           }
         };
+        const sessionId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+        const sData = { ...sessionData, sessionId };
         if (rememberMe) {
-          localStorage.setItem('user', JSON.stringify(sessionData));
+          localStorage.setItem('user', JSON.stringify(sData));
         } else {
-          sessionStorage.setItem('user', JSON.stringify(sessionData));
+          sessionStorage.setItem('user', JSON.stringify(sData));
         }
         localStorage.setItem('isAuthenticated', 'true');
+        
+        const { browser, os, deviceType, deviceInfo } = getDeviceDetails();
+        addSession({
+          id: sessionId,
+          userId: sessionData.id,
+          username: sessionData.username,
+          loginTime: new Date().toISOString(),
+          logoutTime: null,
+          deviceInfo,
+          deviceType: deviceType as any,
+          os,
+          browser
+        });
+        
         navigate('/dashboard');
         return;
       }
@@ -126,13 +167,28 @@ const Login: React.FC = () => {
       localStorage.setItem('app_users', JSON.stringify(updatedUsers));
 
       // Store session
-      const sessionData = { id: matched.id, fullName: matched.fullName, username: matched.username, role: matched.role, permissions: matched.permissions };
+      const sessionId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+      const sessionData = { id: matched.id, fullName: matched.fullName, username: matched.username, role: matched.role, permissions: matched.permissions, sessionId };
       if (rememberMe) {
         localStorage.setItem('user', JSON.stringify(sessionData));
       } else {
         sessionStorage.setItem('user', JSON.stringify(sessionData));
       }
       localStorage.setItem('isAuthenticated', 'true');
+      
+      const { browser, os, deviceType, deviceInfo } = getDeviceDetails();
+      addSession({
+        id: sessionId,
+        userId: matched.id,
+        username: matched.username,
+        loginTime: new Date().toISOString(),
+        logoutTime: null,
+        deviceInfo,
+        deviceType: deviceType as any,
+        os,
+        browser
+      });
+
       // Updated to redirect to dashboard after login
       navigate('/dashboard');
     } catch {

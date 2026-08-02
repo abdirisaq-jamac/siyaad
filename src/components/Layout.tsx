@@ -7,7 +7,7 @@ import {
   FileBarChart2, Settings as SettingsIcon, ChevronLeft, ChevronRight,
   Bell, LogOut, Sun, Moon, UserCog, CheckCircle2, AlertCircle, Clock
 } from 'lucide-react';
-import { getSettings } from '../services/storage';
+import { getSettings, endSession } from '../services/storage';
 import type { AppSettings } from '../types';
 
 // ── Module-level settings cache — fetched only ONCE across all components ──
@@ -69,6 +69,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     { label: t('QR Verification'),  path: '/qr-verify',       icon: <QrCode size={18} />, required: 'verifyQR' },
     { label: t('Reports'),          path: '/reports',         icon: <FileBarChart2 size={18} />, required: 'viewReports' },
     { label: t('Users'),            path: '/users',           icon: <UserCog size={18} />, required: 'viewUsers' },
+    { label: t('Session Logs'),     path: '/sessions',        icon: <Clock size={18} />, required: 'viewUsers' },
     { label: t('Settings'),         path: '/settings',        icon: <SettingsIcon size={18} />, required: 'viewSettings' },
   ].filter(item => !userPerms || userPerms[item.required]);
 
@@ -296,6 +297,14 @@ export function Topbar({ sidebarCollapsed, onMobileMenu }: TopbarProps) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    // End session
+    const rawUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+    if (rawUser) {
+      try {
+        const u = JSON.parse(rawUser);
+        if (u.sessionId) endSession(u.sessionId);
+      } catch (e) {}
+    }
     // Clear authentication flags
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('token');

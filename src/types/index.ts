@@ -90,3 +90,15 @@ export interface AppUser {
   lastLogin: string | null;
   avatar: string | null;   // base64
 }
+
+export interface UserSession {
+  id: string;
+  userId: string;
+  username: string;
+  loginTime: string;
+  logoutTime: string | null;
+  deviceInfo: string;
+  deviceType: 'Desktop' | 'Mobile' | 'Tablet' | 'Unknown';
+  os: string;
+  browser: string;
+}
