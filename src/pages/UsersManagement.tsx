@@ -7,6 +7,7 @@ import {
 import type { AppUser, UserRole, Permission, UserSession } from '../types';
 import { getUsers, addUser, updateUser, deleteUser, buildDefaultPermissions, getUserSessions } from '../services/storage';
 import { format } from 'date-fns';
+import { useTranslation } from '../i18n';
 
 const ROLE_SUGGESTIONS = ['Super Admin', 'Admin', 'Editor', 'Data Entry', 'Viewer'];
 
@@ -86,6 +87,7 @@ function generateId() {
 }
 
 export default function UsersManagement() {
+  const { t } = useTranslation();
   const [users, setUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
@@ -197,13 +199,13 @@ export default function UsersManagement() {
       <div className="page-header">
         <div>
           <div className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Shield size={26} style={{ color: 'var(--primary-color)' }} /> Users Management
+            <Shield size={26} style={{ color: 'var(--primary-color)' }} /> {t('Users Management') || 'Users Management'}
           </div>
-          <div className="page-subtitle">{users.length} users registered · manage roles & permissions</div>
+          <div className="page-subtitle">{users.length} {t('users registered · manage roles & permissions')}</div>
         </div>
         {canManage && (
           <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary" onClick={openAdd}>
-            <UserPlus size={18} /> Add User
+            <UserPlus size={18} /> {t('Add User') || 'Add User'}
           </motion.button>
         )}
       </div>
@@ -225,13 +227,13 @@ export default function UsersManagement() {
             <thead>
               <tr>
                 <th style={{ width: 40 }}>#</th>
-                <th>User</th>
-                <th>Role</th>
-                <th>Permissions</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th>Last Login</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
+                <th>{t('User')}</th>
+                <th>{t('Role')}</th>
+                <th>{t('Permissions')}</th>
+                <th>{t('Status')}</th>
+                <th>{t('Created')}</th>
+                <th>{t('Last Login')}</th>
+                <th style={{ textAlign: 'right' }}>{t('Actions')}</th>
               </tr>
             </thead>
             <tbody>

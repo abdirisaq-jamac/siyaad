@@ -134,10 +134,10 @@ export default function SettingsPage() {
         </Section>
         
         {/* General */}
-        <Section title="General Settings" icon={<Settings size={20} />}>
+        <Section title={t('General Settings') || 'General Settings'} icon={<Settings size={20} />}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
             <div>
-              <label className="form-label">State / Region Name</label>
+              <label className="form-label">{t('State / Region Name') || 'State / Region Name'}</label>
               <input
                 className="form-input"
                 value={settings.stateName}
@@ -149,7 +149,7 @@ export default function SettingsPage() {
         </Section>
 
         {/* Logo */}
-        <Section title="System Logo" icon={<Upload size={20} />}>
+        <Section title={t('System Logo') || 'System Logo'} icon={<Upload size={20} />}>
           <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <motion.div
               whileHover={{ scale: 1.02 }}
@@ -169,14 +169,14 @@ export default function SettingsPage() {
               ) : (
                 <>
                   <Upload size={28} style={{ color: 'var(--text-muted)' }} />
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Upload Logo</span>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('Upload Logo') || 'Upload Logo'}</span>
                 </>
               )}
             </motion.div>
             <input ref={logoRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleLogoUpload} />
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.25rem' }}>{t('Organization Logo')}</div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Upload your government seal or logo. PNG/SVG recommended.</div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>{t('Upload your government seal or logo. PNG/SVG recommended.') || 'Upload your government seal or logo. PNG/SVG recommended.'}</div>
               {settings.logoUrl && (
                 <button
                   className="btn-danger"
@@ -191,7 +191,7 @@ export default function SettingsPage() {
         </Section>
 
         {/* Flag */}
-        <Section title="ID Card Flag" icon={<Upload size={20} />}>
+        <Section title={t('ID Card Flag') || 'ID Card Flag'} icon={<Upload size={20} />}>
           <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <motion.div
               whileHover={{ scale: 1.02 }}

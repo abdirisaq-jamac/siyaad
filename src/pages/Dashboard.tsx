@@ -167,8 +167,8 @@ export default function Dashboard() {
         <div className="glass-card" style={{ padding: '1.5rem', gridColumn: 'span 2' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-main)' }}>{t('Registration Trends')}</div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Last 6 months</div>
+              <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-main)' }}>{t('Registration Trends') || 'Registration Trends'}</div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{t('Last 6 months') || 'Last 6 months'}</div>
             </div>
             <div style={{ padding: '0.5rem', background: 'var(--bg-main)', borderRadius: '8px' }}>
               <TrendingUp size={20} style={{ color: 'var(--primary-color)' }} />
@@ -196,8 +196,8 @@ export default function Dashboard() {
 
         {/* Pie Chart */}
         <div className="glass-card" style={{ padding: '1.5rem' }}>
-          <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-main)', marginBottom: '0.25rem' }}>{t('Gender Distribution')}</div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Citizens by gender</div>
+          <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-main)', marginBottom: '0.25rem' }}>{t('Gender Distribution') || 'Gender Distribution'}</div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>{t('Citizens by gender') || 'Citizens by gender'}</div>
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
               <Pie data={genderData} cx="50%" cy="50%" innerRadius={70} outerRadius={100} dataKey="value" paddingAngle={5}>
@@ -217,8 +217,8 @@ export default function Dashboard() {
       <motion.div variants={itemVariants} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
         {/* District Bar */}
         <div className="glass-card" style={{ padding: '1.5rem' }}>
-          <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-main)', marginBottom: '0.25rem' }}>{t('Citizens by District')}</div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Top districts</div>
+          <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-main)', marginBottom: '0.25rem' }}>{t('Citizens by District') || 'Citizens by District'}</div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>{t('Top districts') || 'Top districts'}</div>
           {districtData.length > 0 ? (
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={districtData} layout="vertical" margin={{ top: 0, right: 20, left: 0, bottom: 0 }}>
@@ -234,7 +234,7 @@ export default function Dashboard() {
             </ResponsiveContainer>
           ) : (
             <div style={{ height: 240, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontWeight: 500 }}>
-              No district data yet
+              {t('No district data yet') || 'No district data yet'}
             </div>
           )}
         </div>
@@ -243,8 +243,8 @@ export default function Dashboard() {
         <div className="glass-card" style={{ padding: '1.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-main)' }}>{t('Recent Registrations')}</div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Latest citizens</div>
+              <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-main)' }}>{t('Recent Registrations') || 'Recent Registrations'}</div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{t('Latest citizens') || 'Latest citizens'}</div>
             </div>
             <motion.button 
               whileHover={{ scale: 1.05 }}
@@ -259,9 +259,9 @@ export default function Dashboard() {
           {recent.length === 0 ? (
             <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '3rem 0' }}>
               <Users size={48} style={{ margin: '0 auto 1rem', opacity: 0.2 }} />
-              <div style={{ fontWeight: 500 }}>No citizens registered yet</div>
+              <div style={{ fontWeight: 500 }}>{t('No citizens registered yet') || 'No citizens registered yet'}</div>
               <button className="btn-primary" style={{ marginTop: '1.5rem', fontSize: '0.85rem' }} onClick={() => navigate('/register')}>
-                <UserPlus size={16} /> Register First Citizen
+                <UserPlus size={16} /> {t('Register First Citizen') || 'Register First Citizen'}
               </button>
             </div>
           ) : (
@@ -298,7 +298,7 @@ export default function Dashboard() {
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.1rem', fontWeight: 500 }}>{c.nationalIdNumber}</div>
                   </div>
                   <span className={c.status === 'Active' ? 'badge-active' : c.status === 'Pending' ? 'badge-pending' : 'badge-rejected'}>
-                    {c.status}
+                    {t(c.status) || c.status}
                   </span>
                 </motion.div>
               ))}
