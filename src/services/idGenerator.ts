@@ -4,20 +4,56 @@ import type { Citizen, Gender, CitizenStatus, MaritalStatus } from '../types';
 import { getCitizens } from './storage';
 import { compressImage } from './imageUtils';
 
-/** Generate a unique National ID like WB-2026-48291 (5 random digits) */
-export async function generateNationalIdNumber(): Promise<string> {
-  const year = new Date().getFullYear();
+/** Generate a unique National ID: WB-GYYRYMMDDSSS */
+export async function generateNationalIdNumber(gender: Gender, dateOfBirth: string): Promise<string> {
   const citizens = await getCitizens();
-  const existingIds = new Set(citizens.map(c => c.nationalIdNumber));
+  
+  // WB = Fixed prefix
+  const prefix = 'WB';
+  
+  // G = Gender Code (1 = Male, 2 = Female)
+  const g = gender === 'Male' ? '1' : '2';
+  
+  // YY = Last 2 digits of Birth Year
+  let dobYear = '00';
+  try {
+    const d = new Date(dateOfBirth);
+    if (!isNaN(d.getTime())) {
+      dobYear = d.getFullYear().toString().slice(-2);
+    }
+  } catch (e) {}
 
-  let candidate = '';
-  do {
-    const randomHex = uuidv4().split('-')[0].toUpperCase();
-    const randomPart2 = uuidv4().split('-')[1].toUpperCase();
-    candidate = `WB-${year}-${randomHex}${randomPart2}`;
-  } while (existingIds.has(candidate));
+  const now = new Date();
+  
+  // RY = Last 2 digits of Registration Year
+  const ry = now.getFullYear().toString().slice(-2);
+  
+  // MM = Registration Month
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  
+  // DD = Registration Day
+  const dd = String(now.getDate()).padStart(2, '0');
 
-  return candidate;
+  // Base prefix for search: WB-GYYRYMMDD
+  const baseId = `${prefix}-${g}${dobYear}${ry}${mm}${dd}`;
+
+  // SSS = Unique Serial Number (3 digits)
+  // Find all existing IDs that start with this base
+  let maxSerial = 0;
+  for (const citizen of citizens) {
+    if (citizen.nationalIdNumber?.startsWith(baseId)) {
+      const serialStr = citizen.nationalIdNumber.slice(baseId.length);
+      const serialNum = parseInt(serialStr, 10);
+      if (!isNaN(serialNum) && serialNum > maxSerial) {
+        maxSerial = serialNum;
+      }
+    }
+  }
+
+  const newSerial = maxSerial + 1;
+  const sss = String(newSerial).padStart(3, '0');
+
+  return `${baseId}${sss}`;
 }
 
 /** Generate QR Code as data URL */
@@ -47,7 +83,7 @@ export async function buildCitizen(form: {
   status?: CitizenStatus;
 }): Promise<Citizen> {
   const id = uuidv4();
-  const nationalIdNumber = await generateNationalIdNumber();  // ← await
+  const nationalIdNumber = await generateNationalIdNumber(form.gender, form.dateOfBirth);
   const now = new Date();
   const issueDate = now.toISOString().split('T')[0];
   const expiryDate = new Date(now.setFullYear(now.getFullYear() + 10))
