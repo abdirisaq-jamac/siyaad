@@ -136,7 +136,20 @@ export const translations: Translations = {
   "Citizen Photo": { en: "Citizen Photo", so: "Sawirka Muwaadinka", ar: "صورة المواطن" },
   "Clear Form": { en: "Clear Form", so: "Nadiifi Foomka", ar: "مسح النموذج" },
   "Reset": { en: "Reset", so: "Tirtir", ar: "إعادة تعيين" },
-  "Save & Generate National ID": { en: "Save & Generate National ID", so: "Xafid & Samee Kaadhka", ar: "حفظ وإنشاء هوية وطنية" }
+  "Save & Generate National ID": { en: "Save & Generate National ID", so: "Xafid & Samee Kaadhka", ar: "حفظ وإنشاء هوية وطنية" },
+  
+  // Public Verify / QR
+  "Verifying identity...": { en: "Verifying identity...", so: "Xaqiijinaya aqoonsiga...", ar: "جاري التحقق من الهوية..." },
+  "Identity Not Found": { en: "Identity Not Found", so: "Aqoonsi Lama Helin", ar: "لم يتم العثور على الهوية" },
+  "No registered citizen matches National ID": { en: "No registered citizen matches National ID", so: "Muwaadin diiwaangashan ma laha ID-gan:", ar: "لا يوجد مواطن مسجل يطابق الهوية الوطنية" },
+  "This QR code may be invalid or the record has been removed.": { en: "This QR code may be invalid or the record has been removed.", so: "QR-kan ayaa dhici karta inuu qaldan yahay ama xogta la tirtiray.", ar: "قد يكون رمز الاستجابة السريعة هذا غير صالح أو تم إزالة السجل." },
+  "VERIFIED — ACTIVE CITIZEN": { en: "VERIFIED — ACTIVE CITIZEN", so: "WAA LA XAQIIJIYAY — FIRFIRCOON", ar: "تم التحقق — مواطن نشط" },
+  "VERIFIED": { en: "VERIFIED", so: "LA XAQIIJIYAY", ar: "تم التحقق" },
+  "ID Card Information": { en: "ID Card Information", so: "Xogta Kaadhka Aqoonsiga", ar: "معلومات بطاقة الهوية" },
+  "Issue Date": { en: "Issue Date", so: "Taariikhda Bixinta", ar: "تاريخ الإصدار" },
+  "Valid Until": { en: "Valid Until", so: "Wuxuu Dhacayaa", ar: "صالح حتى" },
+  "Registered On": { en: "Registered On", so: "La Diiwaangeliyay", ar: "تاريخ التسجيل" },
+  "Verified on": { en: "Verified on", so: "La Xaqiijiyay", ar: "تم التحقق في" }
 };
 
 interface I18nContextType {

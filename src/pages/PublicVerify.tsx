@@ -8,6 +8,7 @@ import {
 import { getCitizenByNationalId } from '../services/storage';
 import type { Citizen } from '../types';
 import { format, isValid } from 'date-fns';
+import { useTranslation } from '../i18n';
 
 function safeFormat(dateStr: string, formatStr: string) {
   try {
@@ -45,6 +46,7 @@ function InfoField({ icon, label, value }: FieldProps) {
 
 export default function PublicVerify() {
   const { nationalId } = useParams<{ nationalId: string }>();
+  const { t, language, setLanguage } = useTranslation();
   const [citizen, setCitizen] = useState<Citizen | null | 'not-found'>(null);
   const [loading, setLoading] = useState(true);
 
@@ -66,12 +68,28 @@ export default function PublicVerify() {
       display: 'flex', flexDirection: 'column', alignItems: 'center',
       padding: '2rem 1rem', fontFamily: "'Inter', sans-serif",
     }}>
-      {/* Header */}
+      {/* Header with Language Switcher */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
-        style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        style={{ textAlign: 'center', marginBottom: '2rem', position: 'relative', width: '100%', maxWidth: 640 }}>
+        
+        <div style={{ position: 'absolute', right: 0, top: 0 }}>
+          <select 
+            value={language} 
+            onChange={(e) => setLanguage(e.target.value as 'en' | 'so' | 'ar')}
+            style={{ 
+              background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', 
+              borderRadius: 8, padding: '0.4rem', fontSize: '0.8rem', cursor: 'pointer', outline: 'none'
+            }}
+          >
+            <option value="en" style={{ color: 'black' }}>English</option>
+            <option value="so" style={{ color: 'black' }}>Soomaali</option>
+            <option value="ar" style={{ color: 'black' }}>العربية</option>
+          </select>
+        </div>
+
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 50, padding: '0.6rem 1.25rem', marginBottom: '1.25rem' }}>
           <Shield size={18} color="#60a5fa" />
-          <span style={{ color: '#93c5fd', fontWeight: 700, fontSize: '0.85rem' }}>Waqooyi Bari · Identity Verification</span>
+          <span style={{ color: '#93c5fd', fontWeight: 700, fontSize: '0.85rem' }}>{t('Waqooyi Bari National ID Management System')} · {t('QR Verification')}</span>
         </div>
         <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem' }}>Powered by Siyaad National ID System</div>
       </motion.div>
@@ -81,7 +99,7 @@ export default function PublicVerify() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
           <div style={{ width: 52, height: 52, border: '4px solid rgba(255,255,255,0.1)', borderTop: '4px solid #60a5fa', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-          <div style={{ color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>Verifying identity…</div>
+          <div style={{ color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>{t('Verifying identity...')}</div>
         </motion.div>
       )}
 
@@ -92,9 +110,9 @@ export default function PublicVerify() {
           <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'rgba(239,68,68,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
             <XCircle size={36} color="#ef4444" />
           </div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#fca5a5', marginBottom: '0.75rem' }}>Identity Not Found</h2>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#fca5a5', marginBottom: '0.75rem' }}>{t('Identity Not Found')}</h2>
           <p style={{ color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>
-            No registered citizen matches National ID <strong style={{ color: '#fff' }}>{nationalId}</strong>. This QR code may be invalid or the record has been removed.
+            {t('No registered citizen matches National ID')} <strong style={{ color: '#fff' }}>{nationalId}</strong>. {t('This QR code may be invalid or the record has been removed.')}
           </p>
         </motion.div>
       )}
@@ -115,7 +133,7 @@ export default function PublicVerify() {
             }}>
             {isActive ? <CheckCircle size={18} color="#10b981" /> : isPending ? <AlertCircle size={18} color="#f59e0b" /> : <XCircle size={18} color="#ef4444" />}
             <span style={{ fontWeight: 700, fontSize: '0.9rem', color: isActive ? '#6ee7b7' : isPending ? '#fcd34d' : '#fca5a5' }}>
-              {isActive ? 'VERIFIED — ACTIVE CITIZEN' : `VERIFIED — ${citizen.status.toUpperCase()}`}
+              {isActive ? t('VERIFIED — ACTIVE CITIZEN') : `${t('VERIFIED')} — ${t(citizen.status).toUpperCase()}`}
             </span>
           </motion.div>
 
@@ -140,7 +158,7 @@ export default function PublicVerify() {
                   </div>
                 )}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.4rem' }}>Full Name</div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.4rem' }}>{t('Full Name')}</div>
                   <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'white', lineHeight: 1.2, marginBottom: '0.5rem', wordBreak: 'break-word' }}>{citizen.fullName}</div>
                   <div style={{ fontFamily: 'monospace', fontSize: '0.85rem', fontWeight: 700, color: '#93c5fd', background: 'rgba(96,165,250,0.1)', padding: '0.25rem 0.75rem', borderRadius: 8, display: 'inline-block' }}>
                     {citizen.nationalIdNumber}
@@ -153,25 +171,25 @@ export default function PublicVerify() {
 
               {/* Personal Info Grid */}
               <div style={{ marginBottom: '1rem', fontSize: '0.75rem', fontWeight: 700, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                Personal Information
+                {t('Personal Information')}
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
-                <InfoField icon={<User size={13} />} label="Father's Name" value={citizen.fatherName} />
-                <InfoField icon={<User size={13} />} label="Mother's Name" value={citizen.motherName} />
-                <InfoField icon={<User size={13} />} label="Gender" value={citizen.gender} />
-                <InfoField icon={<Heart size={13} />} label="Marital Status" value={citizen.maritalStatus} />
-                <InfoField icon={<Calendar size={13} />} label="Date of Birth" value={safeFormat(citizen.dateOfBirth, 'dd MMM yyyy')} />
-                <InfoField icon={<MapPin size={13} />} label="Place of Birth" value={citizen.placeOfBirth} />
-                <InfoField icon={<Briefcase size={13} />} label="Occupation" value={citizen.occupation || '—'} />
-                <InfoField icon={<Phone size={13} />} label="Phone Number" value={citizen.phone} />
-                <InfoField icon={<MapPin size={13} />} label="District" value={citizen.district} />
-                <InfoField icon={<UserCheck size={13} />} label="Registration Status" value={citizen.status} />
+                <InfoField icon={<User size={13} />} label={t('Father Name')} value={citizen.fatherName} />
+                <InfoField icon={<User size={13} />} label={t('Mother Name')} value={citizen.motherName} />
+                <InfoField icon={<User size={13} />} label={t('Gender')} value={t(citizen.gender)} />
+                <InfoField icon={<Heart size={13} />} label={t('Marital Status')} value={t(citizen.maritalStatus)} />
+                <InfoField icon={<Calendar size={13} />} label={t('Date of Birth')} value={safeFormat(citizen.dateOfBirth, 'dd MMM yyyy')} />
+                <InfoField icon={<MapPin size={13} />} label={t('Place of Birth')} value={citizen.placeOfBirth} />
+                <InfoField icon={<Briefcase size={13} />} label={t('Occupation')} value={citizen.occupation || '—'} />
+                <InfoField icon={<Phone size={13} />} label={t('Phone Number')} value={citizen.phone} />
+                <InfoField icon={<MapPin size={13} />} label={t('District')} value={citizen.district} />
+                <InfoField icon={<UserCheck size={13} />} label={t('Registration Status')} value={t(citizen.status)} />
               </div>
 
               {/* Full address */}
               {citizen.address && (
                 <div style={{ marginBottom: '1rem' }}>
-                  <InfoField icon={<Home size={13} />} label="Full Address" value={citizen.address} />
+                  <InfoField icon={<Home size={13} />} label={t('Full Address')} value={citizen.address} />
                 </div>
               )}
 
@@ -180,20 +198,20 @@ export default function PublicVerify() {
 
               {/* ID Validity */}
               <div style={{ marginBottom: '1rem', fontSize: '0.75rem', fontWeight: 700, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                ID Card Information
+                {t('ID Card Information')}
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                <InfoField icon={<Calendar size={13} />} label="Issue Date" value={safeFormat(citizen.issueDate, 'dd MMM yyyy')} />
-                <InfoField icon={<Calendar size={13} />} label="Valid Until" value={safeFormat(citizen.expiryDate, 'dd MMM yyyy')} />
-                <InfoField icon={<Hash size={13} />} label="National ID Number" value={citizen.nationalIdNumber} />
-                <InfoField icon={<Clock size={13} />} label="Registered On" value={safeFormat(citizen.registrationDate, 'dd MMM yyyy')} />
+                <InfoField icon={<Calendar size={13} />} label={t('Issue Date')} value={safeFormat(citizen.issueDate, 'dd MMM yyyy')} />
+                <InfoField icon={<Calendar size={13} />} label={t('Valid Until')} value={safeFormat(citizen.expiryDate, 'dd MMM yyyy')} />
+                <InfoField icon={<Hash size={13} />} label={t('National ID')} value={citizen.nationalIdNumber} />
+                <InfoField icon={<Clock size={13} />} label={t('Registered On')} value={safeFormat(citizen.registrationDate, 'dd MMM yyyy')} />
               </div>
             </div>
           </motion.div>
 
           {/* Footer */}
           <div style={{ textAlign: 'center', marginTop: '1.5rem', color: 'rgba(255,255,255,0.3)', fontSize: '0.75rem' }}>
-            Verified on {safeFormat(new Date().toISOString(), 'dd MMM yyyy, HH:mm')} · Waqooyi Bari National ID System
+            {t('Verified on')} {safeFormat(new Date().toISOString(), 'dd MMM yyyy, HH:mm')} · Waqooyi Bari National ID System
           </div>
         </motion.div>
       )}
