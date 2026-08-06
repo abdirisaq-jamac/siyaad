@@ -17,7 +17,7 @@ function safeFormat(dateStr: string, formatStr: string) {
 }
 
 export default function PublicVerify() {
-  const { t } = useTranslation();
+  const { t, language, setLanguage } = useTranslation();
   const { nationalId } = useParams<{ nationalId: string }>();
   const [citizen, setCitizen] = useState<Citizen | null | 'not-found'>(null);
   const [loading, setLoading] = useState(true);
@@ -38,9 +38,25 @@ export default function PublicVerify() {
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       padding: '2rem 1rem', fontFamily: "'Inter', sans-serif",
     }}>
+      {/* Language Switcher */}
+      <div style={{ position: 'absolute', top: '1rem', right: '1rem', zIndex: 10 }}>
+        <select 
+          value={language}
+          onChange={(e) => setLanguage(e.target.value as any)}
+          style={{ 
+            background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', 
+            borderRadius: '8px', padding: '0.4rem 0.8rem', fontSize: '0.85rem', outline: 'none', cursor: 'pointer' 
+          }}
+        >
+          <option value="so" style={{ color: 'black' }}>Soomaali</option>
+          <option value="en" style={{ color: 'black' }}>English</option>
+          <option value="ar" style={{ color: 'black' }}>العربية</option>
+        </select>
+      </div>
+
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
-        style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        style={{ textAlign: 'center', marginBottom: '2rem', marginTop: '1rem' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 50, padding: '0.6rem 1.25rem', marginBottom: '1.25rem' }}>
           <Shield size={18} color="#60a5fa" />
           <span style={{ color: '#93c5fd', fontWeight: 700, fontSize: '0.85rem' }}>{t('Waqooyi Bari · Identity Verification')}</span>
