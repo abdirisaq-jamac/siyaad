@@ -11,7 +11,13 @@ import { QRCodeSVG } from 'qrcode.react';
 
 // ─── Card Face Components ──────────────────────────────────────────────────
 
-
+function getDynamicFs(text: string, defaultSize: number, maxLength: number) {
+  if (!text) return defaultSize;
+  const len = text.length;
+  if (len <= maxLength) return defaultSize;
+  const ratio = maxLength / len;
+  return Math.max(defaultSize * ratio * 1.35, defaultSize * 0.5);
+}
 
 function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSettings | null }) {
   const nameParts = citizen.fullName.trim().split(' ');
@@ -119,16 +125,16 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
       <div style={{ display: 'flex', padding: '5px 14px 10px', position: 'relative', zIndex: 10, height: 'calc(100% - 56px)' }}>
         
         {/* Text Details */}
-        <div style={{ flex: 1, paddingLeft: 16, display: 'flex', flexDirection: 'column', gap: 6, paddingTop: 4 }}>
+        <div style={{ flex: 1, paddingLeft: 16, display: 'flex', flexDirection: 'column', gap: 6, paddingTop: 4, minWidth: 0 }}>
           <div>
             <div style={{ fontSize: 8, color: '#333', lineHeight: 1 }}>Tirsiga Aqoonsiga / ID Number</div>
             <div style={{ fontSize: 12, fontWeight: 900, color: '#111', lineHeight: 1.2, letterSpacing: '0.02em' }}>{citizen.nationalIdNumber}</div>
           </div>
           
-          <div>
+          <div style={{ overflow: 'hidden' }}>
             <div style={{ fontSize: 8, color: '#333', lineHeight: 1 }}>Magaca / Name</div>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#111', lineHeight: 1.1, textTransform: 'uppercase' }}>{firstName}</div>
-            <div style={{ fontSize: 11, fontWeight: 800, color: '#111', lineHeight: 1.1, textTransform: 'uppercase', wordBreak: 'break-word' as const }}>{restName}</div>
+            <div style={{ fontSize: getDynamicFs(firstName, 10, 12), fontWeight: 700, color: '#111', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{firstName}</div>
+            <div style={{ fontSize: getDynamicFs(restName, 11, 15), fontWeight: 800, color: '#111', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{restName}</div>
           </div>
 
           <div>
@@ -410,7 +416,7 @@ export default function IdCardPreview() {
                       )}
                     </td>
                     <td>
-                      <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.95rem', wordBreak: 'break-word', maxWidth: 200 }}>{c.fullName}</div>
+                      <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.95rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 200 }}>{c.fullName}</div>
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>{c.gender} • {c.occupation}</div>
                     </td>
                     <td><code style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', padding: '0.3rem 0.6rem', borderRadius: '6px', fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 600 }}>{c.nationalIdNumber}</code></td>

@@ -123,9 +123,15 @@ const Field = ({ id, label, error, children, required }: { id: string; label: st
   </motion.div>
 );
 
-// Fixed font size for text to prevent mobile zoom
+// Dynamic font size for text to prevent overflow but fit long names
 function autoFs(text: string, base: number = 1): string {
-  return `16px`;
+  if (!text) return '16px';
+  const len = text.length;
+  if (len <= 20) return '16px';
+  const ratio = 20 / len;
+  // shrink down to a minimum of 11px
+  const calculated = Math.max(16 * ratio * 1.3, 11);
+  return `${calculated}px`;
 }
 
 export default function RegisterCitizen() {
@@ -408,17 +414,17 @@ export default function RegisterCitizen() {
                 )}
                 
                 <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gridColumn: '1 / -1' }}>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('Full Name')}</span>
-                    <span style={{ fontSize: autoFs(form.fullName, 1), color: 'var(--text-main)', fontWeight: 700, wordBreak: 'break-word' }}>{form.fullName || '—'}</span>
+                    <span style={{ fontSize: autoFs(form.fullName, 1), color: 'var(--text-main)', fontWeight: 700 }}>{form.fullName || '—'}</span>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gridColumn: '1 / -1' }}>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('Father Name')}</span>
-                    <span style={{ fontSize: autoFs(form.fatherName, 1), color: 'var(--text-main)', fontWeight: 500, wordBreak: 'break-word' }}>{form.fatherName || '—'}</span>
+                    <span style={{ fontSize: autoFs(form.fatherName, 1), color: 'var(--text-main)', fontWeight: 500 }}>{form.fatherName || '—'}</span>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gridColumn: '1 / -1' }}>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('Mother Name')}</span>
-                    <span style={{ fontSize: autoFs(form.motherName, 1), color: 'var(--text-main)', fontWeight: 500, wordBreak: 'break-word' }}>{form.motherName || '—'}</span>
+                    <span style={{ fontSize: autoFs(form.motherName, 1), color: 'var(--text-main)', fontWeight: 500 }}>{form.motherName || '—'}</span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('Date of Birth')}</span>
