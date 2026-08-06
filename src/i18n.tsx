@@ -156,7 +156,22 @@ export const translations: Translations = {
   "Issue Date": { en: "Issue Date", so: "Taariikhda Bixinta", ar: "تاريخ الإصدار" },
   "Valid Until": { en: "Valid Until", so: "Wuxuu Dhacayaa", ar: "صالح حتى" },
   "Registered On": { en: "Registered On", so: "La Diiwaangeliyay", ar: "تاريخ التسجيل" },
-  "Verified on": { en: "Verified on", so: "La Xaqiijiyay", ar: "تم التحقق في" }
+  "Verified on": { en: "Verified on", so: "La Xaqiijiyay", ar: "تم التحقق في" },
+
+  // QR Verification (admin page)
+  "Identity Verification": { en: "Identity Verification", so: "Xaqiijinta Aqoonsiga", ar: "التحقق من الهوية" },
+  "Enter a National ID Number or a 3-part full name to verify a citizen's identity instantly.": {
+    en: "Enter a National ID Number or a 3-part full name to verify a citizen's identity instantly.",
+    so: "Gal ID Qaranka ama magac la 3-qayb ah si aad xaqiijiso aqoonsiga muwaadinka mar kale.",
+    ar: "أدخل رقم الهوية الوطنية أو اسمًا كاملاً مكوّن من 3 أجزاء للتحقق من هوية مواطن على الفور."
+  },
+  "Verify Now": { en: "Verify Now", so: "Xaqiiji Hadda", ar: "تحقق الآن" },
+  "Citizen Identity Confirmed": { en: "Citizen Identity Confirmed", so: "Aqoonsiga Muwaadinka Waa La Xaqiijiyay", ar: "تم تأكيد هوية المواطن" },
+  "Multiple Citizens Found": { en: "Multiple Citizens Found", so: "Muawaad Xoolo ah La Helay", ar: "تم العثور على عدة مواطنين" },
+  "No Record Found": { en: "No Record Found", so: "Xog Lama Helin", ar: "لم يتم العثور على سجل" },
+  "does not match any registered citizen in our system.": { en: "does not match any registered citizen in our system.", so: "ma dhigin midnah oo ku jira nidaamkaaga.", ar: "لا يتطابق مع أي مواطن مسجل في نظامنا." },
+  "View Full Profile": { en: "View Full Profile", so: "Fiiray Xogga Buuxa", ar: "عرض البيانات الكاملة" },
+  "View ID Card": { en: "View ID Card", so: "Fiiray Kaadhka", ar: "عرض بطاقة الهوية" }
 };
 
 interface I18nContextType {

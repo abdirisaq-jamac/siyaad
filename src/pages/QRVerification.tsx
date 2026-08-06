@@ -12,7 +12,7 @@ export default function QRVerification() {
   const [result, setResult] = useState<Citizen | null | 'not-found'>(null);
   const [multiResults, setMultiResults] = useState<Citizen[]>([]);
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, language, setLanguage } = useTranslation();
   // Removed local dark mode state (managed globally)
 
 
@@ -60,12 +60,26 @@ export default function QRVerification() {
 
   return (
     <motion.div initial="hidden" animate="visible" variants={containerVariants} style={{ maxWidth: '850px', margin: '0 auto', padding: '2rem 1rem' }}>
-      <motion.div variants={itemVariants} style={{ textAlign: 'center', marginBottom: '3rem' }}>
+      <motion.div variants={itemVariants} style={{ textAlign: 'center', marginBottom: '3rem', position: 'relative' }}>
+        <div style={{ position: 'absolute', right: 0, top: 0 }}>
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value as 'en' | 'so' | 'ar')}
+            style={{
+              background: 'var(--bg-main)', color: 'var(--text-main)', border: '1px solid var(--border-color)',
+              borderRadius: 8, padding: '0.4rem 0.6rem', fontSize: '0.85rem', cursor: 'pointer', outline: 'none'
+            }}
+          >
+            <option value="en">English</option>
+            <option value="so">Soomaali</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
         <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 80, height: 80, borderRadius: '50%', background: 'var(--primary-gradient)', color: 'white', marginBottom: '1.5rem', boxShadow: 'var(--shadow-md)' }}>
           <QrCode size={40} />
         </div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>{t('Identity Verification') || 'Identity Verification'}</h1>
-        <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', maxWidth: '500px', margin: '0 auto' }}>{t('Enter a National ID Number or a 3-part full name to verify a citizen\'s identity instantly.') || 'Enter a National ID Number or a 3-part full name to verify a citizen\'s identity instantly.'}</p>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>{t('Identity Verification')}</h1>
+        <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', maxWidth: '500px', margin: '0 auto' }}>{t("Enter a National ID Number or a 3-part full name to verify a citizen's identity instantly.")}</p>
       </motion.div>
 
       <motion.div variants={itemVariants} className="glass-card" style={{ padding: '2rem', marginBottom: '2.5rem' }}>
@@ -91,7 +105,7 @@ export default function QRVerification() {
             style={{ padding: '1.1rem 2rem', fontSize: '1.1rem', borderRadius: '12px' }}
             onClick={handleSearch}
           >
-            {t('Verify Now') || 'Verify Now'}
+            {t('Verify Now')}
           </motion.button>
         </div>
       </motion.div>
@@ -100,7 +114,7 @@ export default function QRVerification() {
         {multiResults.length > 0 && (
           <motion.div key="multi" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="glass-card" style={{ padding: '2rem', marginBottom: '2rem' }}>
             <div style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-main)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <User size={24} style={{ color: 'var(--primary-color)' }} /> Multiple Citizens Found ({multiResults.length})
+              <User size={24} style={{ color: 'var(--primary-color)' }} /> {t('Multiple Citizens Found')} ({multiResults.length})
             </div>
             <div style={{ display: 'grid', gap: '1rem' }}>
               {multiResults.map(c => (
@@ -133,9 +147,9 @@ export default function QRVerification() {
             <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(239, 68, 68, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
               <XCircle size={40} style={{ color: '#ef4444' }} />
             </div>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.75rem' }}>No Record Found</h3>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.75rem' }}>{t('No Record Found')}</h3>
             <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', maxWidth: '400px', margin: '0 auto' }}>
-              The National ID or Name <strong style={{ color: 'var(--text-main)' }}>"{query}"</strong> does not match any registered citizen in our system.
+              The National ID or Name <strong style={{ color: 'var(--text-main)' }}>"{query}"</strong> {t('does not match any registered citizen in our system.')}
             </p>
           </motion.div>
         )}
@@ -159,13 +173,13 @@ export default function QRVerification() {
                 )}
                 <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
                   <span className={result.status === 'Active' ? 'badge-active' : result.status === 'Pending' ? 'badge-pending' : 'badge-rejected'} style={{ fontSize: '0.85rem', padding: '0.4rem 1rem' }}>
-                    <CheckCircle size={14} style={{ display: 'inline', marginRight: '4px' }} /> {t('VERIFIED') || 'Verified'} {t(result.status)}
+                    <CheckCircle size={14} style={{ display: 'inline', marginRight: '4px' }} />             {t('VERIFIED')} {t(result.status)}
                   </span>
                 </div>
               </div>
               
               <div style={{ flex: 1, minWidth: '300px' }}>
-                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--primary-color)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>{t('Citizen Identity Confirmed') || 'Citizen Identity Confirmed'}</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--primary-color)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>{t('Citizen Identity Confirmed')}</div>
                 <h2 style={{ fontSize: '2.25rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '1.5rem', lineHeight: 1.1 }}>{result.fullName}</h2>
                 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.25rem' }}>
@@ -205,10 +219,10 @@ export default function QRVerification() {
 
                 <div style={{ display: 'flex', gap: '1rem', marginTop: '2.5rem', flexWrap: 'wrap' }}>
                   <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-secondary" onClick={() => navigate(`/citizens/${result.id}`)}>
-                    View Full Profile
+                    {t('View Full Profile')}
                   </motion.button>
                   <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary" onClick={() => navigate(`/id-cards/${result.id}`)}>
-                    View ID Card
+                    {t('View ID Card')}
                   </motion.button>
                 </div>
               </div>
