@@ -70,9 +70,9 @@ export default function QRVerification() {
               borderRadius: 8, padding: '0.4rem 0.6rem', fontSize: '0.85rem', cursor: 'pointer', outline: 'none'
             }}
           >
-            <option value="en">English</option>
-            <option value="so">Soomaali</option>
-            <option value="ar">العربية</option>
+             <option value="en">{t('English')}</option>
+             <option value="so">{t('Somali')}</option>
+             <option value="ar">{t('Arabic')}</option>
           </select>
         </div>
         <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 80, height: 80, borderRadius: '50%', background: 'var(--primary-gradient)', color: 'white', marginBottom: '1.5rem', boxShadow: 'var(--shadow-md)' }}>

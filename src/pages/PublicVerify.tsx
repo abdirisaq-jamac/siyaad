@@ -82,9 +82,9 @@ export default function PublicVerify() {
               backdropFilter: 'blur(4px)'
             }}
           >
-            <option value="en" style={{ color: 'black' }}>English</option>
-            <option value="so" style={{ color: 'black' }}>Soomaoli</option>
-            <option value="ar" style={{ color: 'black' }}>العربية</option>
+             <option value="en" style={{ color: 'black' }}>{t('English')}</option>
+             <option value="so" style={{ color: 'black' }}>{t('Somali')}</option>
+             <option value="ar" style={{ color: 'black' }}>{t('Arabic')}</option>
           </select>
         </div>
 
