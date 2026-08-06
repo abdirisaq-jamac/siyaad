@@ -6,7 +6,6 @@ import { getCitizenByNationalId } from '../services/storage';
 import type { Citizen } from '../types';
 import { format, isValid } from 'date-fns';
 import { useTranslation } from '../i18n';
-import { format, isValid } from 'date-fns';
 
 function safeFormat(dateStr: string, formatStr: string) {
   try {
