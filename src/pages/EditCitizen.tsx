@@ -67,9 +67,15 @@ const Field = ({ id: fid, label, children, required }: { id: string; label: stri
   </motion.div>
 );
 
-// Fixed font size for text to prevent mobile zoom
+// Dynamic font size for text to prevent overflow but fit long names
 function autoFs(text: string, base: number = 1): string {
-  return `16px`;
+  if (!text) return '16px';
+  const len = text.length;
+  if (len <= 20) return '16px';
+  const ratio = 20 / len;
+  // shrink down to a minimum of 11px
+  const calculated = Math.max(16 * ratio * 1.3, 11);
+  return `${calculated}px`;
 }
 
 export default function EditCitizen() {
@@ -193,13 +199,13 @@ export default function EditCitizen() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
-              <div style={{ gridColumn: '1 / -1' }}>
+              <div>
                 <Field id="fullName" label="Full Name" required><input id="fullName" className="form-input" style={{ fontSize: autoFs(form.fullName || '') }} value={form.fullName || ''} onChange={e => set('fullName', e.target.value)} required /></Field>
               </div>
-              <div style={{ gridColumn: '1 / -1' }}>
+              <div>
                 <Field id="fatherName" label="Father Name" required><input id="fatherName" className="form-input" style={{ fontSize: autoFs(form.fatherName || '') }} value={form.fatherName || ''} onChange={e => set('fatherName', e.target.value)} required /></Field>
               </div>
-              <div style={{ gridColumn: '1 / -1' }}>
+              <div>
                 <Field id="motherName" label="Mother Name" required><input id="motherName" className="form-input" style={{ fontSize: autoFs(form.motherName || '') }} value={form.motherName || ''} onChange={e => set('motherName', e.target.value)} required /></Field>
               </div>
               
