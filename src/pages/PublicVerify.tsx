@@ -77,12 +77,13 @@ export default function PublicVerify() {
             value={language} 
             onChange={(e) => setLanguage(e.target.value as 'en' | 'so' | 'ar')}
             style={{ 
-              background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', 
-              borderRadius: 8, padding: '0.4rem', fontSize: '0.8rem', cursor: 'pointer', outline: 'none'
+              background: 'rgba(255,255,255,0.18)', color: 'white', border: '1px solid rgba(255,255,255,0.35)', 
+              borderRadius: 8, padding: '0.4rem 0.6rem', fontSize: '0.85rem', cursor: 'pointer', outline: 'none',
+              backdropFilter: 'blur(4px)'
             }}
           >
             <option value="en" style={{ color: 'black' }}>English</option>
-            <option value="so" style={{ color: 'black' }}>Soomaali</option>
+            <option value="so" style={{ color: 'black' }}>Soomaoli</option>
             <option value="ar" style={{ color: 'black' }}>العربية</option>
           </select>
         </div>
