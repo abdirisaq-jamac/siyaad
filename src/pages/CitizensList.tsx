@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Trash2, Edit, Eye, UserPlus, Download, Filter, AlertTriangle } from 'lucide-react';
+import { Search, Trash2, Edit, Eye, UserPlus, Download, Filter, AlertTriangle, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { getCitizens, deleteCitizen } from '../services/storage';
 import type { Citizen, AppUser } from '../types';
 import { format } from 'date-fns';
-import { useTranslation } from '../i18n';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -21,14 +20,9 @@ const itemVariants = {
 };
 
 export default function CitizensList() {
-  const { t } = useTranslation();
   const [citizens, setCitizens] = useState<Citizen[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
-  
-  // Sorting state
-  const [sortField, setSortField] = useState<'name' | 'date' | 'id'>('date');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [statusFilter, setStatusFilter] = useState('All');
   const [genderFilter, setGenderFilter] = useState('All');
   const [districtFilter, setDistrictFilter] = useState('All');
@@ -38,6 +32,24 @@ export default function CitizensList() {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
+
+  // Sorting state
+  const [sortField, setSortField] = useState<string>('');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+
+  function handleSort(field: string) {
+    if (sortField === field) {
+      setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDir('asc');
+    }
+  }
+
+  function SortIcon({ field }: { field: string }) {
+    if (sortField !== field) return <ChevronsUpDown size={13} style={{ opacity: 0.4 }} />;
+    return sortDir === 'asc' ? <ChevronUp size={13} style={{ color: 'var(--primary-color)' }} /> : <ChevronDown size={13} style={{ color: 'var(--primary-color)' }} />;
+  }
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -79,9 +91,6 @@ export default function CitizensList() {
   // Sync pageInput with currentPage
   useEffect(() => { setPageInput(currentPage.toString()); }, [currentPage]);
 
-  // Sync pageInput with currentPage
-  useEffect(() => { setPageInput(currentPage.toString()); }, [currentPage]);
-
   const filtered = citizens.filter(c => {
     const q = query.toLowerCase();
     const matchQ = !q || c.fullName.toLowerCase().includes(q) ||
@@ -95,16 +104,19 @@ export default function CitizensList() {
     return matchQ && matchS && matchG && matchD && matchO && matchM;
   });
 
+  // Sorting
   const sorted = [...filtered].sort((a, b) => {
-    let result = 0;
-    if (sortField === 'name') {
-      result = a.fullName.localeCompare(b.fullName);
-    } else if (sortField === 'id') {
-      result = a.nationalIdNumber.localeCompare(b.nationalIdNumber);
-    } else if (sortField === 'date') {
-      result = new Date(a.registrationDate).getTime() - new Date(b.registrationDate).getTime();
-    }
-    return sortOrder === 'asc' ? result : -result;
+    if (!sortField) return 0;
+    let av: string = '';
+    let bv: string = '';
+    if (sortField === 'name') { av = a.fullName; bv = b.fullName; }
+    else if (sortField === 'id') { av = a.nationalIdNumber; bv = b.nationalIdNumber; }
+    else if (sortField === 'district') { av = a.district; bv = b.district; }
+    else if (sortField === 'status') { av = a.status; bv = b.status; }
+    else if (sortField === 'registered') { av = a.registrationDate; bv = b.registrationDate; }
+    else if (sortField === 'gender') { av = a.gender; bv = b.gender; }
+    const cmp = av.localeCompare(bv);
+    return sortDir === 'asc' ? cmp : -cmp;
   });
 
   const allDistricts = Array.from(new Set(citizens.map(c => c.district))).filter(Boolean).sort();
@@ -188,8 +200,8 @@ export default function CitizensList() {
     <motion.div initial="hidden" animate="visible" variants={containerVariants}>
       <motion.div variants={itemVariants} className="page-header">
         <div>
-          <div className="page-title">{t('Citizens List')}</div>
-          <div className="page-subtitle">{sorted.length} of {citizens.length} {t('citizens found')}</div>
+          <div className="page-title">Citizens List</div>
+          <div className="page-subtitle">{sorted.length} of {citizens.length} citizens found</div>
         </div>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           <motion.button 
@@ -198,10 +210,10 @@ export default function CitizensList() {
             className="btn-secondary" 
             onClick={exportCSV}
           >
-            <Download size={18} /> {selectedCitizens.size > 0 ? `${t('Export CSV')} (${selectedCitizens.size})` : t('Export CSV')}
+            <Download size={18} /> {selectedCitizens.size > 0 ? `Export CSV (${selectedCitizens.size})` : 'Export CSV'}
           </motion.button>
           <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary" onClick={() => navigate('/register')}>
-            <UserPlus size={18} /> {t('Register New')}
+            <UserPlus size={18} /> Register New
           </motion.button>
         </div>
       </motion.div>
@@ -215,7 +227,7 @@ export default function CitizensList() {
         }} className="focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20">
           <Search size={18} style={{ color: 'var(--text-muted)' }} />
           <input
-            placeholder={t('Search by name, ID, phone, district…') || "Search..."}
+            placeholder="Search by name, ID, phone, district…"
             value={query} onChange={e => setQuery(e.target.value)}
             style={{ background: 'none', border: 'none', outline: 'none', color: 'var(--text-main)', fontSize: '0.95rem', width: '100%' }}
           />
@@ -336,19 +348,23 @@ export default function CitizensList() {
                   />
                 </th>
                 <th style={{ width: 40 }}>#</th>
-                <th style={{ width: 70 }}>{t('Photo')}</th>
-                <th style={{ cursor: 'pointer' }} onClick={() => { setSortField('name'); setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); }}>
-                  {t('Citizen Details')} {sortField === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
+                <th style={{ width: 70 }}>Photo</th>
+                <th style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('name')}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>Citizen Details <SortIcon field="name" /></div>
                 </th>
-                <th style={{ cursor: 'pointer' }} onClick={() => { setSortField('id'); setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); }}>
-                  {t('National ID')} {sortField === 'id' && (sortOrder === 'asc' ? '↑' : '↓')}
+                <th style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('id')}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>National ID <SortIcon field="id" /></div>
                 </th>
-                <th>{t('Contact & Location')}</th>
-                <th>{t('Status')}</th>
-                <th style={{ cursor: 'pointer' }} onClick={() => { setSortField('date'); setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); }}>
-                  {t('Registered')} {sortField === 'date' && (sortOrder === 'asc' ? '↑' : '↓')}
+                <th style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('district')}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>Contact & Location <SortIcon field="district" /></div>
                 </th>
-                <th style={{ textAlign: 'right' }}>{t('Actions')}</th>
+                <th style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('status')}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>Status <SortIcon field="status" /></div>
+                </th>
+                <th style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('registered')}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>Registered <SortIcon field="registered" /></div>
+                </th>
+                <th style={{ textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -367,7 +383,7 @@ export default function CitizensList() {
                     </div>
                   </td>
                 </tr>
-              ) : filtered.length === 0 ? (
+              ) : sorted.length === 0 ? (
                 <tr>
                   <td colSpan={9} style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-muted)' }}>
                     <div style={{ background: 'var(--bg-main)', width: 80, height: 80, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>

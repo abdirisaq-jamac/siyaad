@@ -19,6 +19,7 @@ export const translations: Translations = {
   "QR Verification": { en: "QR Verification", so: "Xaqiijinta QR", ar: "التحقق من QR" },
   "Reports": { en: "Reports", so: "Warbixinada", ar: "التقارير" },
   "Settings": { en: "Settings", so: "Goobaha", ar: "الإعدادات" },
+  "Users": { en: "Users", so: "Isticmaalayaasha", ar: "المستخدمون" },
   "Main Menu": { en: "Main Menu", so: "Liiska Weyn", ar: "القائمة الرئيسية" },
   "Gov. Secure System": { en: "Gov. Secure System", so: "Nidaamka Dawladda", ar: "نظام حكومي آمن" },
   
@@ -32,6 +33,7 @@ export const translations: Translations = {
     so: "Nidaamka Aqoonsiga Qaranka ee Waqooyi Bari", 
     ar: "نظام إدارة الهوية الوطنية وقويي باري" 
   },
+  "Citizen Details": { en: "Citizen Details", so: "Xogta Muwaadinka", ar: "تفاصيل المواطن" },
   
   // Settings Page
   "System Settings": { en: "System Settings", so: "Goobaha Nidaamka", ar: "إعدادات النظام" },
@@ -46,6 +48,8 @@ export const translations: Translations = {
   "Version": { en: "Version", so: "Nooca", ar: "الإصدار" },
   "Last Updated": { en: "Last Updated", so: "Markii ugu dambeysay", ar: "اخر تحديث" },
   "Save Changes": { en: "Save Changes", so: "Xafid Isbedelada", ar: "حفظ التغييرات" },
+  "✓ Autosaved": { en: "✓ Autosaved", so: "✓ La Keydsaday", ar: "✓ تم الحفظ تلقائياً" },
+  "Auto-saving is ON": { en: "Auto-saving is ON", so: "Keydsinta Toos ah waa Shidan", ar: "الحفظ التلقائي مفعّل" },
 
   // Dashboard Page
   "Dashboard Overview": { en: "Dashboard Overview", so: "Dulmarka Dashboard-ka", ar: "نظرة عامة على لوحة القيادة" },
@@ -61,13 +65,51 @@ export const translations: Translations = {
   "Recent Registrations": { en: "Recent Registrations", so: "Diiwaangelintii Ugu Dambeysay", ar: "التسجيلات الحديثة" },
   "View All": { en: "View All", so: "Arag Dhammaan", ar: "عرض الكل" },
 
+  // Citizens List
+  "citizens found": { en: "citizens found", so: "muwaadiin la helay", ar: "مواطن تم العثور عليه" },
+  "Export CSV": { en: "Export CSV", so: "Dhooji CSV", ar: "تصدير CSV" },
+  "Register New": { en: "Register New", so: "Diiwaangeli Cusub", ar: "تسجيل جديد" },
+  "Search by name, ID, phone, district…": { en: "Search by name, ID, phone, district…", so: "Raadi magac, ID, tel, degmo…", ar: "البحث باسم، هوية، هاتف، منطقة…" },
+  "All Statuses": { en: "All Statuses", so: "Dhammaan Xaaladaha", ar: "جميع الحالات" },
+  "Advanced Filters": { en: "Advanced Filters", so: "Shaandhaynta Horumarsan", ar: "تصفية متقدمة" },
+  "Clear All": { en: "Clear All", so: "Nadiifi Dhammaan", ar: "مسح الكل" },
+  "Rows per page:": { en: "Rows per page:", so: "Safaf bogga:", ar: "صفوف لكل صفحة:" },
+  "Photo": { en: "Photo", so: "Sawirka", ar: "صورة" },
+  "National ID": { en: "National ID", so: "ID Qaranka", ar: "الهوية الوطنية" },
+  "Contact & Location": { en: "Contact & Location", so: "Xiriir & Goob", ar: "التواصل والموقع" },
+  "Status": { en: "Status", so: "Xaaladda", ar: "الحالة" },
+  "Registered": { en: "Registered", so: "La Diiwaangeliyay", ar: "مسجّل" },
+  "Actions": { en: "Actions", so: "Ficilada", ar: "الإجراءات" },
+  "Loading citizens...": { en: "Loading citizens...", so: "Waa la raraysaa...", ar: "جاري التحميل..." },
+  "No citizens found": { en: "No citizens found", so: "Muwaadiin lama helin", ar: "لم يُعثر على مواطنين" },
+  "Try adjusting your search or filters.": { en: "Try adjusting your search or filters.", so: "Isku day in aad bedelto raadinta.", ar: "حاول تعديل البحث أو التصفية." },
+  "Showing": { en: "Showing", so: "Muujinaya", ar: "يعرض" },
+  "to": { en: "to", so: "ilaa", ar: "إلى" },
+  "of": { en: "of", so: "ka", ar: "من" },
+  "entries": { en: "entries", so: "gal", ar: "إدخال" },
+  "Previous": { en: "Previous", so: "Hore", ar: "السابق" },
+  "Next": { en: "Next", so: "Xiga", ar: "التالي" },
+  "Page": { en: "Page", so: "Bogga", ar: "صفحة" },
+  "Confirm Deletion": { en: "Confirm Deletion", so: "Xaqiiji Tirtiridda", ar: "تأكيد الحذف" },
+  "Are you sure you want to delete this citizen record?": { en: "Are you sure you want to delete this citizen record?", so: "Ma hubtaa inaad tirtireyso xogtan?", ar: "هل أنت متأكد أنك تريد حذف هذا السجل؟" },
+  "Cancel": { en: "Cancel", so: "Jooji", ar: "إلغاء" },
+  "Delete Citizen": { en: "Delete Citizen", so: "Tirtir Muwaadinka", ar: "حذف المواطن" },
+
   // Register Citizen
+  "Citizen Registration": { en: "Citizen Registration", so: "Diiwaangelinta Muwaadinka", ar: "تسجيل المواطن" },
+  "Registration Form": { en: "Registration Form", so: "Foomka Diiwaangelinta", ar: "نموذج التسجيل" },
+  "Data Preview": { en: "Data Preview", so: "Dib u Fiiri Xogta", ar: "معاينة البيانات" },
   "Citizen Registration Form": { en: "Citizen Registration Form", so: "Foomka Diiwaangelinta", ar: "نموذج تسجيل المواطن" },
   "Personal Information": { en: "Personal Information", so: "Xogta Shakhsiga ah", ar: "معلومات شخصية" },
+  "Full Name": { en: "Full Name", so: "Magaca Buuxa", ar: "الاسم الكامل" },
+  "Father Name": { en: "Father Name", so: "Magaca Aabaha", ar: "اسم الأب" },
+  "Mother Name": { en: "Mother Name", so: "Magaca Hooyada", ar: "اسم الأم" },
   "Full Name *": { en: "Full Name *", so: "Magaca Buuxa *", ar: "الاسم الكامل *" },
   "Father Name *": { en: "Father Name *", so: "Magaca Aabaha *", ar: "اسم الأب *" },
   "Mother Name *": { en: "Mother Name *", so: "Magaca Hooyada *", ar: "اسم الأم *" },
+  "Date of Birth": { en: "Date of Birth", so: "Taariikhda Dhalashada", ar: "تاريخ الميلاد" },
   "Date of Birth *": { en: "Date of Birth *", so: "Taariikhda Dhalashada *", ar: "تاريخ الميلاد *" },
+  "Place of Birth": { en: "Place of Birth", so: "Meesha Dhalashada", ar: "مكان الميلاد" },
   "Place of Birth *": { en: "Place of Birth *", so: "Meesha Dhalashada *", ar: "مكان الميلاد *" },
   "Gender": { en: "Gender", so: "Jinsiga", ar: "الجنس" },
   "Male": { en: "Male", so: "Lab", ar: "ذكر" },
@@ -77,48 +119,24 @@ export const translations: Translations = {
   "Married": { en: "Married", so: "Xaali", ar: "متزوج" },
   "Divorced": { en: "Divorced", so: "La Furay", ar: "مطلق" },
   "Widowed": { en: "Widowed", so: "Garoob/Laga Dhintay", ar: "أرمل" },
+  "Phone Number": { en: "Phone Number", so: "Lambarka Taleefanka", ar: "رقم الهاتف" },
   "Phone Number *": { en: "Phone Number *", so: "Lambarka Taleefanka *", ar: "رقم الهاتف *" },
+  "Phone": { en: "Phone", so: "Taleefanka", ar: "الهاتف" },
+  "Occupation": { en: "Occupation", so: "Shaqada", ar: "المهنة" },
   "Occupation *": { en: "Occupation *", so: "Shaqada *", ar: "المهنة *" },
-  "Status": { en: "Status", so: "Xaaladda", ar: "الحالة" },
+  "Registration Status": { en: "Registration Status", so: "Xaaladda Diiwaangelinta", ar: "حالة التسجيل" },
   "Active": { en: "Active", so: "Firfircoon", ar: "نشط" },
   "Pending": { en: "Pending", so: "Sugaya", ar: "قيد الانتظار" },
   "Rejected": { en: "Rejected", so: "La Diiday", ar: "مرفوض" },
   "District": { en: "District", so: "Degmada", ar: "المنطقة" },
+  "Address": { en: "Address", so: "Cinwaanka", ar: "العنوان" },
+  "Full Address": { en: "Full Address", so: "Cinwaanka Buuxa", ar: "العنوان الكامل" },
   "Address Details": { en: "Address Details", so: "Faahfaahinta Cinwaanka", ar: "تفاصيل العنوان" },
   "Full Address *": { en: "Full Address *", so: "Cinwaanka Buuxa *", ar: "العنوان الكامل *" },
-  "Photo": { en: "Photo", so: "Sawirka", ar: "صورة" },
   "Citizen Photo": { en: "Citizen Photo", so: "Sawirka Muwaadinka", ar: "صورة المواطن" },
+  "Clear Form": { en: "Clear Form", so: "Nadiifi Foomka", ar: "مسح النموذج" },
   "Reset": { en: "Reset", so: "Tirtir", ar: "إعادة تعيين" },
-  "Save & Generate National ID": { en: "Save & Generate National ID", so: "Xafid & Samee Kaadhka", ar: "حفظ وإنشاء هوية وطنية" },
-  
-  // Public Verify
-  "Waqooyi Bari · Identity Verification": { en: "Waqooyi Bari · Identity Verification", so: "Waqooyi Bari · Xaqiijinta Aqoonsiga", ar: "التحقق من الهوية" },
-  "Powered by Siyaad National ID System": { en: "Powered by Siyaad National ID System", so: "Waxaa hirgeliyay Nidaamka Aqoonsiga Qaranka", ar: "بدعم من نظام الهوية الوطنية" },
-  "Verifying identity…": { en: "Verifying identity…", so: "Waa la xaqiijinayaa...", ar: "جاري التحقق من الهوية..." },
-  "Identity Not Found": { en: "Identity Not Found", so: "Aqoonsi Lama Helin", ar: "لم يتم العثور على الهوية" },
-  "No registered citizen matches National ID": { en: "No registered citizen matches National ID", so: "Ma jiro muwaadin diiwaangashan oo leh Aqoonsigan", ar: "لا يوجد مواطن مسجل يطابق الهوية الوطنية" },
-  "This QR code may be invalid or the record has been removed.": { en: "This QR code may be invalid or the record has been removed.", so: "Lambar sirta QR-ka wuu khaldanaan karaa ama xogtii waa la tirtiray.", ar: "قد يكون رمز الاستجابة السريعة غير صالح أو تمت إزالة السجل." },
-  "VERIFIED — ACTIVE CITIZEN": { en: "VERIFIED — ACTIVE CITIZEN", so: "WAA LA XAQIIJIYAY — MUWAADIN FIRFIRCOON", ar: "تم التحقق - مواطن نشط" },
-  "VERIFIED —": { en: "VERIFIED —", so: "WAA LA XAQIIJIYAY —", ar: "تم التحقق —" },
-  "ACTIVE": { en: "ACTIVE", so: "FIRFIRCOON", ar: "نشط" },
-  "PENDING": { en: "PENDING", so: "SUGAYA", ar: "قيد الانتظار" },
-  "REJECTED": { en: "REJECTED", so: "LA DIIDAY", ar: "مرفوض" },
-  "ID Valid Until": { en: "ID Valid Until", so: "Kaadhku Wuxuu Dhacayaa", ar: "صالحة حتى" },
-  "Issue Date": { en: "Issue Date", so: "Taariikhda Bixinta", ar: "تاريخ الإصدار" },
-  "Verified on": { en: "Verified on", so: "La xaqiijiyay", ar: "تم التحقق في" },
-  "Phone Number": { en: "Phone Number", so: "Taleefanka", ar: "رقم الهاتف" },
-  "Occupation": { en: "Occupation", so: "Shaqada", ar: "المهنة" },
-  
-  // Citizens List
-  "citizens found": { en: "citizens found", so: "muwaadin la helay", ar: "مواطن تم العثور عليه" },
-  "Export CSV": { en: "Export CSV", so: "Dhoofi CSV", ar: "تصدير CSV" },
-  "Register New": { en: "Register New", so: "Diiwaangeli Cusub", ar: "تسجيل جديد" },
-  "Search by name, ID, phone, district…": { en: "Search by name, ID, phone, district…", so: "Ku raadi magac, ID, taleefan, degmo…", ar: "ابحث بالاسم، الهوية، الهاتف..." },
-  "Citizen Details": { en: "Citizen Details", so: "Xogta Muwaadinka", ar: "تفاصيل المواطن" },
-  "National ID": { en: "National ID", so: "Aqoonsiga Qaranka", ar: "الهوية الوطنية" },
-  "Contact & Location": { en: "Contact & Location", so: "Xidhiidhka & Goobta", ar: "الاتصال والموقع" },
-  "Registered": { en: "Registered", so: "La Diiwaangeliyay", ar: "مسجل" },
-  "Actions": { en: "Actions", so: "Tallaabooyinka", ar: "الإجراءات" }
+  "Save & Generate National ID": { en: "Save & Generate National ID", so: "Xafid & Samee Kaadhka", ar: "حفظ وإنشاء هوية وطنية" }
 };
 
 interface I18nContextType {
@@ -132,7 +150,7 @@ const I18nContext = createContext<I18nContextType | undefined>(undefined);
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguage] = useState<Language>(() => {
     const saved = localStorage.getItem('app-language');
-    return (saved as Language) || 'so';
+    return (saved as Language) || 'en';
   });
 
   useEffect(() => {
