@@ -5,6 +5,7 @@ import { Search, Trash2, Edit, Eye, UserPlus, Download, Filter, AlertTriangle } 
 import { getCitizens, deleteCitizen } from '../services/storage';
 import type { Citizen, AppUser } from '../types';
 import { format } from 'date-fns';
+import { useTranslation } from '../i18n';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -20,9 +21,14 @@ const itemVariants = {
 };
 
 export default function CitizensList() {
+  const { t } = useTranslation();
   const [citizens, setCitizens] = useState<Citizen[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
+  
+  // Sorting state
+  const [sortField, setSortField] = useState<'name' | 'date' | 'id'>('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [statusFilter, setStatusFilter] = useState('All');
   const [genderFilter, setGenderFilter] = useState('All');
   const [districtFilter, setDistrictFilter] = useState('All');
@@ -73,6 +79,9 @@ export default function CitizensList() {
   // Sync pageInput with currentPage
   useEffect(() => { setPageInput(currentPage.toString()); }, [currentPage]);
 
+  // Sync pageInput with currentPage
+  useEffect(() => { setPageInput(currentPage.toString()); }, [currentPage]);
+
   const filtered = citizens.filter(c => {
     const q = query.toLowerCase();
     const matchQ = !q || c.fullName.toLowerCase().includes(q) ||
@@ -86,13 +95,25 @@ export default function CitizensList() {
     return matchQ && matchS && matchG && matchD && matchO && matchM;
   });
 
+  const sorted = [...filtered].sort((a, b) => {
+    let result = 0;
+    if (sortField === 'name') {
+      result = a.fullName.localeCompare(b.fullName);
+    } else if (sortField === 'id') {
+      result = a.nationalIdNumber.localeCompare(b.nationalIdNumber);
+    } else if (sortField === 'date') {
+      result = new Date(a.registrationDate).getTime() - new Date(b.registrationDate).getTime();
+    }
+    return sortOrder === 'asc' ? result : -result;
+  });
+
   const allDistricts = Array.from(new Set(citizens.map(c => c.district))).filter(Boolean).sort();
   const allOccupations = Array.from(new Set(citizens.map(c => c.occupation))).filter(Boolean).sort();
 
-  const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
+  const totalPages = Math.ceil(sorted.length / itemsPerPage) || 1;
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filtered.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = sorted.slice(indexOfFirstItem, indexOfLastItem);
 
   async function handleDelete(id: string) {
     await deleteCitizen(id);
@@ -167,8 +188,8 @@ export default function CitizensList() {
     <motion.div initial="hidden" animate="visible" variants={containerVariants}>
       <motion.div variants={itemVariants} className="page-header">
         <div>
-          <div className="page-title">Citizens List</div>
-          <div className="page-subtitle">{filtered.length} of {citizens.length} citizens found</div>
+          <div className="page-title">{t('Citizens List')}</div>
+          <div className="page-subtitle">{sorted.length} of {citizens.length} {t('citizens found')}</div>
         </div>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           <motion.button 
@@ -177,10 +198,10 @@ export default function CitizensList() {
             className="btn-secondary" 
             onClick={exportCSV}
           >
-            <Download size={18} /> {selectedCitizens.size > 0 ? `Export CSV (${selectedCitizens.size})` : 'Export CSV'}
+            <Download size={18} /> {selectedCitizens.size > 0 ? `${t('Export CSV')} (${selectedCitizens.size})` : t('Export CSV')}
           </motion.button>
           <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary" onClick={() => navigate('/register')}>
-            <UserPlus size={18} /> Register New
+            <UserPlus size={18} /> {t('Register New')}
           </motion.button>
         </div>
       </motion.div>
@@ -194,7 +215,7 @@ export default function CitizensList() {
         }} className="focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20">
           <Search size={18} style={{ color: 'var(--text-muted)' }} />
           <input
-            placeholder="Search by name, ID, phone, district…"
+            placeholder={t('Search by name, ID, phone, district…') || "Search..."}
             value={query} onChange={e => setQuery(e.target.value)}
             style={{ background: 'none', border: 'none', outline: 'none', color: 'var(--text-main)', fontSize: '0.95rem', width: '100%' }}
           />
@@ -315,13 +336,19 @@ export default function CitizensList() {
                   />
                 </th>
                 <th style={{ width: 40 }}>#</th>
-                <th style={{ width: 70 }}>Photo</th>
-                <th>Citizen Details</th>
-                <th>National ID</th>
-                <th>Contact & Location</th>
-                <th>Status</th>
-                <th>Registered</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
+                <th style={{ width: 70 }}>{t('Photo')}</th>
+                <th style={{ cursor: 'pointer' }} onClick={() => { setSortField('name'); setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); }}>
+                  {t('Citizen Details')} {sortField === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
+                </th>
+                <th style={{ cursor: 'pointer' }} onClick={() => { setSortField('id'); setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); }}>
+                  {t('National ID')} {sortField === 'id' && (sortOrder === 'asc' ? '↑' : '↓')}
+                </th>
+                <th>{t('Contact & Location')}</th>
+                <th>{t('Status')}</th>
+                <th style={{ cursor: 'pointer' }} onClick={() => { setSortField('date'); setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); }}>
+                  {t('Registered')} {sortField === 'date' && (sortOrder === 'asc' ? '↑' : '↓')}
+                </th>
+                <th style={{ textAlign: 'right' }}>{t('Actions')}</th>
               </tr>
             </thead>
             <tbody>

@@ -89,7 +89,36 @@ export const translations: Translations = {
   "Photo": { en: "Photo", so: "Sawirka", ar: "صورة" },
   "Citizen Photo": { en: "Citizen Photo", so: "Sawirka Muwaadinka", ar: "صورة المواطن" },
   "Reset": { en: "Reset", so: "Tirtir", ar: "إعادة تعيين" },
-  "Save & Generate National ID": { en: "Save & Generate National ID", so: "Xafid & Samee Kaadhka", ar: "حفظ وإنشاء هوية وطنية" }
+  "Save & Generate National ID": { en: "Save & Generate National ID", so: "Xafid & Samee Kaadhka", ar: "حفظ وإنشاء هوية وطنية" },
+  
+  // Public Verify
+  "Waqooyi Bari · Identity Verification": { en: "Waqooyi Bari · Identity Verification", so: "Waqooyi Bari · Xaqiijinta Aqoonsiga", ar: "التحقق من الهوية" },
+  "Powered by Siyaad National ID System": { en: "Powered by Siyaad National ID System", so: "Waxaa hirgeliyay Nidaamka Aqoonsiga Qaranka", ar: "بدعم من نظام الهوية الوطنية" },
+  "Verifying identity…": { en: "Verifying identity…", so: "Waa la xaqiijinayaa...", ar: "جاري التحقق من الهوية..." },
+  "Identity Not Found": { en: "Identity Not Found", so: "Aqoonsi Lama Helin", ar: "لم يتم العثور على الهوية" },
+  "No registered citizen matches National ID": { en: "No registered citizen matches National ID", so: "Ma jiro muwaadin diiwaangashan oo leh Aqoonsigan", ar: "لا يوجد مواطن مسجل يطابق الهوية الوطنية" },
+  "This QR code may be invalid or the record has been removed.": { en: "This QR code may be invalid or the record has been removed.", so: "Lambar sirta QR-ka wuu khaldanaan karaa ama xogtii waa la tirtiray.", ar: "قد يكون رمز الاستجابة السريعة غير صالح أو تمت إزالة السجل." },
+  "VERIFIED — ACTIVE CITIZEN": { en: "VERIFIED — ACTIVE CITIZEN", so: "WAA LA XAQIIJIYAY — MUWAADIN FIRFIRCOON", ar: "تم التحقق - مواطن نشط" },
+  "VERIFIED —": { en: "VERIFIED —", so: "WAA LA XAQIIJIYAY —", ar: "تم التحقق —" },
+  "ACTIVE": { en: "ACTIVE", so: "FIRFIRCOON", ar: "نشط" },
+  "PENDING": { en: "PENDING", so: "SUGAYA", ar: "قيد الانتظار" },
+  "REJECTED": { en: "REJECTED", so: "LA DIIDAY", ar: "مرفوض" },
+  "ID Valid Until": { en: "ID Valid Until", so: "Kaadhku Wuxuu Dhacayaa", ar: "صالحة حتى" },
+  "Issue Date": { en: "Issue Date", so: "Taariikhda Bixinta", ar: "تاريخ الإصدار" },
+  "Verified on": { en: "Verified on", so: "La xaqiijiyay", ar: "تم التحقق في" },
+  "Phone Number": { en: "Phone Number", so: "Taleefanka", ar: "رقم الهاتف" },
+  "Occupation": { en: "Occupation", so: "Shaqada", ar: "المهنة" },
+  
+  // Citizens List
+  "citizens found": { en: "citizens found", so: "muwaadin la helay", ar: "مواطن تم العثور عليه" },
+  "Export CSV": { en: "Export CSV", so: "Dhoofi CSV", ar: "تصدير CSV" },
+  "Register New": { en: "Register New", so: "Diiwaangeli Cusub", ar: "تسجيل جديد" },
+  "Search by name, ID, phone, district…": { en: "Search by name, ID, phone, district…", so: "Ku raadi magac, ID, taleefan, degmo…", ar: "ابحث بالاسم، الهوية، الهاتف..." },
+  "Citizen Details": { en: "Citizen Details", so: "Xogta Muwaadinka", ar: "تفاصيل المواطن" },
+  "National ID": { en: "National ID", so: "Aqoonsiga Qaranka", ar: "الهوية الوطنية" },
+  "Contact & Location": { en: "Contact & Location", so: "Xidhiidhka & Goobta", ar: "الاتصال والموقع" },
+  "Registered": { en: "Registered", so: "La Diiwaangeliyay", ar: "مسجل" },
+  "Actions": { en: "Actions", so: "Tallaabooyinka", ar: "الإجراءات" }
 };
 
 interface I18nContextType {
