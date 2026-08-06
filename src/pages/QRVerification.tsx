@@ -5,12 +5,14 @@ import { getCitizenByNationalId, getCitizensByName } from '../services/storage';
 import type { Citizen } from '../types';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../i18n';
 
 export default function QRVerification() {
   const [query, setQuery] = useState('');
   const [result, setResult] = useState<Citizen | null | 'not-found'>(null);
   const [multiResults, setMultiResults] = useState<Citizen[]>([]);
   const navigate = useNavigate();
+  const { t } = useTranslation();
   // Removed local dark mode state (managed globally)
 
 
@@ -62,8 +64,8 @@ export default function QRVerification() {
         <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 80, height: 80, borderRadius: '50%', background: 'var(--primary-gradient)', color: 'white', marginBottom: '1.5rem', boxShadow: 'var(--shadow-md)' }}>
           <QrCode size={40} />
         </div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>Identity Verification</h1>
-        <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', maxWidth: '500px', margin: '0 auto' }}>Enter a National ID Number or a 3-part full name to verify a citizen's identity instantly.</p>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>{t('Identity Verification') || 'Identity Verification'}</h1>
+        <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', maxWidth: '500px', margin: '0 auto' }}>{t('Enter a National ID Number or a 3-part full name to verify a citizen\'s identity instantly.') || 'Enter a National ID Number or a 3-part full name to verify a citizen\'s identity instantly.'}</p>
       </motion.div>
 
       <motion.div variants={itemVariants} className="glass-card" style={{ padding: '2rem', marginBottom: '2.5rem' }}>
@@ -89,7 +91,7 @@ export default function QRVerification() {
             style={{ padding: '1.1rem 2rem', fontSize: '1.1rem', borderRadius: '12px' }}
             onClick={handleSearch}
           >
-            Verify Now
+            {t('Verify Now') || 'Verify Now'}
           </motion.button>
         </div>
       </motion.div>
@@ -157,31 +159,47 @@ export default function QRVerification() {
                 )}
                 <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
                   <span className={result.status === 'Active' ? 'badge-active' : result.status === 'Pending' ? 'badge-pending' : 'badge-rejected'} style={{ fontSize: '0.85rem', padding: '0.4rem 1rem' }}>
-                    <CheckCircle size={14} style={{ display: 'inline', marginRight: '4px' }} /> Verified {result.status}
+                    <CheckCircle size={14} style={{ display: 'inline', marginRight: '4px' }} /> {t('VERIFIED') || 'Verified'} {t(result.status)}
                   </span>
                 </div>
               </div>
               
               <div style={{ flex: 1, minWidth: '300px' }}>
-                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--primary-color)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>Citizen Identity Confirmed</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--primary-color)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>{t('Citizen Identity Confirmed') || 'Citizen Identity Confirmed'}</div>
                 <h2 style={{ fontSize: '2.25rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '1.5rem', lineHeight: 1.1 }}>{result.fullName}</h2>
                 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.25rem' }}>
                   <div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>National ID</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('National ID')}</div>
                     <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>{result.nationalIdNumber}</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Gender</div>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>{result.gender}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('Gender')}</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>{t(result.gender)}</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>District</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('Father Name')}</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>{result.fatherName}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('Mother Name')}</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>{result.motherName}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('District')}</div>
                     <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>{result.district}</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Date of Birth</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('Phone Number')}</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>{result.phone}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('Date of Birth')}</div>
                     <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>{format(new Date(result.dateOfBirth), 'dd MMM yyyy')}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{t('Occupation')}</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>{result.occupation || '—'}</div>
                   </div>
                 </div>
 
