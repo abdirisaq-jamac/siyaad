@@ -89,6 +89,13 @@ export const translations: Translations = {
   "entries": { en: "entries", so: "gal", ar: "إدخال" },
   "Previous": { en: "Previous", so: "Hore", ar: "السابق" },
   "Next": { en: "Next", so: "Xiga", ar: "التالي" },
+  "Go to": { en: "Go to", so: "Aad", ar: "انتقل إلى" },
+  "Sort by:": { en: "Sort by:", so: "Ku kala saar:", ar: "ترتيب حسب:" },
+  "None": { en: "None", so: "Waxba", ar: "لا شيء" },
+  "Name": { en: "Name", so: "Magaca", ar: "الاسم" },
+  "Asc": { en: "Asc", so: "Sare", ar: "تصاعدي" },
+  "Desc": { en: "Desc", so: "Hoos", ar: "تنازلي" },
+  "Registration Date": { en: "Registration Date", so: "Taariikhda Diiwaangelinta", ar: "تاريخ التسجيل" },
   "Page": { en: "Page", so: "Bogga", ar: "صفحة" },
   "Confirm Deletion": { en: "Confirm Deletion", so: "Xaqiiji Tirtiridda", ar: "تأكيد الحذف" },
   "Are you sure you want to delete this citizen record?": { en: "Are you sure you want to delete this citizen record?", so: "Ma hubtaa inaad tirtireyso xogtan?", ar: "هل أنت متأكد أنك تريد حذف هذا السجل؟" },
@@ -160,11 +167,24 @@ interface I18nContextType {
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
+function detectBrowserLanguage(): Language {
+  const saved = localStorage.getItem('app-language');
+  if (saved) return (saved as Language) || 'en';
+  // Auto-detect from the device/browser (used when scanning a QR code on mobile)
+  const langs = navigator.languages && navigator.languages.length > 0
+    ? navigator.languages
+    : [navigator.language || ''];
+  for (const l of langs) {
+    const lang = (l || '').toLowerCase();
+    if (lang.startsWith('so')) return 'so';
+    if (lang.startsWith('ar')) return 'ar';
+    if (lang.startsWith('en')) return 'en';
+  }
+  return 'en';
+}
+
 export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>(() => {
-    const saved = localStorage.getItem('app-language');
-    return (saved as Language) || 'en';
-  });
+  const [language, setLanguage] = useState<Language>(detectBrowserLanguage);
 
   useEffect(() => {
     localStorage.setItem('app-language', language);

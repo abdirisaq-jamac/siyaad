@@ -186,6 +186,15 @@ export default function RegisterCitizen() {
       }
 
       const citizen = await buildCitizen(form);
+
+      // Enforce that every citizen has a unique National ID.
+      const duplicateId = allCitizens.find(c => c.nationalIdNumber === citizen.nationalIdNumber);
+      if (duplicateId) {
+        alert("A citizen with this National ID already exists. Every citizen must have a unique ID — no two citizens can have the same ID number.");
+        setLoading(false);
+        return;
+      }
+
       await addCitizen(citizen);
       navigate(`/citizens/${citizen.id}`);
     } catch (err: any) {

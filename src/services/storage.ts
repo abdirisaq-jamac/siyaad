@@ -274,9 +274,34 @@ export async function deleteUser(id: string): Promise<void> {
   saveLocalUsers(updatedList);
 }
 
-// ── User Sessions (Supabase-based) ────────────────────────────────────────────
+// ── User Sessions ─────────────────────────────────────────────────────────────
+// Sessions are stored in localStorage (source of truth) with best-effort
+// sync to Supabase, mirroring how app_users works. This keeps Session History
+// functional even if the `user_sessions` table does not exist yet.
+
+const SESSIONS_KEY = 'app_user_sessions';
+
+function getLocalSessions(): UserSession[] {
+  try {
+    const raw = localStorage.getItem(SESSIONS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {
+    /* ignore */
+  }
+  return [];
+}
+
+function saveLocalSessions(sessions: UserSession[]) {
+  try {
+    localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+  } catch {
+    /* ignore */
+  }
+}
 
 export async function getUserSessions(userId?: string): Promise<UserSession[]> {
+  const local = getLocalSessions();
+  let merged: UserSession[] = local;
   try {
     let query = supabase
       .from('user_sessions')
@@ -285,31 +310,40 @@ export async function getUserSessions(userId?: string): Promise<UserSession[]> {
       .limit(200);
     if (userId) query = query.eq('userId', userId);
     const { data, error } = await query;
-    if (error) throw error;
-    return (data || []) as UserSession[];
+    if (!error && data) {
+      const remote = data as UserSession[];
+      // Prefer remote rows, keep local rows that Supabase doesn't have yet
+      merged = [...remote, ...local.filter(s => !remote.some(r => r.id === s.id))];
+    }
   } catch (err) {
-    console.warn('getUserSessions error:', err);
-    return [];
+    console.warn('getUserSessions Supabase error, using local storage:', err);
   }
+  const filtered = userId ? merged.filter(s => s.userId === userId) : merged;
+  return filtered.sort((a, b) => (b.loginTime || '').localeCompare(a.loginTime || ''));
 }
 
 export async function addSession(session: UserSession): Promise<void> {
+  const current = getLocalSessions();
+  saveLocalSessions([session, ...current.filter(s => s.id !== session.id)]);
   try {
     const { error } = await supabase.from('user_sessions').insert([session]);
-    if (error) throw error;
+    if (error) console.warn('addSession Supabase error, saved locally:', error.message);
   } catch (err) {
-    console.warn('addSession error:', err);
+    console.warn('addSession Supabase error, saved locally:', err);
   }
 }
 
 export async function endSession(sessionId: string): Promise<void> {
+  const now = new Date().toISOString();
+  const current = getLocalSessions();
+  saveLocalSessions(current.map(s => s.id === sessionId ? { ...s, logoutTime: now } : s));
   try {
     const { error } = await supabase
       .from('user_sessions')
-      .update({ logoutTime: new Date().toISOString() })
+      .update({ logoutTime: now })
       .eq('id', sessionId);
-    if (error) throw error;
+    if (error) console.warn('endSession Supabase error, updated locally:', error.message);
   } catch (err) {
-    console.warn('endSession error:', err);
+    console.warn('endSession Supabase error:', err);
   }
 }

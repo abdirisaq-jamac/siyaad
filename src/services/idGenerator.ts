@@ -56,6 +56,17 @@ export async function generateNationalIdNumber(gender: Gender, dateOfBirth: stri
   return `${baseId}${sss}`;
 }
 
+/**
+ * Sync the Gender Code (first digit after the prefix) of an existing National ID
+ * with the citizen's current gender, keeping every other part unchanged.
+ * Format: WB-GYYRYMMDDSSS  →  WB-[1=Male|2=Female]YYRYMMDDSSS
+ */
+export function syncNationalIdGender(nationalIdNumber: string, gender: Gender): string {
+  if (!nationalIdNumber || nationalIdNumber.length < 5) return nationalIdNumber;
+  const g = gender === 'Male' ? '1' : '2';
+  return `${nationalIdNumber.slice(0, 3)}${g}${nationalIdNumber.slice(4)}`;
+}
+
 /** Generate QR Code as data URL */
 export async function generateQRCode(data: string): Promise<string> {
   return QRCode.toDataURL(data, {

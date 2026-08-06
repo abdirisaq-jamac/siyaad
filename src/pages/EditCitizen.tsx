@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Save, ArrowLeft, X, Camera, Shield, User, MapPin } from 'lucide-react';
 import { getCitizenById, updateCitizen } from '../services/storage';
 import type { Citizen, Gender, CitizenStatus } from '../types';
-import { generateQRCode } from '../services/idGenerator';
+import { generateQRCode, syncNationalIdGender } from '../services/idGenerator';
 
 
 
@@ -117,16 +117,22 @@ export default function EditCitizen() {
 
   const set = (k: keyof Citizen, v: unknown) => setForm(f => f ? ({ ...f, [k]: v }) : f);
 
+  // Preview of the National ID with the Gender Code synced to the selected gender
+  const previewId = syncNationalIdGender(form.nationalIdNumber ?? '', form.gender ?? 'Male');
+
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     if (!form?.id) return;
     setSaving(true);
     try {
+      // Auto-sync the Gender Code in the National ID with the citizen's current gender
+      const nationalIdNumber = syncNationalIdGender(form.nationalIdNumber ?? '', form.gender ?? 'Male');
+      const updated = { ...form, nationalIdNumber };
       // Regenerate QR with new URL data
       const baseUrl = 'https://siyaad-livid.vercel.app';
-      const qrData = `${baseUrl}/verify/${form.nationalIdNumber}`;
+      const qrData = `${baseUrl}/verify/${nationalIdNumber}`;
       const qrCode = await generateQRCode(qrData);
-      await updateCitizen({ ...form, qrCode } as Citizen);
+      await updateCitizen({ ...updated, qrCode } as Citizen);
       navigate(`/citizens/${form.id}`);
     } finally {
       setSaving(false);
@@ -151,7 +157,7 @@ export default function EditCitizen() {
           <div>
             <div className="page-title">Edit Citizen Profile</div>
             <div className="page-subtitle" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
-              ID: <code style={{ background: 'var(--bg-main)', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: 600 }}>{form.nationalIdNumber}</code>
+              ID: <code style={{ background: 'var(--bg-main)', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: 600 }}>{previewId}</code>
             </div>
           </div>
         </div>

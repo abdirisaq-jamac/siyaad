@@ -53,6 +53,15 @@ export default function CitizensList() {
     return sortDir === 'asc' ? <ChevronUp size={13} style={{ color: 'var(--primary-color)' }} /> : <ChevronDown size={13} style={{ color: 'var(--primary-color)' }} />;
   }
 
+  function handleSortSelect(field: string) {
+    if (field === '') {
+      setSortField('');
+    } else {
+      setSortField(field);
+      setSortDir('asc');
+    }
+  }
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
@@ -93,6 +102,14 @@ export default function CitizensList() {
   // Sync pageInput with currentPage
   useEffect(() => { setPageInput(currentPage.toString()); }, [currentPage]);
 
+  function applyPage() {
+    let n = parseInt(pageInput, 10);
+    if (isNaN(n)) n = currentPage;
+    n = Math.min(totalPages, Math.max(1, n));
+    setCurrentPage(n);
+    setPageInput(n.toString());
+  }
+
   const filtered = citizens.filter(c => {
     const q = query.toLowerCase();
     const matchQ = !q || c.fullName.toLowerCase().includes(q) ||
@@ -117,6 +134,7 @@ export default function CitizensList() {
     else if (sortField === 'status') { av = a.status; bv = b.status; }
     else if (sortField === 'registered') { av = a.registrationDate; bv = b.registrationDate; }
     else if (sortField === 'gender') { av = a.gender; bv = b.gender; }
+    else if (sortField === 'phone') { av = a.phone; bv = b.phone; }
     const cmp = av.localeCompare(bv);
     return sortDir === 'asc' ? cmp : -cmp;
   });
@@ -260,6 +278,25 @@ export default function CitizensList() {
             {[10, 15, 20, 25, 30, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
           </select>
         </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{t('Sort by:') || 'Sort by:'}</span>
+          <select className="form-input" style={{ width: 'auto' }} value={sortField} onChange={(e) => handleSortSelect(e.target.value)}>
+            <option value="">{t('None') || 'None'}</option>
+            <option value="name">{t('Name') || 'Name'}</option>
+            <option value="id">{t('National ID') || 'National ID'}</option>
+            <option value="district">{t('District') || 'District'}</option>
+            <option value="phone">{t('Phone') || 'Phone'}</option>
+            <option value="status">{t('Status') || 'Status'}</option>
+            <option value="registered">{t('Registration Date') || 'Registration Date'}</option>
+            <option value="gender">{t('Gender') || 'Gender'}</option>
+          </select>
+          {sortField && (
+            <button className="btn-secondary" style={{ padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }} onClick={() => setSortDir(d => d === 'asc' ? 'desc' : 'asc')}>
+              {sortDir === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              {sortDir === 'asc' ? (t('Asc') || 'Asc') : (t('Desc') || 'Desc')}
+            </button>
+          )}
+        </div>
       </motion.div>
 
       <motion.div variants={itemVariants} className="glass-card" style={{ overflow: 'hidden' }}>
@@ -320,6 +357,20 @@ export default function CitizensList() {
                 })}
               </div>
               <button className="btn-secondary" style={{ padding: '0.5rem 1rem' }} disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}>{t('Next')}</button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginLeft: '0.25rem' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('Go to') || 'Go to'}</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={totalPages}
+                  value={pageInput}
+                  onChange={e => setPageInput(e.target.value)}
+                  onBlur={applyPage}
+                  onKeyDown={e => { if (e.key === 'Enter') applyPage(); }}
+                  style={{ width: 56, height: 32, borderRadius: 6, border: '1px solid var(--border-color)', background: 'var(--bg-main)', color: 'var(--text-main)', textAlign: 'center', fontWeight: 600, outline: 'none' }}
+                />
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>/ {totalPages}</span>
+              </div>
             </div>
           </div>
         )}
