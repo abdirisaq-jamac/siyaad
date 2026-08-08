@@ -25,10 +25,12 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
   const restName = nameParts.slice(1).join(' ');
 
   return (
-    <div style={{
-      width: 350, height: 220,
+    <div className="id-card-render" style={{
+      width: '100%',
+      maxWidth: 350,
+      aspectRatio: '350/220',
       background: 'linear-gradient(135deg, #cbeae5 0%, #a4d2c8 50%, #cbeae5 100%)',
-      borderRadius: 10,
+      borderRadius: '2.5%',
       overflow: 'hidden',
       position: 'relative',
       boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
@@ -36,19 +38,17 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
       fontFamily: '"Arial", sans-serif',
       boxSizing: 'border-box',
     }}>
-      {/* Background Patterns removed for clean look */}
-      
       {/* Central Sunburst */}
-      <div style={{
-        position: 'absolute', left: '50%', top: '35%', width: 250, height: 250,
+      <div className="sunburst" style={{
+        position: 'absolute', left: '50%', top: '35%', width: '71%', height: '71%',
         transform: 'translate(-50%, -50%)',
         background: 'radial-gradient(circle, rgba(240,240,200,0.7) 0%, transparent 60%)',
         pointerEvents: 'none'
       }} />
 
       {/* Emblem Watermark */}
-      <div style={{
-        position: 'absolute', left: '40%', top: '55%', width: 130, height: 130,
+      <div className="watermark" style={{
+        position: 'absolute', left: '40%', top: '55%', width: '37%', height: '37%',
         transform: 'translate(-50%, -50%)',
         opacity: 0.20,
         pointerEvents: 'none',
@@ -70,9 +70,9 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
       </div>
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '12px 14px 0', position: 'relative', zIndex: 10 }}>
+      <div className="card-header" style={{ display: 'flex', alignItems: 'center', padding: '5.5% 4% 0', position: 'relative', zIndex: 10 }}>
         {/* Left: Flag - uses uploaded flag from Settings, fallback to inline SVG */}
-        <div style={{ flexShrink: 0, width: 72, height: 48, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.2)', boxShadow: '0 2px 6px rgba(0,0,0,0.15)', borderRadius: 4, marginRight: 12 }}>
+        <div className="flag-wrapper" style={{ flexShrink: 0, width: '19.5%', height: '22%', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.2)', boxShadow: '0 2px 6px rgba(0,0,0,0.15)', borderRadius: '3%', marginRight: '3.5%' }}>
           {settings?.flagUrl ? (
             <img
               src={settings.flagUrl}
@@ -80,7 +80,7 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             />
           ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="72" height="48" style={{ display: 'block' }}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style={{ display: 'block' }}>
               {/* Sky blue top half */}
               <rect width="900" height="300" fill="#4A90D9" />
               {/* Green bottom half */}
@@ -110,59 +110,59 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
         </div>
 
         <div style={{ flex: 1, whiteSpace: 'nowrap' }}>
-          <div style={{ fontSize: 9, fontWeight: 900, color: '#111', textTransform: 'uppercase', letterSpacing: '-0.2px' }}>Dawlada Hoose Ee Lascanod</div>
-          <div style={{ fontSize: 7.5, fontWeight: 800, color: '#111', marginTop: 1 }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
-          <div style={{ fontSize: 6.5, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase' }}>Kaadhka Dhalashada</div>
+          <div className="text-dawlat">Dawlada Hoose Ee Lascanod</div>
+          <div className="text-state" style={{ marginTop: '0.5%' }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
+          <div className="text-idcard-title" style={{ marginTop: '0.5%' }}>Kaadhka Dhalashada</div>
         </div>
 
         <div style={{ flex: 1, textAlign: 'right', whiteSpace: 'nowrap' }}>
-          <div style={{ fontSize: 7.5, fontWeight: 800, color: '#111', marginTop: 12 }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
-          <div style={{ fontSize: 6.5, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase' }}>Birth Certificate</div>
+          <div className="text-state" style={{ marginTop: '5.5%' }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
+          <div className="text-birth-cert" style={{ marginTop: '0.5%' }}>Birth Certificate</div>
         </div>
       </div>
 
       {/* Body */}
-      <div style={{ display: 'flex', padding: '5px 14px 10px', position: 'relative', zIndex: 10, height: 'calc(100% - 56px)' }}>
+      <div className="card-body" style={{ display: 'flex', padding: '2.8% 4% 4.5%', position: 'relative', zIndex: 10, height: 'calc(100% - 25%)' }}>
         
         {/* Text Details */}
-        <div style={{ flex: 1, paddingLeft: 16, display: 'flex', flexDirection: 'column', gap: 6, paddingTop: 4, minWidth: 0 }}>
+        <div style={{ flex: 1, paddingLeft: '4.5%', display: 'flex', flexDirection: 'column', gap: '2.7%', minWidth: 0 }}>
           <div>
-            <div style={{ fontSize: 8, color: '#333', lineHeight: 1 }}>Tirsiga Aqoonsiga / ID Number</div>
-            <div style={{ fontSize: 12, fontWeight: 900, color: '#111', lineHeight: 1.2, letterSpacing: '0.02em' }}>{citizen.nationalIdNumber}</div>
+            <div className="text-label">Tirsiga Aqoonsiga / ID Number</div>
+            <div className="text-id-number">{citizen.nationalIdNumber}</div>
           </div>
-          
+        
           <div style={{ overflow: 'hidden' }}>
-            <div style={{ fontSize: 8, color: '#333', lineHeight: 1 }}>Magaca / Name</div>
-            <div style={{ fontSize: getDynamicFs(firstName, 10, 12), fontWeight: 700, color: '#111', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{firstName}</div>
-            <div style={{ fontSize: getDynamicFs(restName, 11, 15), fontWeight: 800, color: '#111', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{restName}</div>
+            <div className="text-label">Magaca / Name</div>
+            <div className="text-first-name" style={{ fontSize: getDynamicFs(firstName, 10, 12), fontWeight: 700, color: '#111', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{firstName}</div>
+            <div className="text-rest-name" style={{ fontSize: getDynamicFs(restName, 11, 15), fontWeight: 800, color: '#111', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{restName}</div>
           </div>
 
           <div>
-            <div style={{ fontSize: 8, color: '#333', lineHeight: 1 }}>Taar. Dhalashada / D.O.B</div>
-            <div style={{ fontSize: 10, fontWeight: 800, color: '#111', lineHeight: 1.2 }}>{format(new Date(citizen.dateOfBirth), 'dd-MM-yyyy')}</div>
+            <div className="text-label">Taar. Dhalashada / D.O.B</div>
+            <div className="text-field-value">{format(new Date(citizen.dateOfBirth), 'dd-MM-yyyy')}</div>
           </div>
 
           <div>
-            <div style={{ fontSize: 8, color: '#333', lineHeight: 1 }}>Taar. La Bixiyey / Date of Issue</div>
-            <div style={{ fontSize: 10, fontWeight: 800, color: '#111', lineHeight: 1.2 }}>{format(new Date(citizen.issueDate), 'dd-MM-yyyy')}</div>
+            <div className="text-label">Taar. La Bixiyey / Date of Issue</div>
+            <div className="text-field-value">{format(new Date(citizen.issueDate), 'dd-MM-yyyy')}</div>
           </div>
 
           <div>
-            <div style={{ fontSize: 8, color: '#333', lineHeight: 1 }}>Jinsiga / Gender</div>
-            <div style={{ fontSize: 10, fontWeight: 800, color: '#111', lineHeight: 1.2 }}>{citizen.gender === 'Male' ? 'Lab / Male' : 'Dhedig / Female'}</div>
+            <div className="text-label">Jinsiga / Gender</div>
+            <div className="text-field-value">{citizen.gender === 'Male' ? 'Lab / Male' : 'Dhedig / Female'}</div>
           </div>
         </div>
 
         {/* Right Side: Photo */}
-        <div style={{ flexShrink: 0, paddingLeft: 10 }}>
+        <div style={{ flexShrink: 0, paddingLeft: '3%' }}>
           {citizen.photo ? (
-             <img src={citizen.photo} alt="Citizen" style={{ 
-               width: 85, height: 110, objectFit: 'cover', objectPosition: 'center', 
+             <img src={citizen.photo} alt="Citizen" className="citizen-photo" style={{ 
+               width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', 
                mixBlendMode: 'multiply',
                filter: 'contrast(1.05)'
              }} />
           ) : (
-             <div style={{ width: 85, height: 110, background: 'rgba(255,255,255,0.4)', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, color: '#333', fontWeight: 'bold' }}>
+             <div className="photo-placeholder" style={{ background: 'rgba(255,255,255,0.4)', borderRadius: '3%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#333' }}>
                {citizen.fullName.charAt(0)}
              </div>
           )}
@@ -174,10 +174,12 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
 
 function CardBack({ citizen, settings }: { citizen: Citizen, settings?: AppSettings | null }) {
   return (
-    <div style={{
-      width: 350, height: 220,
+    <div className="id-card-render" style={{
+      width: '100%',
+      maxWidth: 350,
+      aspectRatio: '350/220',
       background: '#f4f7f6',
-      borderRadius: 10,
+      borderRadius: '2.5%',
       overflow: 'hidden',
       position: 'relative',
       boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
@@ -191,44 +193,44 @@ function CardBack({ citizen, settings }: { citizen: Citizen, settings?: AppSetti
         backgroundImage: 'repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 0, transparent 10px)',
       }} />
 
-      <div style={{ padding: '30px 20px 15px', display: 'flex', gap: 20 }}>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div className="card-back-content" style={{ padding: '13.6% 5.7% 6.8%', display: 'flex', gap: '5.7%' }}>
+        <div className="card-back-details" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4.5%' }}>
            <div>
-             <div style={{ fontSize: 9, color: '#555' }}>{settings?.stateName || 'Waqooyi Bari'} National ID Management System</div>
-             <div style={{ fontSize: 8, color: '#777', marginTop: 2 }}>This card is the property of the Government of {settings?.stateName || 'Waqooyi Bari'}. If found, please return to the nearest police station.</div>
-           </div>
+              <div className="text-label-sm">{settings?.stateName || 'Waqooyi Bari'} National ID Management System</div>
+              <div className="text-label-xs" style={{ marginTop: '0.9%' }}>This card is the property of the Government of {settings?.stateName || 'Waqooyi Bari'}. If found, please return to the nearest police station.</div>
+            </div>
 
-           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 5 }}>
-             <div>
-               <div style={{ fontSize: 8, color: '#555', lineHeight: 1 }}>Father's Name</div>
-               <div style={{ fontSize: 10, fontWeight: 'bold', lineHeight: 1, marginTop: 2 }}>{citizen.fatherName}</div>
-             </div>
-             <div>
-               <div style={{ fontSize: 8, color: '#555', lineHeight: 1 }}>Mother's Name</div>
-               <div style={{ fontSize: 10, fontWeight: 'bold', lineHeight: 1, marginTop: 2 }}>{citizen.motherName}</div>
-             </div>
-             <div>
-               <div style={{ fontSize: 8, color: '#555', lineHeight: 1 }}>District</div>
-               <div style={{ fontSize: 10, fontWeight: 'bold', lineHeight: 1, marginTop: 2 }}>{citizen.district}</div>
-             </div>
-             <div>
-               <div style={{ fontSize: 8, color: '#555', lineHeight: 1 }}>Expiry Date</div>
-               <div style={{ fontSize: 10, fontWeight: 'bold', color: '#b30000', lineHeight: 1, marginTop: 2 }}>{format(new Date(citizen.expiryDate), 'dd-MM-yyyy')}</div>
-             </div>
-           </div>
-        </div>
+            <div className="card-back-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2.7%', marginTop: '2.3%' }}>
+              <div>
+                <div className="text-label">Father's Name</div>
+                <div className="text-field-value">{citizen.fatherName}</div>
+              </div>
+              <div>
+                <div className="text-label">Mother's Name</div>
+                <div className="text-field-value">{citizen.motherName}</div>
+              </div>
+              <div>
+                <div className="text-label">District</div>
+                <div className="text-field-value">{citizen.district}</div>
+              </div>
+              <div>
+                <div className="text-label">Expiry Date</div>
+                <div className="text-field-value" style={{ color: '#b30000' }}>{format(new Date(citizen.expiryDate), 'dd-MM-yyyy')}</div>
+              </div>
+            </div>
+         </div>
 
-        {/* QR Code */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: 'white', padding: '4px', border: '1px solid #ccc', borderRadius: '4px', display: 'flex' }}>
-            <QRCodeSVG 
-              value={`https://siyaad-livid.vercel.app/verify/${citizen.nationalIdNumber}`} 
-              size={60} 
-              level="H" 
-            />
-          </div>
-        </div>
-      </div>
+         {/* QR Code */}
+         <div className="qr-code-wrapper" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+           <div style={{ background: 'white', padding: '1.1%', border: '1px solid #ccc', borderRadius: '2.8%', display: 'flex' }}>
+             <QRCodeSVG 
+               value={`https://siyaad-livid.vercel.app/verify/${citizen.nationalIdNumber}`} 
+               size={60} 
+               level="H" 
+             />
+           </div>
+         </div>
+       </div>
     </div>
   );
 }
@@ -477,25 +479,25 @@ export default function IdCardPreview() {
       {/* Modal for Card Preview */}
       <AnimatePresence>
         {selected && (
-          <motion.div 
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '1rem' }}
-            onClick={(e) => { if (e.target === e.currentTarget) setSelected(null); }}
-          >
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="glass-card" style={{ padding: '2.5rem', maxWidth: 600, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'var(--bg-card)' }}>
-              
-              <div style={{ alignSelf: 'stretch', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                <div style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-main)' }}>ID Card Preview</div>
-                <button className="btn-secondary" style={{ padding: '0.4rem', border: 'none', background: 'none' }} onClick={() => setSelected(null)}>✕</button>
-              </div>
+           <motion.div 
+             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+             style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '1rem' }}
+             onClick={(e) => { if (e.target === e.currentTarget) setSelected(null); }}
+           >
+             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="glass-card id-preview-modal" style={{ padding: '2.5rem', maxWidth: 600, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'var(--bg-card)' }}>
+               
+               <div style={{ alignSelf: 'stretch', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                 <div style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-main)' }}>ID Card Preview</div>
+                 <button className="btn-secondary" style={{ padding: '0.4rem', border: 'none', background: 'none' }} onClick={() => setSelected(null)}>✕</button>
+               </div>
 
-              <div style={{ background: 'var(--bg-main)', padding: '2rem', borderRadius: '24px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-lg)', marginBottom: '1.5rem' }}>
-                <div ref={cardRef} style={{ perspective: 1000 }}>
-                  <motion.div initial={false} animate={{ rotateY: showBack ? 180 : 0 }} transition={{ duration: 0.4 }} style={{ transformStyle: 'preserve-3d', position: 'relative' }}>
-                    {!showBack ? <CardFront citizen={selected} settings={settings} /> : <div style={{ transform: 'rotateY(180deg)' }}><CardBack citizen={selected} settings={settings} /></div>}
-                  </motion.div>
-                </div>
-              </div>
+               <div className="id-card-container" style={{ background: 'var(--bg-main)', padding: '2rem', borderRadius: '24px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-lg)', marginBottom: '1.5rem' }}>
+                 <div ref={cardRef} style={{ perspective: 1000 }}>
+                   <motion.div initial={false} animate={{ rotateY: showBack ? 180 : 0 }} transition={{ duration: 0.4 }} style={{ transformStyle: 'preserve-3d', position: 'relative' }}>
+                     {!showBack ? <CardFront citizen={selected} settings={settings} /> : <div style={{ transform: 'rotateY(180deg)', width: '100%' }}><CardBack citizen={selected} settings={settings} /></div>}
+                   </motion.div>
+                 </div>
+               </div>
 
               <div style={{ display: 'flex', gap: '1rem', background: 'var(--bg-card)', padding: '0.5rem', borderRadius: '12px', border: '1px solid var(--border-color)', marginBottom: '1.5rem' }}>
                 <button className={!showBack ? 'btn-primary' : 'btn-secondary'} style={{ border: 'none' }} onClick={() => setShowBack(false)}><CreditCard size={16} /> Front Face</button>
