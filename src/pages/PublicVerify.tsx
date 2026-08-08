@@ -149,23 +149,23 @@ export default function PublicVerify() {
 
             <div style={{ padding: '2rem' }}>
 
-               {/* Photo + Name + ID */}
-               <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-                 {citizen.photo ? (
-                   <img src={citizen.photo} alt="" className="verify-photo" style={{ width: 90, height: 110, objectFit: 'cover', borderRadius: 14, border: '3px solid rgba(255,255,255,0.15)', flexShrink: 0 }} />
-                 ) : (
-                   <div className="verify-photo" style={{ borderRadius: 14, background: 'linear-gradient(135deg,#2563eb,#7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, flexShrink: 0 }}>
-                     {citizen.fullName.charAt(0)}
-                   </div>
-                 )}
-                 <div style={{ flex: 1, minWidth: 0 }}>
-                   <div className="verify-field-label">{t('Full Name')}</div>
-                   <div className="verify-name" style={{ fontWeight: 800, color: 'white', lineHeight: 1.2, marginBottom: '0.5rem', wordBreak: 'break-word' }}>{citizen.fullName}</div>
-                   <div className="verify-id-number" style={{ fontFamily: 'monospace', fontWeight: 700, color: '#93c5fd', background: 'rgba(96,165,250,0.1)', padding: '0.25rem 0.75rem', borderRadius: 8, display: 'inline-block' }}>
-                     {citizen.nationalIdNumber}
-                   </div>
-                 </div>
-               </div>
+              {/* Photo + Name + ID */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+                {citizen.photo ? (
+                  <img src={citizen.photo} alt="" style={{ width: 90, height: 110, objectFit: 'cover', borderRadius: 14, border: '3px solid rgba(255,255,255,0.15)', flexShrink: 0 }} />
+                ) : (
+                  <div style={{ width: 90, height: 110, borderRadius: 14, background: 'linear-gradient(135deg,#2563eb,#7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '2.5rem', fontWeight: 800, flexShrink: 0 }}>
+                    {citizen.fullName.charAt(0)}
+                  </div>
+                )}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.4rem' }}>{t('Full Name')}</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'white', lineHeight: 1.2, marginBottom: '0.5rem', wordBreak: 'break-word' }}>{citizen.fullName}</div>
+                  <div style={{ fontFamily: 'monospace', fontSize: '0.85rem', fontWeight: 700, color: '#93c5fd', background: 'rgba(96,165,250,0.1)', padding: '0.25rem 0.75rem', borderRadius: 8, display: 'inline-block' }}>
+                    {citizen.nationalIdNumber}
+                  </div>
+                </div>
+              </div>
 
               {/* Divider */}
               <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', marginBottom: '1.5rem' }} />
