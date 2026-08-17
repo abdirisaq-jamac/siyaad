@@ -5,8 +5,8 @@ import {
   ArrowLeft, Edit, CreditCard, Printer, Download,
   User, Phone, MapPin, Briefcase, Calendar, Hash, Shield, QrCode
 } from 'lucide-react';
-import { getCitizenById } from '../services/storage';
-import type { Citizen, AppUser } from '../types';
+import { getCitizenById, getSettings } from '../services/storage';
+import type { Citizen, AppUser, AppSettings } from '../types';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';
 import { QRCodeSVG } from 'qrcode.react';
@@ -31,10 +31,14 @@ export default function CitizenDetails() {
   const printRef = useRef<HTMLDivElement>(null);
 
   const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
+  const [settings, setSettings] = useState<AppSettings | null>(null);
 
   useEffect(() => {
     const rawUser = localStorage.getItem('user') || sessionStorage.getItem('user');
     if (rawUser) { try { setCurrentUser(JSON.parse(rawUser)); } catch(e){} }
+    
+    getSettings().then(setSettings).catch(console.error);
+    
     if (id) {
       getCitizenById(id)
         .then(c => setCitizen(c || null))
@@ -73,10 +77,11 @@ export default function CitizenDetails() {
 
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
     const margin = 15;
     let y = margin;
 
-    // ── Helper: load image as data URL ──
+    // Helper: load image
     function loadImage(src: string): Promise<string> {
       return new Promise((resolve, reject) => {
         const img = new Image();
@@ -90,178 +95,210 @@ export default function CitizenDetails() {
             ctx.drawImage(img, 0, 0);
             resolve(canvas.toDataURL('image/png'));
           } else {
-            reject('Canvas context unavailable');
+            reject('Canvas error');
           }
         };
-        img.onerror = () => reject('Image load failed');
+        img.onerror = () => reject('Load failed');
         img.src = src;
       });
     }
 
-    // ── Title Header ──
-    pdf.setFillColor(37, 99, 235);
-    pdf.rect(0, 0, pageW, 28, 'F');
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(18);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Citizen Profile', margin, 12);
-    pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text(`National ID: ${citizen.nationalIdNumber}`, margin, 20);
-    pdf.text(`Status: ${citizen.status}`, pageW - margin - 30, 20);
-    y = 38;
+    // Hex to RGB helper for primary color
+    const primaryHex = settings?.primaryColor || '#2563eb';
+    const hex2rgb = (hex: string) => {
+      const v = hex.replace('#', '');
+      return {
+        r: parseInt(v.substring(0, 2), 16) || 37,
+        g: parseInt(v.substring(2, 4), 16) || 99,
+        b: parseInt(v.substring(4, 6), 16) || 235
+      };
+    };
+    const pColor = hex2rgb(primaryHex);
 
-    // ── Photo ──
-    const photoX = margin;
-    const photoSize = 40;
-    if (citizen.photo) {
+    // --- Watermark ---
+    if (settings?.watermarkUrl) {
       try {
-        const photoData = await loadImage(citizen.photo);
-        pdf.addImage(photoData, 'PNG', photoX, y, photoSize, photoSize);
-      } catch {
-        pdf.setFillColor(37, 99, 235);
-        pdf.roundedRect(photoX, y, photoSize, photoSize, 3, 3, 'F');
-        pdf.setTextColor(255, 255, 255);
-        pdf.setFontSize(24);
-        pdf.text(citizen.fullName.charAt(0), photoX + 15, y + 27);
-      }
-    } else {
-      pdf.setFillColor(37, 99, 235);
-      pdf.roundedRect(photoX, y, photoSize, photoSize, 3, 3, 'F');
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(24);
-      pdf.text(citizen.fullName.charAt(0), photoX + 15, y + 27);
+        const wm = await loadImage(settings.watermarkUrl);
+        const pdfAny = pdf as any;
+        pdfAny.setGState(new pdfAny.GState({ opacity: 0.08 }));
+        pdf.addImage(wm, 'PNG', pageW/2 - 60, pageH/2 - 60, 120, 120);
+        pdfAny.setGState(new pdfAny.GState({ opacity: 1 }));
+      } catch (e) {}
     }
 
-    // ── Name & Occupation next to photo ──
-    const textX = photoX + photoSize + 10;
+    // --- Header ---
+    if (settings?.logoUrl) {
+      try {
+        const logo = await loadImage(settings.logoUrl);
+        pdf.addImage(logo, 'PNG', margin, margin, 25, 25);
+      } catch (e) {}
+    }
+    
+    if (settings?.flagUrl) {
+      try {
+        const flag = await loadImage(settings.flagUrl);
+        pdf.addImage(flag, 'PNG', pageW - margin - 35, margin, 35, 22);
+      } catch (e) {}
+    }
+
     pdf.setTextColor(15, 23, 42);
-    pdf.setFontSize(16);
     pdf.setFont('helvetica', 'bold');
-    pdf.text(citizen.fullName, textX, y + 12);
-    pdf.setFontSize(10);
+    pdf.setFontSize(16);
+    pdf.text((settings?.stateName || 'WAQOOYI BARI').toUpperCase(), pageW/2, margin + 8, { align: 'center' });
+    
+    pdf.setFontSize(12);
+    pdf.setTextColor(pColor.r, pColor.g, pColor.b);
+    pdf.text('OFFICIAL CITIZEN PROFILE RECORD', pageW/2, margin + 15, { align: 'center' });
+    
+    pdf.setFontSize(9);
     pdf.setFont('helvetica', 'normal');
     pdf.setTextColor(100, 116, 139);
-    pdf.text(citizen.occupation || '', textX, y + 20);
+    pdf.text(`Generated on: ${format(new Date(), 'dd MMM yyyy, HH:mm')}`, pageW/2, margin + 21, { align: 'center' });
 
-    // ── QR Code next to name ──
-    const qrSize = 35;
-    const qrX = pageW - margin - qrSize;
-    if (citizen.qrCode) {
-      try {
-        const qrData = await loadImage(citizen.qrCode);
-        pdf.addImage(qrData, 'PNG', qrX, y, qrSize, qrSize);
-        pdf.setFontSize(7);
-        pdf.setTextColor(100, 116, 139);
-        pdf.text('Verification QR', qrX + 5, y + qrSize + 4);
-      } catch {
-        pdf.setDrawColor(200, 200, 200);
-        pdf.setLineWidth(0.3);
-        pdf.rect(qrX, y, qrSize, qrSize);
-        pdf.setFontSize(8);
-        pdf.setTextColor(150);
-        pdf.text('QR Error', qrX + 8, y + 20);
-      }
-    }
-
-    y += photoSize + 16;
-
-    // ── Divider ──
-    pdf.setDrawColor(226, 232, 240);
-    pdf.setLineWidth(0.5);
+    y += 32;
+    
+    // --- Header Divider ---
+    pdf.setDrawColor(pColor.r, pColor.g, pColor.b);
+    pdf.setLineWidth(1);
     pdf.line(margin, y, pageW - margin, y);
-    y += 8;
+    y += 10;
 
-    // ── Section Title ──
-    pdf.setFontSize(13);
+    // --- Core Identity Block ---
+    const photoSize = 42;
+    if (citizen.photo) {
+      try {
+        const photo = await loadImage(citizen.photo);
+        pdf.addImage(photo, 'PNG', margin, y, photoSize, photoSize);
+      } catch (e) {
+        pdf.setFillColor(241, 245, 249);
+        pdf.rect(margin, y, photoSize, photoSize, 'F');
+      }
+    } else {
+      pdf.setFillColor(241, 245, 249);
+      pdf.rect(margin, y, photoSize, photoSize, 'F');
+    }
+    pdf.setDrawColor(200, 200, 200);
+    pdf.setLineWidth(0.5);
+    pdf.rect(margin, y, photoSize, photoSize, 'S');
+
+    const textX = margin + photoSize + 12;
+    const qrSize = 36;
+    const qrX = pageW - margin - qrSize;
+
+    pdf.setFontSize(20);
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(15, 23, 42);
-    pdf.text('Personal & Registration Details', margin, y);
-    y += 8;
+    pdf.text(citizen.fullName.toUpperCase(), textX, y + 8, { maxWidth: qrX - textX - 5 });
+    
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(100, 116, 139);
+    pdf.text(`National ID:`, textX, y + 22);
+    
+    pdf.setFontSize(13);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(pColor.r, pColor.g, pColor.b);
+    pdf.text(citizen.nationalIdNumber, textX + 22, y + 22);
 
-    // ── Info rows (two columns) ──
+    // --- QR Code ---
+    if (citizen.qrCode) {
+      try {
+        const qr = await loadImage(citizen.qrCode);
+        pdf.addImage(qr, 'PNG', qrX, y + (photoSize - qrSize)/2, qrSize, qrSize);
+      } catch (e) {}
+    }
+
+    y += photoSize + 12;
+
+    // --- Details Box ---
+    const detailsHeight = 115;
+    pdf.setFillColor(250, 252, 254);
+    pdf.setDrawColor(pColor.r, pColor.g, pColor.b);
+    pdf.setLineWidth(0.3);
+    pdf.roundedRect(margin, y, pageW - margin * 2, detailsHeight, 3, 3, 'FD');
+
+    pdf.setFillColor(pColor.r, pColor.g, pColor.b);
+    pdf.roundedRect(margin, y, pageW - margin * 2, 10, 3, 3, 'F');
+    pdf.rect(margin, y + 5, pageW - margin * 2, 5, 'F');
+    
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(255, 255, 255);
+    pdf.text('CITIZEN DEMOGRAPHIC & REGISTRATION DATA', margin + 5, y + 7);
+    
+    y += 16;
+    
     const fields = [
       { label: 'Full Name', value: citizen.fullName },
-      { label: 'National ID', value: citizen.nationalIdNumber },
       { label: "Father's Name", value: citizen.fatherName },
       { label: "Mother's Name", value: citizen.motherName },
-      { label: 'Date of Birth', value: format(new Date(citizen.dateOfBirth), 'dd MMMM yyyy') },
+      { label: 'Date of Birth', value: format(new Date(citizen.dateOfBirth), 'dd MMM yyyy') },
       { label: 'Place of Birth', value: citizen.placeOfBirth },
       { label: 'Gender', value: citizen.gender },
       { label: 'Marital Status', value: citizen.maritalStatus },
-      { label: 'Phone Number', value: citizen.phone },
       { label: 'Occupation', value: citizen.occupation },
+      { label: 'Phone Number', value: citizen.phone },
       { label: 'District', value: citizen.district },
-      { label: 'Registration Date', value: format(new Date(citizen.registrationDate), 'dd MMMM yyyy') },
-      { label: 'Issue Date', value: format(new Date(citizen.issueDate), 'dd MMMM yyyy') },
-      { label: 'Expiry Date', value: format(new Date(citizen.expiryDate), 'dd MMMM yyyy') },
+      { label: 'Registration Date', value: format(new Date(citizen.registrationDate), 'dd MMM yyyy') },
+      { label: 'Issue Date', value: format(new Date(citizen.issueDate), 'dd MMM yyyy') },
+      { label: 'Expiry Date', value: format(new Date(citizen.expiryDate), 'dd MMM yyyy') },
     ];
 
-    const colW = (pageW - margin * 2) / 2;
-    const rowH = 14;
+    const colW = (pageW - margin * 2 - 10) / 2;
+    const rowH = 12;
+    const startY = y;
 
     fields.forEach((field, i) => {
       const col = i % 2;
-      const x = margin + col * colW;
+      const x = margin + 5 + col * colW;
+      const rIndex = Math.floor(i / 2);
+      const currentY = startY + (rIndex * rowH);
 
-      // Draw light background for alternating rows
-      if (col === 0) {
-        const rowIndex = Math.floor(i / 2);
-        if (rowIndex % 2 === 0) {
-          pdf.setFillColor(248, 250, 252);
-          pdf.rect(margin, y - 4, pageW - margin * 2, rowH, 'F');
-        }
-      }
-
-      // Label
       pdf.setFontSize(7.5);
       pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor(100, 116, 139);
-      pdf.text(field.label.toUpperCase(), x + 2, y);
+      pdf.setTextColor(148, 163, 184);
+      pdf.text(field.label.toUpperCase(), x, currentY);
 
-      // Value
       pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'normal');
+      pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(15, 23, 42);
-      pdf.text(field.value || '—', x + 2, y + 6, { maxWidth: colW - 4 });
-
-      // Move y down after every 2 fields
-      if (col === 1) {
-        y += rowH;
-      }
+      pdf.text(field.value || '—', x, currentY + 4.5, { maxWidth: colW - 5 });
     });
 
-    // Handle odd number of fields
-    if (fields.length % 2 !== 0) {
-      y += rowH;
-    }
+    y = startY + Math.ceil(fields.length / 2) * rowH + 2;
 
-    // ── Full Address (full width) ──
-    y += 4;
-    pdf.setDrawColor(226, 232, 240);
-    pdf.line(margin, y, pageW - margin, y);
-    y += 6;
     pdf.setFontSize(7.5);
     pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(100, 116, 139);
-    pdf.text('FULL ADDRESS', margin + 2, y);
-    y += 5;
-    pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(15, 23, 42);
-    pdf.text(citizen.address || '—', margin + 2, y);
-
-    // ── Footer ──
-    y += 16;
-    pdf.setDrawColor(226, 232, 240);
-    pdf.line(margin, y, pageW - margin, y);
-    y += 6;
-    pdf.setFontSize(8);
     pdf.setTextColor(148, 163, 184);
-    pdf.text('Generated by WNIMS — Waqooyi Bari National ID Management System', margin, y);
-    pdf.text(format(new Date(), 'dd MMMM yyyy, HH:mm'), pageW - margin - 45, y);
+    pdf.text('FULL ADDRESS', margin + 5, y);
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(15, 23, 42);
+    pdf.text(citizen.address || '—', margin + 5, y + 4.5, { maxWidth: pageW - margin * 2 - 10 });
 
-    pdf.save(`${citizen.nationalIdNumber}.pdf`);
+    y = startY + detailsHeight; 
+    
+    // --- Signatures ---
+    y += 25;
+    pdf.setDrawColor(150, 150, 150);
+    pdf.setLineWidth(0.4);
+    pdf.line(margin + 15, y, margin + 65, y);
+    pdf.line(pageW - margin - 65, y, pageW - margin - 15, y);
+    
+    pdf.setFontSize(8.5);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(100, 116, 139);
+    pdf.text('Citizen Signature', margin + 40, y + 5, { align: 'center' });
+    pdf.text('Authorized Official Signature', pageW - margin - 40, y + 5, { align: 'center' });
+
+    // --- Bottom Edge / Footer ---
+    pdf.setFillColor(pColor.r, pColor.g, pColor.b);
+    pdf.rect(0, pageH - 8, pageW, 8, 'F');
+    pdf.setFontSize(7.5);
+    pdf.setTextColor(255, 255, 255);
+    pdf.text(`${settings?.stateName || 'Waqooyi Bari'} National ID Management System • Document ID: ${citizen.nationalIdNumber}`, pageW/2, pageH - 3, { align: 'center' });
+
+    pdf.save(`${citizen.nationalIdNumber}-profile.pdf`);
   }
 
   const containerVariants = {
