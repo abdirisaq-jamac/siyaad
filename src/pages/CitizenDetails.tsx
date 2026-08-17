@@ -333,27 +333,35 @@ export default function CitizenDetails() {
     
     // --- Signatures ---
     // Clamp y so signatures never fall off the page
-    const sigY = Math.min(y + 25, pageH - 35);
+    const sigY = Math.min(y + 25, pageH - 42);
     
     pdf.setDrawColor(150, 150, 150);
     pdf.setLineWidth(0.4);
     pdf.line(margin + 15, sigY, margin + 65, sigY);
     pdf.line(pageW - margin - 65, sigY, pageW - margin - 15, sigY);
     
+    // Left: Citizen Signature label
     pdf.setFontSize(8.5);
     pdf.setFont('helvetica', 'normal');
     pdf.setTextColor(100, 116, 139);
     pdf.text('Citizen Signature', margin + 40, sigY + 5, { align: 'center' });
 
-    // Official signature: show their name in bold, then title below
-    const officialName = settings?.officialSignatureName || 'Authorized Official Signature';
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(15, 23, 42);
-    pdf.text(officialName, pageW - margin - 40, sigY + 5, { align: 'center' });
+    // Right: Always show official name (bold) + "Authorized Official Signature" label below
     if (settings?.officialSignatureName) {
+      pdf.setFontSize(9.5);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(15, 23, 42);
+      pdf.text(settings.officialSignatureName, pageW - margin - 40, sigY + 5, { align: 'center' });
+      
+      pdf.setFontSize(7.5);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(100, 116, 139);
-      pdf.text('Authorized Official', pageW - margin - 40, sigY + 10, { align: 'center' });
+      pdf.text('Authorized Official Signature', pageW - margin - 40, sigY + 11, { align: 'center' });
+    } else {
+      pdf.setFontSize(8.5);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(100, 116, 139);
+      pdf.text('Authorized Official Signature', pageW - margin - 40, sigY + 5, { align: 'center' });
     }
     
     y = sigY;
