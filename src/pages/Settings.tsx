@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Settings, Save, Upload, Palette, Type, X, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getSettings, saveSettings, clearAllCitizens } from '../services/storage';
+import { compressImage } from '../services/imageUtils';
 import { useTranslation } from '../i18n';
 import type { AppSettings } from '../types';
 
@@ -39,12 +40,17 @@ export default function SettingsPage() {
     getSettings()
       .then(s => {
         setSettings(s);
-        // Add a small delay before enabling auto-save to prevent saving the initial fetch
         setTimeout(() => { initialLoadDone.current = true; }, 100);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  // Persist language change to localStorage immediately so QR/verify pages pick it up
+  const handleSetLanguage = (lang: 'en' | 'so' | 'ar') => {
+    setLanguage(lang);
+    localStorage.setItem('app-language', lang);
+  };
 
   // Auto-save whenever settings change
   useEffect(() => {
@@ -68,7 +74,10 @@ export default function SettingsPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => setSettings(s => ({ ...s, logoUrl: reader.result as string }));
+    reader.onload = async () => {
+      const compressed = await compressImage(reader.result as string, 150);
+      setSettings(s => ({ ...s, logoUrl: compressed }));
+    };
     reader.readAsDataURL(file);
   }
 
@@ -76,7 +85,10 @@ export default function SettingsPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => setSettings(s => ({ ...s, flagUrl: reader.result as string }));
+    reader.onload = async () => {
+      const compressed = await compressImage(reader.result as string, 100);
+      setSettings(s => ({ ...s, flagUrl: compressed }));
+    };
     reader.readAsDataURL(file);
   }
 
@@ -84,7 +96,10 @@ export default function SettingsPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => setSettings(s => ({ ...s, watermarkUrl: reader.result as string }));
+    reader.onload = async () => {
+      const compressed = await compressImage(reader.result as string, 150);
+      setSettings(s => ({ ...s, watermarkUrl: compressed }));
+    };
     reader.readAsDataURL(file);
   }
 
@@ -123,7 +138,7 @@ export default function SettingsPage() {
             <select
               className="form-input"
               value={language}
-              onChange={e => setLanguage(e.target.value as 'en' | 'so' | 'ar')}
+              onChange={e => handleSetLanguage(e.target.value as 'en' | 'so' | 'ar')}
               style={{ maxWidth: '100%' }}
             >
               <option value="en">{t('English')}</option>
@@ -145,6 +160,16 @@ export default function SettingsPage() {
                 placeholder="e.g. Waqooyi Bari"
               />
             </div>
+            <div>
+              <label className="form-label">{t('Authorized Official Signature Name') || 'Authorized Official Signature Name'}</label>
+              <input
+                className="form-input"
+                value={settings.officialSignatureName || ''}
+                onChange={e => setSettings(s => ({ ...s, officialSignatureName: e.target.value }))}
+                placeholder="e.g. Eng. Jama Ali"
+              />
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>This name will appear under the signature line in the PDF exports.</p>
+            </div>
           </div>
         </Section>
 
@@ -165,7 +190,7 @@ export default function SettingsPage() {
               className="hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/10"
             >
               {settings.logoUrl ? (
-                <img src={settings.logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={settings.logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               ) : (
                 <>
                   <Upload size={28} style={{ color: 'var(--text-muted)' }} />
@@ -207,7 +232,7 @@ export default function SettingsPage() {
               className="hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/10"
             >
               {settings.flagUrl ? (
-                <img src={settings.flagUrl} alt="Flag" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={settings.flagUrl} alt="Flag" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               ) : (
                 <>
                   <Upload size={28} style={{ color: 'var(--text-muted)' }} />
@@ -274,74 +299,9 @@ export default function SettingsPage() {
           </div>
         </Section>
 
-        {/* Color Scheme */}
-        <Section title="Color Scheme" icon={<Palette size={20} />}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-            <div>
-              <label className="form-label">Primary Color</label>
-              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                <input
-                  type="color"
-                  value={settings.primaryColor}
-                  onChange={e => setSettings(s => ({ ...s, primaryColor: e.target.value }))}
-                  style={{ width: 56, height: 44, border: 'none', borderRadius: '8px', cursor: 'pointer', background: 'var(--bg-main)', padding: '0.25rem' }}
-                />
-                <input
-                  className="form-input"
-                  value={settings.primaryColor}
-                  onChange={e => setSettings(s => ({ ...s, primaryColor: e.target.value }))}
-                  style={{ flex: 1 }}
-                />
-              </div>
-            </div>
-            <div>
-              <label className="form-label">Accent Color</label>
-              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                <input
-                  type="color"
-                  value={settings.accentColor}
-                  onChange={e => setSettings(s => ({ ...s, accentColor: e.target.value }))}
-                  style={{ width: 56, height: 44, border: 'none', borderRadius: '8px', cursor: 'pointer', background: 'var(--bg-main)', padding: '0.25rem' }}
-                />
-                <input
-                  className="form-input"
-                  value={settings.accentColor}
-                  onChange={e => setSettings(s => ({ ...s, accentColor: e.target.value }))}
-                  style={{ flex: 1 }}
-                />
-              </div>
-            </div>
-          </div>
-          {/* Preview */}
-          <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'var(--bg-main)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>UI Preview</div>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <button style={{ padding: '0.75rem 1.5rem', borderRadius: '8px', background: settings.primaryColor, color: 'white', fontWeight: 600, fontSize: '0.9rem', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-                Primary Button
-              </button>
-              <button style={{ padding: '0.75rem 1.5rem', borderRadius: '8px', background: settings.accentColor, color: 'white', fontWeight: 600, fontSize: '0.9rem', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-                Accent Button
-              </button>
-            </div>
-          </div>
-        </Section>
 
-        {/* System Info */}
-        <Section title={t('System Information')} icon={<Type size={20} />}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {[
-              ['System Name', t('Waqooyi Bari National ID Management System')],
-              [t('Version'), '2.0.0 Pro'],
-              ['Storage Engine', 'MySQL Database'],
-              [t('Last Updated'), new Date().toLocaleDateString()],
-            ].map(([label, value]) => (
-              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', background: 'var(--bg-main)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 600 }}>{label}</span>
-                <span style={{ color: 'var(--text-main)', fontSize: '0.9rem', fontWeight: 700 }}>{value}</span>
-              </div>
-            ))}
-          </div>
-        </Section>
+
+
 
         {/* Danger Zone */}
         <motion.div variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }} className="glass-card" style={{ padding: '2rem', border: '1px solid rgba(220, 38, 38, 0.3)', background: 'rgba(220, 38, 38, 0.05)' }}>

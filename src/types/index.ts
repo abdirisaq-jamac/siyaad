@@ -35,6 +35,7 @@ export interface AppSettings {
   cardTemplate: 'default' | 'classic' | 'modern';
   primaryColor: string;
   accentColor: string;
+  officialSignatureName?: string;
 }
 
 export interface DashboardStats {
