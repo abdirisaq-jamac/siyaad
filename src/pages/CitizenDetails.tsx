@@ -342,7 +342,7 @@ export default function CitizenDetails() {
     pdf.setFont('helvetica', 'normal');
     pdf.setTextColor(100, 116, 139);
     pdf.text('Citizen Signature', margin + 40, y + 5, { align: 'center' });
-    pdf.text(settings?.officialSignatureName || 'Authorized Official Signature', pageW - margin - 40, y + 5, { align: 'center' });
+    pdf.text((settings?.officialSignatureName || 'Authorized Official Signature').toUpperCase(), pageW - margin - 40, y + 5, { align: 'center' });
 
     // --- Bottom Edge / Footer ---
     pdf.setFontSize(8);
