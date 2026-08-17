@@ -164,6 +164,14 @@ export default function CitizenDetails() {
     y += 10;
 
     // --- Core Identity Block ---
+    pdf.setFontSize(18);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(15, 23, 42);
+    const splitName = pdf.splitTextToSize(citizen.fullName.toUpperCase(), pageW - margin * 2);
+    pdf.text(splitName, margin, y + 6);
+    
+    y += (splitName.length * 8) + 4;
+
     const photoSize = 42;
     if (citizen.photo) {
       try {
@@ -184,21 +192,16 @@ export default function CitizenDetails() {
     const textX = margin + photoSize + 12;
     const qrSize = 36;
     const qrX = pageW - margin - qrSize;
-
-    pdf.setFontSize(20);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(15, 23, 42);
-    pdf.text(citizen.fullName.toUpperCase(), textX, y + 8, { maxWidth: qrX - textX - 5 });
     
     pdf.setFontSize(11);
     pdf.setFont('helvetica', 'normal');
     pdf.setTextColor(100, 116, 139);
-    pdf.text(`National ID:`, textX, y + 22);
+    pdf.text(`National ID:`, textX, y + 16);
     
-    pdf.setFontSize(13);
+    pdf.setFontSize(14);
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(pColor.r, pColor.g, pColor.b);
-    pdf.text(citizen.nationalIdNumber, textX + 22, y + 22);
+    pdf.text(citizen.nationalIdNumber, textX, y + 24);
 
     // --- QR Code ---
     if (citizen.qrCode) {
