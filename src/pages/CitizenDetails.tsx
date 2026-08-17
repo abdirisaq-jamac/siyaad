@@ -149,11 +149,6 @@ export default function CitizenDetails() {
     pdf.setFontSize(12);
     pdf.setTextColor(pColor.r, pColor.g, pColor.b);
     pdf.text('OFFICIAL CITIZEN PROFILE RECORD', pageW/2, margin + 15, { align: 'center' });
-    
-    pdf.setFontSize(9);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(100, 116, 139);
-    pdf.text(`Generated on: ${format(new Date(), 'dd MMM yyyy, HH:mm')}`, pageW/2, margin + 21, { align: 'center' });
 
     y += 32;
     
@@ -193,15 +188,25 @@ export default function CitizenDetails() {
     const qrSize = 36;
     const qrX = pageW - margin - qrSize;
     
-    pdf.setFontSize(11);
+    pdf.setFontSize(9);
     pdf.setFont('helvetica', 'normal');
     pdf.setTextColor(100, 116, 139);
-    pdf.text(`National ID:`, textX, y + 16);
+    pdf.text(`REGISTRATION DATE:`, textX, y + 8);
     
-    pdf.setFontSize(14);
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(15, 23, 42);
+    pdf.text(format(new Date(citizen.registrationDate), 'dd MMM yyyy').toUpperCase(), textX, y + 13);
+    
+    pdf.setFontSize(9);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(100, 116, 139);
+    pdf.text(`NATIONAL ID:`, textX, y + 26);
+    
+    pdf.setFontSize(13);
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(pColor.r, pColor.g, pColor.b);
-    pdf.text(citizen.nationalIdNumber, textX, y + 24);
+    pdf.text(citizen.nationalIdNumber, textX, y + 32);
 
     // --- QR Code ---
     if (citizen.qrCode) {
@@ -228,7 +233,6 @@ export default function CitizenDetails() {
       { label: 'Phone Number', value: citizen.phone?.toUpperCase() },
       { label: 'District', value: citizen.district?.toUpperCase() },
       { label: 'Registration Date', value: format(new Date(citizen.registrationDate), 'dd MMM yyyy').toUpperCase() },
-      { label: 'Issue Date', value: format(new Date(citizen.issueDate), 'dd MMM yyyy').toUpperCase() },
       { label: 'Expiry Date', value: format(new Date(citizen.expiryDate), 'dd MMM yyyy').toUpperCase() },
     ];
 
@@ -341,6 +345,11 @@ export default function CitizenDetails() {
     pdf.text('Authorized Official Signature', pageW - margin - 40, y + 5, { align: 'center' });
 
     // --- Bottom Edge / Footer ---
+    pdf.setFontSize(8);
+    pdf.setFont('helvetica', 'italic');
+    pdf.setTextColor(100, 116, 139);
+    pdf.text(`Generated on: ${format(new Date(), 'dd MMM yyyy, HH:mm')}`, pageW/2, pageH - 12, { align: 'center' });
+
     pdf.setFillColor(pColor.r, pColor.g, pColor.b);
     pdf.rect(0, pageH - 8, pageW, 8, 'F');
     pdf.setFontSize(7.5);
