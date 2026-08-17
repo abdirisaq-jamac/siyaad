@@ -214,52 +214,62 @@ export default function CitizenDetails() {
     y += photoSize + 12;
 
     // --- Details Box ---
-    const detailsHeight = 115;
-    pdf.setFillColor(250, 252, 254);
-    pdf.setDrawColor(pColor.r, pColor.g, pColor.b);
-    pdf.setLineWidth(0.3);
-    pdf.roundedRect(margin, y, pageW - margin * 2, detailsHeight, 3, 3, 'FD');
-
-    pdf.setFillColor(pColor.r, pColor.g, pColor.b);
-    pdf.roundedRect(margin, y, pageW - margin * 2, 10, 3, 3, 'F');
-    pdf.rect(margin, y + 5, pageW - margin * 2, 5, 'F');
+    const detailsHeight = 125;
+    const bannerBlue = { r: 30, g: 64, b: 175 }; // Deep blue for professional look
     
-    pdf.setFontSize(10);
+    pdf.setFillColor(250, 252, 254);
+    pdf.setDrawColor(bannerBlue.r, bannerBlue.g, bannerBlue.b);
+    pdf.setLineWidth(0.4);
+    pdf.roundedRect(margin, y, pageW - margin * 2, detailsHeight, 4, 4, 'FD');
+
+    pdf.setFillColor(bannerBlue.r, bannerBlue.g, bannerBlue.b);
+    pdf.roundedRect(margin, y, pageW - margin * 2, 11, 4, 4, 'F');
+    pdf.rect(margin, y + 5, pageW - margin * 2, 6, 'F'); // cover bottom corners
+    
+    pdf.setFontSize(10.5);
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(255, 255, 255);
-    pdf.text('CITIZEN DEMOGRAPHIC & REGISTRATION DATA', margin + 5, y + 7);
+    pdf.text('CITIZEN DEMOGRAPHIC & REGISTRATION DATA', pageW / 2, y + 7.5, { align: 'center' });
     
-    y += 16;
+    y += 18;
     
     const fields = [
-      { label: 'Full Name', value: citizen.fullName },
-      { label: "Father's Name", value: citizen.fatherName },
-      { label: "Mother's Name", value: citizen.motherName },
-      { label: 'Date of Birth', value: format(new Date(citizen.dateOfBirth), 'dd MMM yyyy') },
-      { label: 'Place of Birth', value: citizen.placeOfBirth },
-      { label: 'Gender', value: citizen.gender },
-      { label: 'Marital Status', value: citizen.maritalStatus },
-      { label: 'Occupation', value: citizen.occupation },
-      { label: 'Phone Number', value: citizen.phone },
-      { label: 'District', value: citizen.district },
-      { label: 'Registration Date', value: format(new Date(citizen.registrationDate), 'dd MMM yyyy') },
-      { label: 'Issue Date', value: format(new Date(citizen.issueDate), 'dd MMM yyyy') },
-      { label: 'Expiry Date', value: format(new Date(citizen.expiryDate), 'dd MMM yyyy') },
+      { label: 'Full Name', value: citizen.fullName?.toUpperCase() },
+      { label: "Father's Name", value: citizen.fatherName?.toUpperCase() },
+      { label: "Mother's Name", value: citizen.motherName?.toUpperCase() },
+      { label: 'Date of Birth', value: format(new Date(citizen.dateOfBirth), 'dd MMM yyyy').toUpperCase() },
+      { label: 'Place of Birth', value: citizen.placeOfBirth?.toUpperCase() },
+      { label: 'Gender', value: citizen.gender?.toUpperCase() },
+      { label: 'Marital Status', value: citizen.maritalStatus?.toUpperCase() },
+      { label: 'Occupation', value: citizen.occupation?.toUpperCase() },
+      { label: 'Phone Number', value: citizen.phone?.toUpperCase() },
+      { label: 'District', value: citizen.district?.toUpperCase() },
+      { label: 'Registration Date', value: format(new Date(citizen.registrationDate), 'dd MMM yyyy').toUpperCase() },
+      { label: 'Issue Date', value: format(new Date(citizen.issueDate), 'dd MMM yyyy').toUpperCase() },
+      { label: 'Expiry Date', value: format(new Date(citizen.expiryDate), 'dd MMM yyyy').toUpperCase() },
     ];
 
-    const colW = (pageW - margin * 2 - 10) / 2;
-    const rowH = 12;
+    const colW = (pageW - margin * 2 - 12) / 2;
+    const rowH = 13;
     const startY = y;
 
     fields.forEach((field, i) => {
       const col = i % 2;
-      const x = margin + 5 + col * colW;
       const rIndex = Math.floor(i / 2);
       const currentY = startY + (rIndex * rowH);
 
+      // Add horizontal divider for rows after the first
+      if (col === 0 && rIndex > 0) {
+        pdf.setDrawColor(226, 232, 240);
+        pdf.setLineWidth(0.2);
+        pdf.line(margin + 4, currentY - 5, pageW - margin - 4, currentY - 5);
+      }
+
+      const x = margin + 6 + col * colW;
+
       pdf.setFontSize(7.5);
-      pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor(148, 163, 184);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(100, 116, 139);
       pdf.text(field.label.toUpperCase(), x, currentY);
 
       pdf.setFontSize(10);
@@ -270,14 +280,20 @@ export default function CitizenDetails() {
 
     y = startY + Math.ceil(fields.length / 2) * rowH + 2;
 
+    // Divider before address
+    pdf.setDrawColor(226, 232, 240);
+    pdf.setLineWidth(0.2);
+    pdf.line(margin + 4, y - 5, pageW - margin - 4, y - 5);
+
     pdf.setFontSize(7.5);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(148, 163, 184);
-    pdf.text('FULL ADDRESS', margin + 5, y);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(100, 116, 139);
+    pdf.text('FULL ADDRESS', margin + 6, y);
+    
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(15, 23, 42);
-    pdf.text(citizen.address || '—', margin + 5, y + 4.5, { maxWidth: pageW - margin * 2 - 10 });
+    pdf.text(citizen.address?.toUpperCase() || '—', margin + 6, y + 4.5, { maxWidth: pageW - margin * 2 - 12 });
 
     y = startY + detailsHeight; 
     
