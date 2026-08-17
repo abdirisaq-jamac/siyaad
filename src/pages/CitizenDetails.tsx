@@ -332,17 +332,31 @@ export default function CitizenDetails() {
     y += addressHeight + 5;
     
     // --- Signatures ---
-    y += 25;
+    // Clamp y so signatures never fall off the page
+    const sigY = Math.min(y + 25, pageH - 35);
+    
     pdf.setDrawColor(150, 150, 150);
     pdf.setLineWidth(0.4);
-    pdf.line(margin + 15, y, margin + 65, y);
-    pdf.line(pageW - margin - 65, y, pageW - margin - 15, y);
+    pdf.line(margin + 15, sigY, margin + 65, sigY);
+    pdf.line(pageW - margin - 65, sigY, pageW - margin - 15, sigY);
     
     pdf.setFontSize(8.5);
     pdf.setFont('helvetica', 'normal');
     pdf.setTextColor(100, 116, 139);
-    pdf.text('Citizen Signature', margin + 40, y + 5, { align: 'center' });
-    pdf.text((settings?.officialSignatureName || 'Authorized Official Signature').toUpperCase(), pageW - margin - 40, y + 5, { align: 'center' });
+    pdf.text('Citizen Signature', margin + 40, sigY + 5, { align: 'center' });
+
+    // Official signature: show their name in bold, then title below
+    const officialName = settings?.officialSignatureName || 'Authorized Official Signature';
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(15, 23, 42);
+    pdf.text(officialName, pageW - margin - 40, sigY + 5, { align: 'center' });
+    if (settings?.officialSignatureName) {
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(100, 116, 139);
+      pdf.text('Authorized Official', pageW - margin - 40, sigY + 10, { align: 'center' });
+    }
+    
+    y = sigY;
 
     // --- Bottom Edge / Footer ---
     pdf.setFontSize(8);
