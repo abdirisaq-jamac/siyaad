@@ -68,6 +68,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   cardTemplate: 'default',
   primaryColor: '#00875a',
   accentColor: '#1a4a8a',
+  officialSignatureName: '',
 };
 
 export async function getSettings(): Promise<AppSettings> {
@@ -75,7 +76,8 @@ export async function getSettings(): Promise<AppSettings> {
   if (error || !data) {
     return DEFAULT_SETTINGS;
   }
-  return data as AppSettings;
+  // Merge with defaults so new fields (like officialSignatureName) always exist
+  return { ...DEFAULT_SETTINGS, ...data } as AppSettings;
 }
 
 export async function saveSettings(settings: AppSettings): Promise<AppSettings> {

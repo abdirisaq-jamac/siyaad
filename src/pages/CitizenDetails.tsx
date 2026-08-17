@@ -75,6 +75,9 @@ export default function CitizenDetails() {
   async function handleDownloadPDF() {
     if (!citizen) return;
 
+    // Always fetch fresh settings so officialSignatureName is current
+    const freshSettings = await getSettings().catch(() => settings);
+
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pageW = pdf.internal.pageSize.getWidth();
     const pageH = pdf.internal.pageSize.getHeight();
@@ -103,8 +106,11 @@ export default function CitizenDetails() {
       });
     }
 
+    // Use freshSettings everywhere instead of settings
+    const activeSettings = freshSettings || settings;
+
     // Hex to RGB helper for primary color
-    const primaryHex = settings?.primaryColor || '#2563eb';
+    const primaryHex = activeSettings?.primaryColor || '#2563eb';
     const hex2rgb = (hex: string) => {
       const v = hex.replace('#', '');
       return {
@@ -116,9 +122,9 @@ export default function CitizenDetails() {
     const pColor = hex2rgb(primaryHex);
 
     // --- Watermark ---
-    if (settings?.watermarkUrl) {
+    if (activeSettings?.watermarkUrl) {
       try {
-        const wm = await loadImage(settings.watermarkUrl);
+        const wm = await loadImage(activeSettings.watermarkUrl);
         const pdfAny = pdf as any;
         pdfAny.setGState(new pdfAny.GState({ opacity: 0.08 }));
         pdf.addImage(wm, 'PNG', pageW/2 - 60, pageH/2 - 60, 120, 120);
@@ -127,16 +133,16 @@ export default function CitizenDetails() {
     }
 
     // --- Header ---
-    if (settings?.logoUrl) {
+    if (activeSettings?.logoUrl) {
       try {
-        const logo = await loadImage(settings.logoUrl);
+        const logo = await loadImage(activeSettings.logoUrl);
         pdf.addImage(logo, 'PNG', margin, margin, 25, 25);
       } catch (e) {}
     }
     
-    if (settings?.flagUrl) {
+    if (activeSettings?.flagUrl) {
       try {
-        const flag = await loadImage(settings.flagUrl);
+        const flag = await loadImage(activeSettings.flagUrl);
         pdf.addImage(flag, 'PNG', pageW - margin - 35, margin, 35, 22);
       } catch (e) {}
     }
@@ -144,7 +150,7 @@ export default function CitizenDetails() {
     pdf.setTextColor(15, 23, 42);
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(16);
-    pdf.text((settings?.stateName || 'WAQOOYI BARI').toUpperCase(), pageW/2, margin + 8, { align: 'center' });
+    pdf.text((activeSettings?.stateName || 'WAQOOYI BARI').toUpperCase(), pageW/2, margin + 8, { align: 'center' });
     
     pdf.setFontSize(12);
     pdf.setTextColor(pColor.r, pColor.g, pColor.b);
@@ -333,35 +339,27 @@ export default function CitizenDetails() {
     
     // --- Signatures ---
     // Clamp y so signatures never fall off the page
-    const sigY = Math.min(y + 25, pageH - 42);
+    const sigY = Math.min(y + 25, pageH - 35);
     
     pdf.setDrawColor(150, 150, 150);
     pdf.setLineWidth(0.4);
     pdf.line(margin + 15, sigY, margin + 65, sigY);
     pdf.line(pageW - margin - 65, sigY, pageW - margin - 15, sigY);
     
-    // Left: Citizen Signature label
     pdf.setFontSize(8.5);
     pdf.setFont('helvetica', 'normal');
     pdf.setTextColor(100, 116, 139);
     pdf.text('Citizen Signature', margin + 40, sigY + 5, { align: 'center' });
 
-    // Right: Always show official name (bold) + "Authorized Official Signature" label below
-    if (settings?.officialSignatureName) {
-      pdf.setFontSize(9.5);
-      pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor(15, 23, 42);
-      pdf.text(settings.officialSignatureName, pageW - margin - 40, sigY + 5, { align: 'center' });
-      
-      pdf.setFontSize(7.5);
+    // Official signature: show their name in bold, then title below
+    const officialName = activeSettings?.officialSignatureName?.trim() || 'Authorized Official Signature';
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(15, 23, 42);
+    pdf.text(officialName, pageW - margin - 40, sigY + 5, { align: 'center' });
+    if (activeSettings?.officialSignatureName?.trim()) {
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(100, 116, 139);
-      pdf.text('Authorized Official Signature', pageW - margin - 40, sigY + 11, { align: 'center' });
-    } else {
-      pdf.setFontSize(8.5);
-      pdf.setFont('helvetica', 'normal');
-      pdf.setTextColor(100, 116, 139);
-      pdf.text('Authorized Official Signature', pageW - margin - 40, sigY + 5, { align: 'center' });
+      pdf.text('Authorized Official', pageW - margin - 40, sigY + 10, { align: 'center' });
     }
     
     y = sigY;
@@ -376,7 +374,7 @@ export default function CitizenDetails() {
     pdf.rect(0, pageH - 8, pageW, 8, 'F');
     pdf.setFontSize(7.5);
     pdf.setTextColor(255, 255, 255);
-    pdf.text(`${settings?.stateName || 'Waqooyi Bari'} National ID Management System • Document ID: ${citizen.nationalIdNumber}`, pageW/2, pageH - 3, { align: 'center' });
+    pdf.text(`${activeSettings?.stateName || 'Waqooyi Bari'} National ID Management System • Document ID: ${citizen.nationalIdNumber}`, pageW/2, pageH - 3, { align: 'center' });
 
     pdf.save(`${citizen.nationalIdNumber}-profile.pdf`);
   }
