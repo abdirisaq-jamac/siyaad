@@ -351,12 +351,16 @@ export default function CitizenDetails() {
     pdf.setTextColor(100, 116, 139);
     pdf.text('Citizen Signature', margin + 40, sigY + 5, { align: 'center' });
 
-    // Official signature: show their name in bold, then title below
-    const officialName = activeSettings?.officialSignatureName?.trim() || 'Authorized Official Signature';
+    // Official signature: read from localStorage (most reliable) then fallback to settings
+    const officialName = (
+      localStorage.getItem('officialSignatureName')?.trim() ||
+      activeSettings?.officialSignatureName?.trim() ||
+      'Authorized Official Signature'
+    );
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(15, 23, 42);
     pdf.text(officialName, pageW - margin - 40, sigY + 5, { align: 'center' });
-    if (activeSettings?.officialSignatureName?.trim()) {
+    if (officialName !== 'Authorized Official Signature') {
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(100, 116, 139);
       pdf.text('Authorized Official', pageW - margin - 40, sigY + 10, { align: 'center' });

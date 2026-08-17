@@ -56,6 +56,9 @@ export default function SettingsPage() {
   useEffect(() => {
     if (!initialLoadDone.current || loading) return;
 
+    // Save officialSignatureName to localStorage immediately as a reliable fallback
+    localStorage.setItem('officialSignatureName', settings.officialSignatureName || '');
+
     const timer = setTimeout(async () => {
       try {
         await saveSettings(settings);
