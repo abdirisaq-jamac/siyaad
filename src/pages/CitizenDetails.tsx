@@ -150,12 +150,7 @@ export default function CitizenDetails() {
     pdf.setTextColor(pColor.r, pColor.g, pColor.b);
     pdf.text('OFFICIAL CITIZEN PROFILE RECORD', pageW/2, margin + 15, { align: 'center' });
     
-    pdf.setFontSize(9);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(100, 116, 139);
-    pdf.text(`Generated on: ${format(new Date(), 'dd MMM yyyy, HH:mm')}`, pageW/2, margin + 21, { align: 'center' });
-
-    y += 32;
+    y += 26;
     
     // --- Header Divider ---
     pdf.setDrawColor(pColor.r, pColor.g, pColor.b);
@@ -193,15 +188,25 @@ export default function CitizenDetails() {
     const qrSize = 36;
     const qrX = pageW - margin - qrSize;
     
-    pdf.setFontSize(11);
+    pdf.setFontSize(9);
     pdf.setFont('helvetica', 'normal');
     pdf.setTextColor(100, 116, 139);
-    pdf.text(`National ID:`, textX, y + 16);
+    pdf.text(`ISSUE DATE:`, textX, y + 6);
+    
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(15, 23, 42);
+    pdf.text(format(new Date(citizen.issueDate), 'dd MMM yyyy').toUpperCase(), textX, y + 11.5);
+    
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(100, 116, 139);
+    pdf.text(`NATIONAL ID:`, textX, y + 21);
     
     pdf.setFontSize(14);
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(pColor.r, pColor.g, pColor.b);
-    pdf.text(citizen.nationalIdNumber, textX, y + 24);
+    pdf.text(citizen.nationalIdNumber, textX, y + 28);
 
     // --- QR Code ---
     if (citizen.qrCode) {
@@ -311,6 +316,11 @@ export default function CitizenDetails() {
     pdf.text('Authorized Official Signature', pageW - margin - 40, y + 5, { align: 'center' });
 
     // --- Bottom Edge / Footer ---
+    pdf.setFontSize(8);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(100, 116, 139);
+    pdf.text(`Generated on: ${format(new Date(), 'dd MMM yyyy, HH:mm')}`, pageW/2, pageH - 12, { align: 'center' });
+
     pdf.setFillColor(pColor.r, pColor.g, pColor.b);
     pdf.rect(0, pageH - 8, pageW, 8, 'F');
     pdf.setFontSize(7.5);
