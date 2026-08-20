@@ -69,8 +69,28 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', padding: '10px 14px 0', position: 'relative', zIndex: 10 }}>
-        {/* Left: Flag */}
-        <div style={{ flexShrink: 0, width: 68, height: 45, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.3)', borderRadius: 4, marginRight: 10 }}>
+        {/* Left: Logo */}
+        <div style={{ flexShrink: 0, width: 45, height: 45, marginRight: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {settings?.logoUrl ? (
+            <img src={settings.logoUrl} alt="ID Card Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} />
+          ) : (
+            <div style={{ width: '100%', height: '100%', background: 'transparent' }} />
+          )}
+        </div>
+
+        <div style={{ flex: 1, whiteSpace: 'nowrap' }}>
+          <div style={{ fontSize: 8.5, fontWeight: 900, color: '#111', textTransform: 'uppercase', letterSpacing: '-0.2px' }}>Dawlada Hoose Ee Lascanod</div>
+          <div style={{ fontSize: 7, fontWeight: 800, color: '#111', marginTop: 1 }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
+          <div style={{ fontSize: 6, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase' }}>Kaadhka Dhalashada</div>
+        </div>
+
+        <div style={{ flex: 1, textAlign: 'right', whiteSpace: 'nowrap', marginRight: 10 }}>
+          <div style={{ fontSize: 7, fontWeight: 800, color: '#111', marginTop: 10 }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
+          <div style={{ fontSize: 6, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase' }}>Birth Certificate</div>
+        </div>
+
+        {/* Right: Flag */}
+        <div style={{ flexShrink: 0, width: 68, height: 45, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.3)', borderRadius: 4 }}>
           {settings?.flagUrl ? (
             <img src={settings.flagUrl} alt="ID Card Flag" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           ) : (
@@ -92,19 +112,6 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
                 <line x1="140" y1="60" x2="170" y2="30" stroke="black" strokeWidth="7" strokeLinecap="round" />
               </g>
             </svg>
-          )}
-        </div>
-
-        <div style={{ flex: 1, textAlign: 'center', whiteSpace: 'nowrap' }}>
-          <div style={{ fontSize: 8.5, fontWeight: 900, color: '#111', textTransform: 'uppercase', letterSpacing: '-0.2px' }}>Dawlada Hoose Ee Lascanod</div>
-          <div style={{ fontSize: 7, fontWeight: 800, color: '#111', marginTop: 1 }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
-          <div style={{ fontSize: 6, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase' }}>Kaadhka Dhalashada / Birth Certificate</div>
-        </div>
-
-        {/* Right: Logo */}
-        <div style={{ flexShrink: 0, width: 68, height: 45, display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 10 }}>
-          {settings?.idCardLogoUrl && (
-            <img src={settings.idCardLogoUrl} alt="ID Card Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} />
           )}
         </div>
       </div>

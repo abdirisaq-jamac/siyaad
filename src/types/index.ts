@@ -37,7 +37,6 @@ export interface AppSettings {
   accentColor: string;
   officialSignatureName?: string;
   officialSignatureUrl?: string | null;
-  idCardLogoUrl?: string | null;
 }
 
 export interface DashboardStats {

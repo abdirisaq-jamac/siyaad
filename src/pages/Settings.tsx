@@ -34,7 +34,6 @@ export default function SettingsPage() {
   const flagRef = useRef<HTMLInputElement>(null);
   const watermarkRef = useRef<HTMLInputElement>(null);
   const signatureRef = useRef<HTMLInputElement>(null);
-  const idCardLogoRef = useRef<HTMLInputElement>(null);
 
   const initialLoadDone = useRef(false);
 
@@ -126,17 +125,6 @@ export default function SettingsPage() {
     reader.onload = async () => {
       const compressed = await compressImage(reader.result as string, 200);
       setSettings(s => ({ ...s, officialSignatureUrl: compressed }));
-    };
-    reader.readAsDataURL(file);
-  }
-
-  function handleIdCardLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const compressed = await compressImage(reader.result as string, 150);
-      setSettings(s => ({ ...s, idCardLogoUrl: compressed }));
     };
     reader.readAsDataURL(file);
   }
@@ -370,48 +358,6 @@ export default function SettingsPage() {
                   onClick={() => setSettings(s => ({ ...s, watermarkUrl: null }))}
                 >
                   <X size={16} /> Remove Watermark
-                </button>
-              )}
-            </div>
-          </div>
-        </Section>
-
-        {/* ID Card Secondary Logo */}
-        <Section title={t('ID Card Secondary Logo') || 'ID Card Secondary Logo'} icon={<Upload size={20} />}>
-          <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => idCardLogoRef.current?.click()}
-              style={{
-                width: 140, height: 90, borderRadius: '12px',
-                border: '2px dashed var(--border-color)', cursor: 'pointer',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                background: 'var(--bg-main)', overflow: 'hidden',
-                transition: 'border-color 0.2s',
-              }}
-              className="hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/10"
-            >
-              {settings.idCardLogoUrl ? (
-                <img src={settings.idCardLogoUrl} alt="ID Card Secondary Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-              ) : (
-                <>
-                  <Upload size={28} style={{ color: 'var(--text-muted)' }} />
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Upload Logo</span>
-                </>
-              )}
-            </motion.div>
-            <input ref={idCardLogoRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleIdCardLogoUpload} />
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.25rem' }}>ID Card Secondary Logo</div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Upload the logo to display on the right side of the ID Card Preview header (opposite the flag).</div>
-              {settings.idCardLogoUrl && (
-                <button
-                  className="btn-danger"
-                  style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}
-                  onClick={() => setSettings(s => ({ ...s, idCardLogoUrl: null }))}
-                >
-                  <X size={16} /> Remove Logo
                 </button>
               )}
             </div>
