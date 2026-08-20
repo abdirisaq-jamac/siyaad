@@ -162,6 +162,14 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
                {citizen.fullName.charAt(0)}
              </div>
           )}
+
+          {settings?.officialSignatureUrl && (
+            <div style={{ marginTop: 4, textAlign: 'center', width: 84 }}>
+              <img src={settings.officialSignatureUrl} alt="Signature" style={{
+                height: 18, maxWidth: 84, objectFit: 'contain', display: 'block', margin: '0 auto',
+              }} />
+            </div>
+          )}
         </div>
       </div>
     </div>
