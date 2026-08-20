@@ -157,28 +157,10 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
                backgroundColor: 'transparent',
                mixBlendMode: 'multiply'
              }} />
-          ) : (
+) : (
              <div style={{ width: 84, height: 84, background: 'transparent', border: 'none', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, color: '#1a4a3a', fontWeight: 'bold' }}>
                {citizen.fullName.charAt(0)}
              </div>
-          )}
-
-          {(settings?.officialSignatureUrl || settings?.officialSignatureName) && (
-            <div style={{ marginTop: 4, textAlign: 'center', width: 84 }}>
-              {settings?.officialSignatureUrl && (
-                <img src={settings.officialSignatureUrl} alt="Signature" style={{
-                  height: 18, maxWidth: 84, objectFit: 'contain', display: 'block', margin: '0 auto',
-                }} />
-              )}
-              {settings?.officialSignatureName && (
-                <div style={{
-                  fontSize: 5.5, fontWeight: 800, color: '#111', letterSpacing: '0.02em',
-                  borderTop: '1px solid rgba(0,0,0,0.4)', marginTop: 2, paddingTop: 1,
-                  whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                  textTransform: 'uppercase',
-                }}>{settings.officialSignatureName}</div>
-              )}
-            </div>
           )}
         </div>
       </div>
