@@ -235,10 +235,12 @@ function saveLocalUsers(users: AppUser[]) {
 
 export async function getUsers(): Promise<AppUser[]> {
   let list: AppUser[] = [];
+  let remoteEmpty = true;
   try {
     const { data, error } = await supabase.from('app_users').select('*').order('createdAt', { ascending: false });
     if (!error && data && data.length > 0) {
       list = data as AppUser[];
+      remoteEmpty = false;
     } else {
       list = getLocalUsers();
     }
@@ -248,6 +250,17 @@ export async function getUsers(): Promise<AppUser[]> {
   }
 
   list = ensureSuperAdmin(list);
+
+  // Centralize: if the database has no users, push the local/seed users up so
+  // the same credentials work on any device.
+  if (remoteEmpty) {
+    try {
+      await supabase.from('app_users').insert(list.map(u => ({ ...u, createdAt: u.createdAt || new Date().toISOString() })));
+    } catch (err) {
+      console.warn('getUsers: failed to sync local users to Supabase:', err);
+    }
+  }
+
   localStorage.setItem(USERS_KEY, JSON.stringify(list));
   return list;
 }
@@ -274,7 +287,9 @@ export async function addUser(user: AppUser): Promise<AppUser> {
 export async function updateUser(updatedUser: AppUser): Promise<AppUser> {
   let savedUser = updatedUser;
   try {
-    const { data, error } = await supabase.from('app_users').update(updatedUser).eq('id', updatedUser.id).select().single();
+    // Upsert so the change always lands in the central database (inserts if the
+    // row doesn't exist yet) and then updates the local cache.
+    const { data, error } = await supabase.from('app_users').upsert([updatedUser]).select().single();
     if (!error && data) {
       savedUser = data as AppUser;
     } else if (error) {

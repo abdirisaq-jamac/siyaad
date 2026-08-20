@@ -80,48 +80,7 @@ const Login: React.FC = () => {
     await new Promise(r => setTimeout(r, 600));
 
     try {
-      // MASTER BYPASS: Always allow admin with password admin
-      if (normalizedUsername === 'admin' && normalizedPassword === 'admin') {
-        const sessionData = { 
-          id: 'super-admin-001', 
-          fullName: 'Super Administrator', 
-          username: 'admin', 
-          role: 'Super Admin', 
-          permissions: {
-            viewDashboard: true, viewCitizens: true, registerCitizen: true,
-            editCitizen: true, deleteCitizen: true, printProfile: true, exportProfile: true, viewIdCards: true,
-            exportIdCard: true, savePNG: true, exportPDF: true, verifyQR: true, generateQR: true, viewReports: true,
-            exportReports: true, viewSettings: true, editSettings: true,
-            viewUsers: true, manageUsers: true,
-          }
-        };
-        const sessionId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-        const sData = { ...sessionData, sessionId };
-        if (rememberMe) {
-          localStorage.setItem('user', JSON.stringify(sData));
-        } else {
-          sessionStorage.setItem('user', JSON.stringify(sData));
-        }
-        localStorage.setItem('isAuthenticated', 'true');
-        
-        const { browser, os, deviceType, deviceInfo } = getDeviceDetails();
-        await addSession({
-          id: sessionId,
-          userId: sessionData.id,
-          username: sessionData.username,
-          loginTime: new Date().toISOString(),
-          logoutTime: null,
-          deviceInfo,
-          deviceType: deviceType as any,
-          os,
-          browser
-        });
-        
-        navigate('/dashboard');
-        return;
-      }
-
-      // Load users from Supabase database
+      // Load users from Supabase database (centralized so credentials work on any device)
       let users = await getUsers();
       if (!users || users.length === 0) {
         users = [{

@@ -36,14 +36,6 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
       boxSizing: 'border-box',
       border: '1px solid rgba(0,0,0,0.05)',
     }}>
-      {/* Central Sunburst */}
-      <div style={{
-        position: 'absolute', left: '50%', top: '35%', width: 250, height: 250,
-        transform: 'translate(-50%, -50%)',
-        background: 'radial-gradient(circle, rgba(240,240,200,0.7) 0%, transparent 60%)',
-        pointerEvents: 'none'
-      }} />
-
       {/* Emblem Watermark */}
       <div style={{
         position: 'absolute', left: '40%', top: '55%', width: 120, height: 120,
@@ -139,7 +131,7 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
             </div>
             <div>
               <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600, marginBottom: 1 }}>Jinsiga / Gender</div>
-              <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1.1 }}>{citizen.gender === 'Male' ? 'Lab / Male' : 'Dhedig / Female'}</div>
+              <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1.1 }}>{citizen.gender === 'Male' ? 'Lab' : 'Dhedig'}</div>
             </div>
           </div>
 
@@ -156,16 +148,17 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
         </div>
 
 {/* Right Side: Photo */}
-        <div style={{ flexShrink: 0, paddingLeft: 8 }}>
+        <div style={{ flexShrink: 0, paddingLeft: 8, marginLeft: 10 }}>
           {citizen.photo ? (
              <img src={citizen.photo} alt="Citizen" style={{ 
                width: 84, height: 84, objectFit: 'cover', objectPosition: 'center', 
                border: 'none',
                borderRadius: 6,
-               backgroundColor: '#fff'
+               backgroundColor: 'transparent',
+               mixBlendMode: 'multiply'
              }} />
           ) : (
-             <div style={{ width: 84, height: 84, background: '#e2e8f0', border: 'none', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, color: '#333', fontWeight: 'bold' }}>
+             <div style={{ width: 84, height: 84, background: 'transparent', border: 'none', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, color: '#1a4a3a', fontWeight: 'bold' }}>
                {citizen.fullName.charAt(0)}
              </div>
           )}
