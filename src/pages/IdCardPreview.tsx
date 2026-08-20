@@ -119,9 +119,9 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
             <div style={{ fontSize: 11, fontWeight: 900, color: '#000', lineHeight: 1.1, letterSpacing: '0.02em' }}>{citizen.nationalIdNumber}</div>
           </div>
           
-          <div style={{ overflow: 'hidden' }}>
+          <div>
             <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600, marginBottom: 1 }}>Magaca / Name</div>
-            <div style={{ fontSize: getDynamicFs(citizen.fullName, 9.5, 20), fontWeight: 900, color: '#000', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{citizen.fullName}</div>
+            <div style={{ fontSize: getDynamicFs(citizen.fullName, 9.5, 20), fontWeight: 900, color: '#000', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'normal', overflowWrap: 'break-word', wordBreak: 'break-word' }}>{citizen.fullName}</div>
           </div>
 
           <div style={{ display: 'flex', gap: 12 }}>
