@@ -82,7 +82,7 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
         )}
 
         {/* Center: Text Stack */}
-        <div style={{ width: '100%', textAlign: 'center', whiteSpace: 'nowrap' }}>
+        <div style={{ width: '100%', textAlign: 'center', whiteSpace: 'nowrap', paddingRight: 14 }}>
           <div style={{ fontSize: 8.5, fontWeight: 900, color: '#111', textTransform: 'uppercase', letterSpacing: '-0.2px' }}>Dawlada Hoose Ee Lascanod</div>
           <div style={{ fontSize: 7, fontWeight: 800, color: '#111', marginTop: 1 }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
           <div style={{ fontSize: 7, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase' }}>Kaadhka Dhalashada</div>
@@ -155,17 +155,17 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
           </div>
         </div>
 
-        {/* Right Side: Photo */}
+{/* Right Side: Photo */}
         <div style={{ flexShrink: 0, paddingLeft: 8 }}>
           {citizen.photo ? (
              <img src={citizen.photo} alt="Citizen" style={{ 
-               width: 78, height: 100, objectFit: 'cover', objectPosition: 'center', 
-               border: '2px solid rgba(0,0,0,0.8)', /* Solid black border for crispness */
-               borderRadius: '6px',
-               backgroundColor: '#fff' /* Solid white background behind photo */
+               width: 84, height: 84, objectFit: 'cover', objectPosition: 'center', 
+               border: 'none',
+               borderRadius: 6,
+               backgroundColor: '#fff'
              }} />
           ) : (
-             <div style={{ width: 78, height: 100, background: '#e2e8f0', border: '2px solid rgba(0,0,0,0.8)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, color: '#333', fontWeight: 'bold' }}>
+             <div style={{ width: 84, height: 84, background: '#e2e8f0', border: 'none', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, color: '#333', fontWeight: 'bold' }}>
                {citizen.fullName.charAt(0)}
              </div>
           )}
@@ -194,15 +194,21 @@ function CardBack({ citizen, settings }: { citizen: Citizen, settings?: AppSetti
         backgroundImage: 'repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 0, transparent 10px)',
       }} />
 
-      <div style={{ padding: '25px 20px 15px', display: 'flex', gap: 15 }}>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+      <div style={{ padding: '18px 16px 14px', display: 'flex', gap: 12 }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
            <div>
              <div style={{ fontSize: 9, color: '#111', fontWeight: 900, lineHeight: 1.3 }}>{settings?.stateName || 'Waqooyi Bari'} National ID Management System</div>
            </div>
-           <div>
-             <div style={{ fontSize: 7.5, color: '#444', fontWeight: 600, lineHeight: 1.6 }}>
-               This card is the property of the Government of {settings?.stateName || 'Waqooyi Bari'}. If found, please return to the nearest police station.
+
+           <div style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(0,0,0,0.15)', borderRadius: 6, padding: '6px 8px' }}>
+             <div style={{ fontSize: 6, color: '#333', fontWeight: 800, letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: 2 }}>Full Address / Cinwaanka</div>
+             <div style={{ fontSize: 7.5, color: '#111', fontWeight: 700, lineHeight: 1.4, wordBreak: 'break-word' }}>
+               {[citizen.address, citizen.district].filter(Boolean).join(', ')}
              </div>
+           </div>
+
+           <div style={{ fontSize: 7.5, color: '#111', fontWeight: 800, lineHeight: 1.6, borderTop: '1px solid rgba(0,0,0,0.15)', paddingTop: 6 }}>
+             This card is the property of the Government of {settings?.stateName || 'Waqooyi Bari'}. If found, please return to the nearest police station.
            </div>
         </div>
 
@@ -211,7 +217,7 @@ function CardBack({ citizen, settings }: { citizen: Citizen, settings?: AppSetti
           <div style={{ background: 'white', padding: '4px', border: '2px solid #000', borderRadius: '4px', display: 'flex' }}>
             <QRCodeSVG 
               value={`https://siyaad-livid.vercel.app/verify/${citizen.nationalIdNumber}`} 
-              size={55} 
+              size={62} 
               level="H" 
             />
           </div>

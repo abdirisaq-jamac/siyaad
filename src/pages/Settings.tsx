@@ -124,6 +124,7 @@ export default function SettingsPage() {
       const compressed = await compressImage(reader.result as string, 150);
       setSettings(s => ({ ...s, leftLogoUrl: compressed }));
     };
+    reader.readAsDataURL(file);
   }
 
   async function handleClearAll() {
@@ -355,48 +356,6 @@ export default function SettingsPage() {
                   onClick={() => setSettings(s => ({ ...s, flagUrl: null }))}
                 >
                   <X size={16} /> Remove Flag
-                </button>
-              )}
-            </div>
-          </div>
-        </Section>
-
-        {/* Left Logo */}
-        <Section title="ID Card Left Logo" icon={<Upload size={20} />}>
-          <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => leftLogoRef.current?.click()}
-              style={{
-                width: 140, height: 90, borderRadius: '12px',
-                border: '2px dashed var(--border-color)', cursor: 'pointer',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                background: 'var(--bg-main)', overflow: 'hidden',
-                transition: 'border-color 0.2s',
-              }}
-              className="hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/10"
-            >
-              {settings.leftLogoUrl ? (
-                <img src={settings.leftLogoUrl} alt="Left Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-              ) : (
-                <>
-                  <Upload size={28} style={{ color: 'var(--text-muted)' }} />
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Upload Left Logo</span>
-                </>
-              )}
-            </motion.div>
-            <input ref={leftLogoRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleLeftLogoUpload} />
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.25rem' }}>ID Card Left Logo</div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Upload the logo/emblem to display in the left corner of the ID card (same size/shape as the flag on the right).</div>
-              {settings.leftLogoUrl && (
-                <button
-                  className="btn-danger"
-                  style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}
-                  onClick={() => setSettings(s => ({ ...s, leftLogoUrl: null }))}
-                >
-                  <X size={16} /> Remove Left Logo
                 </button>
               )}
             </div>

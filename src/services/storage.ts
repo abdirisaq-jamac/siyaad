@@ -72,51 +72,56 @@ const DEFAULT_SETTINGS: AppSettings = {
   officialSignatureUrl: null,
 };
 
+// officialSignatureName and officialSignatureUrl have no columns in the
+// app_settings table, so they are persisted to localStorage instead.
+const LOCAL_SIGNATURE_NAME_KEY = 'officialSignatureName';
+const LOCAL_SIGNATURE_URL_KEY = 'officialSignatureUrl';
+
+function getLocalSignature(): { name: string; url: string | null } {
+  let name = '';
+  let url: string | null = null;
+  try {
+    name = localStorage.getItem(LOCAL_SIGNATURE_NAME_KEY) || '';
+    url = localStorage.getItem(LOCAL_SIGNATURE_URL_KEY) || null;
+  } catch { /* ignore */ }
+  return { name, url };
+}
+
+function saveLocalSignature(name: string, url: string | null) {
+  try {
+    if (name) localStorage.setItem(LOCAL_SIGNATURE_NAME_KEY, name);
+    else localStorage.removeItem(LOCAL_SIGNATURE_NAME_KEY);
+    if (url) localStorage.setItem(LOCAL_SIGNATURE_URL_KEY, url);
+    else localStorage.removeItem(LOCAL_SIGNATURE_URL_KEY);
+  } catch { /* ignore */ }
+}
+
 export async function getSettings(): Promise<AppSettings> {
   const { data, error } = await supabase.from('app_settings').select('*').eq('id', 1).single();
   let baseSettings = DEFAULT_SETTINGS;
   if (!error && data) {
-    let sigUrl = data.officialSignatureUrl;
-    let extractedLeftLogo = data.leftLogoUrl || data.leftlogourl || null;
-
-    // Decode packed images if stored as JSON in officialSignatureUrl
-    if (sigUrl && sigUrl.startsWith('{"')) {
-      try {
-        const parsed = JSON.parse(sigUrl);
-        sigUrl = parsed.sig || null;
-        if (parsed.left) extractedLeftLogo = parsed.left;
-      } catch (e) {
-        // Not JSON, treat as raw image string
-      }
-    }
-
+    const { name, url } = getLocalSignature();
     baseSettings = {
       ...DEFAULT_SETTINGS,
       ...data,
-      officialSignatureUrl: sigUrl,
-      leftLogoUrl: extractedLeftLogo,
+      officialSignatureName: data.officialSignatureName ?? name,
+      officialSignatureUrl: url,
+      leftLogoUrl: data.leftLogoUrl ?? null,
     } as AppSettings;
   }
   return baseSettings;
 }
 
 export async function saveSettings(settings: AppSettings): Promise<AppSettings> {
-  const { leftLogoUrl, officialSignatureUrl, ...rest } = settings as any;
+  const { leftLogoUrl, officialSignatureName, officialSignatureUrl, ...rest } = settings as any;
 
-  // We serialize leftLogoUrl into officialSignatureUrl as JSON to bypass missing DB columns.
-  // This guarantees it is stored centrally in the database without needing schema alterations.
-  let packedUrl = officialSignatureUrl;
-  if (leftLogoUrl || (officialSignatureUrl && officialSignatureUrl.startsWith('{"'))) {
-    packedUrl = JSON.stringify({
-      sig: officialSignatureUrl && !officialSignatureUrl.startsWith('{"') ? officialSignatureUrl : null,
-      left: leftLogoUrl || null
-    });
-  }
+  // Persist signature fields to localStorage (no DB columns exist for them)
+  saveLocalSignature(officialSignatureName || '', officialSignatureUrl || null);
 
   const payload: Record<string, unknown> = {
     id: 1,
     ...rest,
-    officialSignatureUrl: packedUrl
+    leftLogoUrl: leftLogoUrl ?? null,
   };
 
   const { data, error } = await supabase
@@ -126,10 +131,11 @@ export async function saveSettings(settings: AppSettings): Promise<AppSettings> 
 
   if (error) throw new Error(error.message);
 
-  return { 
-    ...data, 
+  return {
+    ...data,
     leftLogoUrl: leftLogoUrl ?? null,
-    officialSignatureUrl: officialSignatureUrl ?? null
+    officialSignatureName: officialSignatureName ?? '',
+    officialSignatureUrl: officialSignatureUrl ?? null,
   } as AppSettings;
 }
 
