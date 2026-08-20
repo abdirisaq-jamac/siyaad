@@ -30,6 +30,7 @@ export interface Citizen {
 export interface AppSettings {
   stateName: string;
   logoUrl: string | null;
+  leftLogoUrl?: string | null;
   flagUrl: string | null;
   watermarkUrl: string | null;
   cardTemplate: 'default' | 'classic' | 'modern';

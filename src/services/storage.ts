@@ -74,17 +74,63 @@ const DEFAULT_SETTINGS: AppSettings = {
 
 export async function getSettings(): Promise<AppSettings> {
   const { data, error } = await supabase.from('app_settings').select('*').eq('id', 1).single();
-  if (error || !data) {
-    return DEFAULT_SETTINGS;
+  let baseSettings = DEFAULT_SETTINGS;
+  if (!error && data) {
+    let sigUrl = data.officialSignatureUrl;
+    let extractedLeftLogo = data.leftLogoUrl || data.leftlogourl || null;
+
+    // Decode packed images if stored as JSON in officialSignatureUrl
+    if (sigUrl && sigUrl.startsWith('{"')) {
+      try {
+        const parsed = JSON.parse(sigUrl);
+        sigUrl = parsed.sig || null;
+        if (parsed.left) extractedLeftLogo = parsed.left;
+      } catch (e) {
+        // Not JSON, treat as raw image string
+      }
+    }
+
+    baseSettings = {
+      ...DEFAULT_SETTINGS,
+      ...data,
+      officialSignatureUrl: sigUrl,
+      leftLogoUrl: extractedLeftLogo,
+    } as AppSettings;
   }
-  // Merge with defaults so new fields (like officialSignatureName) always exist
-  return { ...DEFAULT_SETTINGS, ...data } as AppSettings;
+  return baseSettings;
 }
 
 export async function saveSettings(settings: AppSettings): Promise<AppSettings> {
-  const { data, error } = await supabase.from('app_settings').upsert({ id: 1, ...settings }).select().single();
+  const { leftLogoUrl, officialSignatureUrl, ...rest } = settings as any;
+
+  // We serialize leftLogoUrl into officialSignatureUrl as JSON to bypass missing DB columns.
+  // This guarantees it is stored centrally in the database without needing schema alterations.
+  let packedUrl = officialSignatureUrl;
+  if (leftLogoUrl || (officialSignatureUrl && officialSignatureUrl.startsWith('{"'))) {
+    packedUrl = JSON.stringify({
+      sig: officialSignatureUrl && !officialSignatureUrl.startsWith('{"') ? officialSignatureUrl : null,
+      left: leftLogoUrl || null
+    });
+  }
+
+  const payload: Record<string, unknown> = {
+    id: 1,
+    ...rest,
+    officialSignatureUrl: packedUrl
+  };
+
+  const { data, error } = await supabase
+    .from('app_settings')
+    .upsert(payload)
+    .select().single();
+
   if (error) throw new Error(error.message);
-  return data as AppSettings;
+
+  return { 
+    ...data, 
+    leftLogoUrl: leftLogoUrl ?? null,
+    officialSignatureUrl: officialSignatureUrl ?? null
+  } as AppSettings;
 }
 
 // ── Users Management (localStorage-based) ────────────────────────────────────

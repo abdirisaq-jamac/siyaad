@@ -68,29 +68,30 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
       </div>
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '10px 14px 0', position: 'relative', zIndex: 10 }}>
-        {/* Left: Logo */}
-        <div style={{ flexShrink: 0, width: 45, height: 45, marginRight: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {settings?.logoUrl ? (
-            <img src={settings.logoUrl} alt="ID Card Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} />
-          ) : (
-            <div style={{ width: '100%', height: '100%', background: 'transparent' }} />
-          )}
-        </div>
+      <div style={{ position: 'relative', zIndex: 10, paddingTop: 8 }}>
+        
+        {/* Left: ID Card Left Logo — falls back to System Logo when leftLogoUrl is not set */}
+        {(settings?.leftLogoUrl || settings?.logoUrl) && (
+          <div style={{ position: 'absolute', top: 5, left: 6, width: 54, height: 54, overflow: 'hidden', border: '2px solid rgba(0,0,0,0.25)', borderRadius: '50%' }}>
+            <img 
+              src={settings?.leftLogoUrl || settings?.logoUrl || ''} 
+              alt="Left Logo" 
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} 
+            />
+          </div>
+        )}
 
-        <div style={{ flex: 1, whiteSpace: 'nowrap' }}>
+        {/* Center: Text Stack */}
+        <div style={{ width: '100%', textAlign: 'center', whiteSpace: 'nowrap' }}>
           <div style={{ fontSize: 8.5, fontWeight: 900, color: '#111', textTransform: 'uppercase', letterSpacing: '-0.2px' }}>Dawlada Hoose Ee Lascanod</div>
           <div style={{ fontSize: 7, fontWeight: 800, color: '#111', marginTop: 1 }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
-          <div style={{ fontSize: 6, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase' }}>Kaadhka Dhalashada</div>
-        </div>
-
-        <div style={{ flex: 1, textAlign: 'right', whiteSpace: 'nowrap', marginRight: 10 }}>
-          <div style={{ fontSize: 7, fontWeight: 800, color: '#111', marginTop: 10 }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
+          <div style={{ fontSize: 7, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase' }}>Kaadhka Dhalashada</div>
+          <div style={{ fontSize: 6, fontWeight: 800, color: '#111', marginTop: 1 }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
           <div style={{ fontSize: 6, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase' }}>Birth Certificate</div>
         </div>
 
         {/* Right: Flag */}
-        <div style={{ flexShrink: 0, width: 68, height: 45, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.3)', borderRadius: 4 }}>
+        <div style={{ position: 'absolute', top: 5, right: 6, width: 62, height: 41, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.3)', borderRadius: 4 }}>
           {settings?.flagUrl ? (
             <img src={settings.flagUrl} alt="ID Card Flag" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           ) : (
@@ -117,34 +118,40 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
       </div>
 
       {/* Body */}
-      <div style={{ display: 'flex', padding: '4px 14px 10px', position: 'relative', zIndex: 10, height: 'calc(100% - 55px)' }}>
+      <div style={{ display: 'flex', padding: '2px 14px 10px', position: 'relative', zIndex: 10, height: 'calc(100% - 55px)' }}>
         
         {/* Text Details */}
-        <div style={{ flex: 1, paddingLeft: 12, display: 'flex', flexDirection: 'column', gap: 5, paddingTop: 4, minWidth: 0 }}>
+        <div style={{ flex: 1, paddingLeft: 4, display: 'flex', flexDirection: 'column', gap: 3.5, paddingTop: 8, minWidth: 0, justifyContent: 'flex-start' }}>
           <div>
-            <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Tirsiga Aqoonsiga / ID Number</div>
-            <div style={{ fontSize: 11, fontWeight: 900, color: '#000', lineHeight: 1.2, letterSpacing: '0.02em' }}>{citizen.nationalIdNumber}</div>
+            <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600, marginBottom: 1 }}>Tirsiga Aqoonsiga / ID Number</div>
+            <div style={{ fontSize: 11, fontWeight: 900, color: '#000', lineHeight: 1.1, letterSpacing: '0.02em' }}>{citizen.nationalIdNumber}</div>
           </div>
           
           <div style={{ overflow: 'hidden' }}>
-            <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Magaca / Name</div>
-            <div style={{ fontSize: getDynamicFs(firstName, 9, 12), fontWeight: 800, color: '#000', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{firstName}</div>
-            <div style={{ fontSize: getDynamicFs(restName, 10, 15), fontWeight: 900, color: '#000', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{restName}</div>
+            <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600, marginBottom: 1 }}>Magaca / Name</div>
+            <div style={{ fontSize: getDynamicFs(citizen.fullName, 9.5, 20), fontWeight: 900, color: '#000', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{citizen.fullName}</div>
           </div>
 
-          <div>
-            <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Taar. Dhalashada / D.O.B</div>
-            <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1.2 }}>{format(new Date(citizen.dateOfBirth), 'dd-MM-yyyy')}</div>
+          <div style={{ display: 'flex', gap: 12 }}>
+            <div>
+              <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600, marginBottom: 1 }}>Taar. Dhalashada / D.O.B</div>
+              <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1.1 }}>{format(new Date(citizen.dateOfBirth), 'dd-MM-yyyy')}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600, marginBottom: 1 }}>Jinsiga / Gender</div>
+              <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1.1 }}>{citizen.gender === 'Male' ? 'Lab / Male' : 'Dhedig / Female'}</div>
+            </div>
           </div>
 
-          <div>
-            <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Taar. La Bixiyey / Date of Issue</div>
-            <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1.2 }}>{format(new Date(citizen.issueDate), 'dd-MM-yyyy')}</div>
-          </div>
-
-          <div>
-            <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Jinsiga / Gender</div>
-            <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1.2 }}>{citizen.gender === 'Male' ? 'Lab / Male' : 'Dhedig / Female'}</div>
+          <div style={{ display: 'flex', gap: 12 }}>
+            <div>
+              <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600, marginBottom: 1 }}>La Bixiyey / Issue Date</div>
+              <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1.1 }}>{format(new Date(citizen.issueDate), 'dd-MM-yyyy')}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600, marginBottom: 1 }}>Dhicitaanka / Expiry Date</div>
+              <div style={{ fontSize: 9.5, fontWeight: 800, color: '#b30000', lineHeight: 1.1 }}>{format(new Date(citizen.expiryDate), 'dd-MM-yyyy')}</div>
+            </div>
           </div>
         </div>
 
@@ -188,28 +195,13 @@ function CardBack({ citizen, settings }: { citizen: Citizen, settings?: AppSetti
       }} />
 
       <div style={{ padding: '25px 20px 15px', display: 'flex', gap: 15 }}>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
            <div>
-             <div style={{ fontSize: 8.5, color: '#333', fontWeight: 800 }}>{settings?.stateName || 'Waqooyi Bari'} National ID Management System</div>
-             <div style={{ fontSize: 7, color: '#555', marginTop: 2, fontWeight: 600 }}>This card is the property of the Government of {settings?.stateName || 'Waqooyi Bari'}. If found, please return to the nearest police station.</div>
+             <div style={{ fontSize: 9, color: '#111', fontWeight: 900, lineHeight: 1.3 }}>{settings?.stateName || 'Waqooyi Bari'} National ID Management System</div>
            </div>
-
-           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 5 }}>
-             <div>
-               <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Father's Name</div>
-               <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1, marginTop: 2 }}>{citizen.fatherName}</div>
-             </div>
-             <div>
-               <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Mother's Name</div>
-               <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1, marginTop: 2 }}>{citizen.motherName}</div>
-             </div>
-             <div>
-               <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>District</div>
-               <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1, marginTop: 2 }}>{citizen.district}</div>
-             </div>
-             <div>
-               <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Expiry Date</div>
-               <div style={{ fontSize: 9.5, fontWeight: 800, color: '#b30000', lineHeight: 1, marginTop: 2 }}>{format(new Date(citizen.expiryDate), 'dd-MM-yyyy')}</div>
+           <div>
+             <div style={{ fontSize: 7.5, color: '#444', fontWeight: 600, lineHeight: 1.6 }}>
+               This card is the property of the Government of {settings?.stateName || 'Waqooyi Bari'}. If found, please return to the nearest police station.
              </div>
            </div>
         </div>
