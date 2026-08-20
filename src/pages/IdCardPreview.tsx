@@ -80,7 +80,8 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
 
         {/* Center: Text Stack */}
         <div style={{ flex: 1, textAlign: 'center', minWidth: 0, paddingTop: 2 }}>
-          <div style={{ fontSize: 7.5, fontWeight: 900, color: '#111', textTransform: 'uppercase', letterSpacing: '-0.2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Dawlada Hoose Ee Lascanod Waqooyi Bari</div>
+          <div style={{ fontSize: 7.5, fontWeight: 900, color: '#111', textTransform: 'uppercase', letterSpacing: '-0.2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Dawlada Hoose Ee Lascanod</div>
+          <div style={{ fontSize: 7, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Waqooyi Bari</div>
           <div style={{ fontSize: 7, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Kaadhka Dhalashada</div>
           <div style={{ fontSize: 6, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Birth Certificate</div>
         </div>
