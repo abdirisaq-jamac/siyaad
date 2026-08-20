@@ -81,9 +81,7 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
         {/* Center: Text Stack */}
         <div style={{ width: '100%', textAlign: 'center', whiteSpace: 'nowrap', paddingRight: 14 }}>
           <div style={{ fontSize: 8.5, fontWeight: 900, color: '#111', textTransform: 'uppercase', letterSpacing: '-0.2px' }}>Dawlada Hoose Ee Lascanod</div>
-          <div style={{ fontSize: 7, fontWeight: 800, color: '#111', marginTop: 1 }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
           <div style={{ fontSize: 7, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase' }}>Kaadhka Dhalashada</div>
-          <div style={{ fontSize: 6, fontWeight: 800, color: '#111', marginTop: 1 }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
           <div style={{ fontSize: 6, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase' }}>Birth Certificate</div>
         </div>
 
