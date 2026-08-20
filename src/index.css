@@ -588,7 +588,84 @@ body {
 }
 
 @media print {
-  body { background: white !important; }
-  .no-print { display: none !important; }
+  /* ---- Global print reset ---- */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 14mm 14mm 14mm 14mm;
+  }
+
+  body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* ---- Hide non-content UI ---- */
+  .no-print,
+  aside,
+  nav,
+  header,
+  [class*="sidebar"],
+  [class*="Sidebar"] {
+    display: none !important;
+  }
+
+  /* ---- Remove sidebar offset so content fills the page ---- */
+  main,
+  [class*="main-content"],
+  #root > div > div:last-child,
+  #root > div {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* ---- Citizen Profile page: collapse 2-col grid to full-width ---- */
+  [style*="grid-template-columns"] {
+    display: block !important;
+  }
+
+  /* ---- Cards: clean white on print ---- */
+  .glass-card,
+  .stat-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    border-radius: 8px !important;
+    margin-bottom: 12pt !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* ---- Badges keep their color on print ---- */
+  .badge-active  { background: #d1fae5 !important; color: #065f46 !important; border: 1px solid #6ee7b7 !important; }
+  .badge-pending { background: #fef3c7 !important; color: #92400e !important; border: 1px solid #fcd34d !important; }
+  .badge-rejected{ background: #fee2e2 !important; color: #991b1b !important; border: 1px solid #fca5a5 !important; }
+
+  /* ---- ID card print layout ---- */
+  .print-card-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 15mm !important;
+    padding: 10mm !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+  }
+
+  .id-card-render {
+    border: none !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+  }
+
   .print-only { display: block !important; }
 }

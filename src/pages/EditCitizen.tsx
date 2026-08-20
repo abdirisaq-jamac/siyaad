@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Save, ArrowLeft, X, Camera, Shield, User, MapPin } from 'lucide-react';
 import { getCitizenById, updateCitizen } from '../services/storage';
 import type { Citizen, Gender, CitizenStatus } from '../types';
-import { generateQRCode, syncNationalIdGender } from '../services/idGenerator';
+import { generateQRCode } from '../services/idGenerator';
 
 
 
@@ -117,17 +117,16 @@ export default function EditCitizen() {
 
   const set = (k: keyof Citizen, v: unknown) => setForm(f => f ? ({ ...f, [k]: v }) : f);
 
-  // Preview of the National ID with the Gender Code synced to the selected gender
-  const previewId = syncNationalIdGender(form.nationalIdNumber ?? '', form.gender ?? 'Male');
+  // The National ID is permanent and immutable
+  const previewId = form.nationalIdNumber ?? '';
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     if (!form?.id) return;
     setSaving(true);
     try {
-      // Auto-sync the Gender Code in the National ID with the citizen's current gender
-      const nationalIdNumber = syncNationalIdGender(form.nationalIdNumber ?? '', form.gender ?? 'Male');
-      const updated = { ...form, nationalIdNumber };
+      const nationalIdNumber = form.nationalIdNumber ?? '';
+      const updated = { ...form };
       // Regenerate QR with new URL data
       const baseUrl = 'https://siyaad-livid.vercel.app';
       const qrData = `${baseUrl}/verify/${nationalIdNumber}`;

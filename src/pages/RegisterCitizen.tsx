@@ -185,17 +185,30 @@ export default function RegisterCitizen() {
         }
       }
 
-      const citizen = await buildCitizen(form);
+      let citizen: any;
+      let success = false;
+      let retries = 0;
 
-      // Enforce that every citizen has a unique National ID.
-      const duplicateId = allCitizens.find(c => c.nationalIdNumber === citizen.nationalIdNumber);
-      if (duplicateId) {
-        alert("A citizen with this National ID already exists. Every citizen must have a unique ID — no two citizens can have the same ID number.");
-        setLoading(false);
-        return;
+      while (!success && retries < 5) {
+        citizen = await buildCitizen(form);
+        try {
+          await addCitizen(citizen);
+          success = true;
+        } catch (err: any) {
+          // Check for unique constraint violation (Supabase/PostgreSQL duplicate key error)
+          if (err.message?.toLowerCase().includes('duplicate') || err.message?.toLowerCase().includes('unique') || err.code === '23505') {
+            retries++;
+            if (retries >= 5) {
+              throw new Error("Failed to generate a unique National ID after multiple attempts due to high concurrency. Please try again.");
+            }
+            // wait briefly before retrying to allow other requests to complete
+            await new Promise(r => setTimeout(r, 200 * retries));
+          } else {
+            throw err;
+          }
+        }
       }
 
-      await addCitizen(citizen);
       navigate(`/citizens/${citizen.id}`);
     } catch (err: any) {
       console.error(err);

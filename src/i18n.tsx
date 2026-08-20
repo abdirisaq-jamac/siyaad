@@ -171,9 +171,24 @@ export const translations: Translations = {
   "No Record Found": { en: "No Record Found", so: "Xog Lama Helin", ar: "لم يتم العثور على سجل" },
   "does not match any registered citizen in our system.": { en: "does not match any registered citizen in our system.", so: "ma dhigin midnah oo ku jira nidaamkaaga.", ar: "لا يتطابق مع أي مواطن مسجل في نظامنا." },
   "View Full Profile": { en: "View Full Profile", so: "Fiiray Xogga Buuxa", ar: "عرض البيانات الكاملة" },
-  "View ID Card": { en: "View ID Card", so: "Fiiray Kaadhka", ar: "عرض بطاقة الهوية" }
+  "View ID Card": { en: "View ID Card", so: "Fiiray Kaadhka", ar: "عرض بطاقة الهوية" },
+  "Download QR": { en: "Download QR", so: "Soo Deji QR", ar: "تحميل QR" },
+  "QR Code": { en: "QR Code", so: "Koodhka QR", ar: "رمز QR" },
+  "Scan the QR code with your mobile phone to open the verification website and view full citizen data.": { en: "Scan the QR code with your mobile phone to open the verification website and view full citizen data.", so: "U gal QR-code-ka moobaylkaaga si aad u furtid website-ka xaqiijinta oo aad u aragto xogta muwaadinka oo dhamaysan.", ar: "امسح رمز الاستجابة السريعة بهاتفك المحمول لفتح موقع التحقق وعرض بيانات المواطن الكاملة." },
+  "National ID:": { en: "National ID:", so: "ID Qaranka:", ar: "الهوية الوطنية:" },
+  "Lascanod": { en: "Lascanod", so: "Laascaanood", ar: "لاسكانود" },
+  "State / Region Name": { en: "State / Region Name", so: "Magaca Gobolka", ar: "اسم الولاية / المنطقة" },
+  "General Settings": { en: "General Settings", so: "Goobaha Guud", ar: "الإعدادات العامة" },
+  "System Logo": { en: "System Logo", so: "Astaanta Nidaamka", ar: "شعار النظام" },
+  "ID Card Flag": { en: "ID Card Flag", so: "Calanka Kaadhka", ar: "علم بطاقة الهوية" },
+  "Upload Logo": { en: "Upload Logo", so: "Soo Geli Astaanta", ar: "رفع الشعار" },
+  "Upload your government seal or logo. PNG/SVG recommended.": { en: "Upload your government seal or logo. PNG/SVG recommended.", so: "Soo geli calaamadda dowladda. PNG/SVG ayaa lagu talinayaa.", ar: "قم برفع ختم أو شعار حكومتك. يوصى باستخدام PNG/SVG." },
+  "Loading Citizens...": { en: "Loading Citizens...", so: "Muwaadiniinta waa la raraysaa...", ar: "جاري تحميل المواطنين..." },
+  "Rows:": { en: "Rows:", so: "Safafka:", ar: "الصفوف:" },
+  "Date": { en: "Date", so: "Taariikhda", ar: "التاريخ" },
+  "Are you sure you want to delete this citizen record? This action cannot be undone.": { en: "Are you sure you want to delete this citizen record? This action cannot be undone.", so: "Ma hubtaa inaad tirtireyso diiwaanka muwaadinkaan? Ficilkan lama baabi'in karo.", ar: "هل أنت متأكد أنك تريد حذف سجل هذا المواطن؟ لا يمكن التراجع عن هذا الإجراء." },
+  "Delete": { en: "Delete", so: "Tirtir", ar: "حذف" }
 };
-
 interface I18nContextType {
   language: Language;
   setLanguage: (lang: Language) => void;

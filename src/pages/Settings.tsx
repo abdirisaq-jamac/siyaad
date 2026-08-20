@@ -33,13 +33,24 @@ export default function SettingsPage() {
   const logoRef = useRef<HTMLInputElement>(null);
   const flagRef = useRef<HTMLInputElement>(null);
   const watermarkRef = useRef<HTMLInputElement>(null);
+  const signatureRef = useRef<HTMLInputElement>(null);
 
   const initialLoadDone = useRef(false);
 
   useEffect(() => {
     getSettings()
       .then(s => {
-        setSettings(s);
+        // If Supabase didn't have the signature fields, use the ones from localStorage
+        const localName = localStorage.getItem('officialSignatureName');
+        const localUrl = localStorage.getItem('officialSignatureUrl');
+        
+        const mergedSettings = {
+          ...s,
+          officialSignatureName: s.officialSignatureName || localName || '',
+          officialSignatureUrl: s.officialSignatureUrl || localUrl || null
+        };
+        
+        setSettings(mergedSettings);
         setTimeout(() => { initialLoadDone.current = true; }, 100);
       })
       .catch(console.error)
@@ -58,6 +69,7 @@ export default function SettingsPage() {
 
     // Save officialSignatureName to localStorage immediately as a reliable fallback
     localStorage.setItem('officialSignatureName', settings.officialSignatureName || '');
+    localStorage.setItem('officialSignatureUrl', settings.officialSignatureUrl || '');
 
     const timer = setTimeout(async () => {
       try {
@@ -102,6 +114,17 @@ export default function SettingsPage() {
     reader.onload = async () => {
       const compressed = await compressImage(reader.result as string, 150);
       setSettings(s => ({ ...s, watermarkUrl: compressed }));
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleSignatureUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const compressed = await compressImage(reader.result as string, 200);
+      setSettings(s => ({ ...s, officialSignatureUrl: compressed }));
     };
     reader.readAsDataURL(file);
   }
@@ -172,6 +195,45 @@ export default function SettingsPage() {
                 placeholder="e.g. Eng. Jama Ali"
               />
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>This name will appear under the signature line in the PDF exports.</p>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap', marginTop: '0.5rem' }}>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => signatureRef.current?.click()}
+                style={{
+                  width: 140, height: 80, borderRadius: '12px',
+                  border: '2px dashed var(--border-color)', cursor: 'pointer',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                  background: 'var(--bg-main)', overflow: 'hidden',
+                  transition: 'border-color 0.2s',
+                }}
+                className="hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/10"
+              >
+                {settings.officialSignatureUrl ? (
+                  <img src={settings.officialSignatureUrl} alt="Signature" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                ) : (
+                  <>
+                    <Upload size={24} style={{ color: 'var(--text-muted)' }} />
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Upload Image</span>
+                  </>
+                )}
+              </motion.div>
+              <input ref={signatureRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleSignatureUpload} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.25rem' }}>Signature Image (Optional)</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Upload a transparent PNG of the official's signature.</div>
+                {settings.officialSignatureUrl && (
+                  <button
+                    className="btn-danger"
+                    style={{ fontSize: '0.85rem', padding: '0.4rem 0.8rem' }}
+                    onClick={() => setSettings(s => ({ ...s, officialSignatureUrl: null }))}
+                  >
+                    <X size={14} /> Remove
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </Section>

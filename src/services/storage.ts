@@ -69,6 +69,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   primaryColor: '#00875a',
   accentColor: '#1a4a8a',
   officialSignatureName: '',
+  officialSignatureUrl: null,
 };
 
 export async function getSettings(): Promise<AppSettings> {

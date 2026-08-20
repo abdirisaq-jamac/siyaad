@@ -34,37 +34,61 @@ export async function generateNationalIdNumber(gender: Gender, dateOfBirth: stri
   // DD = Registration Day
   const dd = String(now.getDate()).padStart(2, '0');
 
-  // Base prefix for search: WB-GYYRYMMDD
-  const baseId = `${prefix}-${g}${dobYear}${ry}${mm}${dd}`;
+  // HH = Registration hour (24-hour format)
+  const hh = String(now.getHours()).padStart(2, '0');
 
-  // SSS = Unique Serial Number (3 digits)
-  // Find all existing IDs that start with this base
-  let maxSerial = 0;
+  // MIN = Registration minute
+  const min = String(now.getMinutes()).padStart(2, '0');
+
+  // Base prefix for search: WB-GYYRYMMDDHHMM
+  const baseId = `${prefix}-${g}${dobYear}${ry}${mm}${dd}${hh}${min}`;
+
+  // SSS = Random Unique Serial Number (3 digits)
+  // Ensure global uniqueness of the serial across all citizens
+  const usedSerials = new Set<string>();
   for (const citizen of citizens) {
-    if (citizen.nationalIdNumber?.startsWith(baseId)) {
-      const serialStr = citizen.nationalIdNumber.slice(baseId.length);
-      const serialNum = parseInt(serialStr, 10);
-      if (!isNaN(serialNum) && serialNum > maxSerial) {
-        maxSerial = serialNum;
+    if (citizen.nationalIdNumber && citizen.nationalIdNumber.length > 16) {
+      // The prefix (WB-GYYRYMMDDHHMM) is exactly 16 characters long.
+      const serial = citizen.nationalIdNumber.slice(16);
+      if (serial) {
+        usedSerials.add(serial);
       }
     }
   }
 
-  const newSerial = maxSerial + 1;
-  const sss = String(newSerial).padStart(3, '0');
+  let sss = '';
+  let attempts = 0;
+  let digits = 3;
+
+  while (attempts < 10000) {
+    const maxVal = Math.pow(10, digits) - 1;
+    const randomNum = Math.floor(Math.random() * (maxVal + 1));
+    const candidate = String(randomNum).padStart(digits, '0');
+    
+    // Check global uniqueness for the serial
+    if (!usedSerials.has(candidate)) {
+      sss = candidate;
+      break;
+    }
+    
+    attempts++;
+    // If we've used up most of the available numbers for this digit count, increase the digits
+    if (usedSerials.size >= Math.pow(10, digits) * 0.9) {
+      digits++;
+    }
+  }
+
+  // Fallback in case of extreme edge case
+  if (!sss) {
+    sss = String(Date.now()).slice(-4);
+  }
 
   return `${baseId}${sss}`;
 }
 
-/**
- * Sync the Gender Code (first digit after the prefix) of an existing National ID
- * with the citizen's current gender, keeping every other part unchanged.
- * Format: WB-GYYRYMMDDSSS  →  WB-[1=Male|2=Female]YYRYMMDDSSS
- */
 export function syncNationalIdGender(nationalIdNumber: string, gender: Gender): string {
-  if (!nationalIdNumber || nationalIdNumber.length < 5) return nationalIdNumber;
-  const g = gender === 'Male' ? '1' : '2';
-  return `${nationalIdNumber.slice(0, 3)}${g}${nationalIdNumber.slice(4)}`;
+  // The National ID is permanent and immutable
+  return nationalIdNumber;
 }
 
 /** Generate QR Code as data URL */

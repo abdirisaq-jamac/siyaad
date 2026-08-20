@@ -25,19 +25,17 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
   const restName = nameParts.slice(1).join(' ');
 
   return (
-    <div style={{
-      width: 350, height: 220,
+    <div className="id-card-render" style={{
+      width: 324, height: 204, // Exact CR80 size in 96dpi (3.375" x 2.125")
       background: 'linear-gradient(135deg, #cbeae5 0%, #a4d2c8 50%, #cbeae5 100%)',
       borderRadius: 10,
       overflow: 'hidden',
       position: 'relative',
-      boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
       color: '#111',
       fontFamily: '"Arial", sans-serif',
       boxSizing: 'border-box',
+      border: '1px solid rgba(0,0,0,0.05)',
     }}>
-      {/* Background Patterns removed for clean look */}
-      
       {/* Central Sunburst */}
       <div style={{
         position: 'absolute', left: '50%', top: '35%', width: 250, height: 250,
@@ -48,9 +46,9 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
 
       {/* Emblem Watermark */}
       <div style={{
-        position: 'absolute', left: '40%', top: '55%', width: 130, height: 130,
+        position: 'absolute', left: '40%', top: '55%', width: 120, height: 120,
         transform: 'translate(-50%, -50%)',
-        opacity: 0.20,
+        opacity: 0.15, /* Reduced opacity for cleaner print */
         pointerEvents: 'none',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         zIndex: 5
@@ -70,29 +68,32 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
       </div>
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '12px 14px 0', position: 'relative', zIndex: 10 }}>
-        {/* Left: Flag - uses uploaded flag from Settings, fallback to inline SVG */}
-        <div style={{ flexShrink: 0, width: 72, height: 48, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.2)', boxShadow: '0 2px 6px rgba(0,0,0,0.15)', borderRadius: 4, marginRight: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px 0', position: 'relative', zIndex: 10 }}>
+        {/* Left: Logo */}
+        <div style={{ flexShrink: 0, width: 68, height: 45, overflow: 'hidden', borderRadius: 4 }}>
+          {settings?.logoUrl && (
+            <img src={settings.logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} />
+          )}
+        </div>
+
+        {/* Middle: Text */}
+        <div style={{ flex: 1, textAlign: 'center', whiteSpace: 'nowrap', padding: '0 5px' }}>
+          <div style={{ fontSize: 8.5, fontWeight: 900, color: '#111', textTransform: 'uppercase', letterSpacing: '-0.2px' }}>Dawlada Hoose Ee Lascanod</div>
+          <div style={{ fontSize: 7, fontWeight: 800, color: '#111', marginTop: 1 }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
+          <div style={{ fontSize: 6, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase' }}>Kaadhka Dhalashada</div>
+          <div style={{ fontSize: 6, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase' }}>Birth Certificate</div>
+        </div>
+
+        {/* Right: Flag */}
+        <div style={{ flexShrink: 0, width: 68, height: 45, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.3)', borderRadius: 4 }}>
           {settings?.flagUrl ? (
-            <img
-              src={settings.flagUrl}
-              alt="ID Card Flag"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-            />
+            <img src={settings.flagUrl} alt="ID Card Flag" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="72" height="48" style={{ display: 'block' }}>
-              {/* Sky blue top half */}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="68" height="45" style={{ display: 'block' }}>
               <rect width="900" height="300" fill="#4A90D9" />
-              {/* Green bottom half */}
               <rect y="300" width="900" height="300" fill="#2E8B2E" />
-              {/* White triangle on left */}
               <polygon points="0,0 300,300 0,600" fill="white" />
-              {/* White 5-pointed star */}
-              <polygon
-                points="480,90 494,135 542,135 504,162 518,207 480,180 442,207 456,162 418,135 466,135"
-                fill="white"
-              />
-              {/* Horseman silhouette */}
+              <polygon points="480,90 494,135 542,135 504,162 518,207 480,180 442,207 456,162 418,135 466,135" fill="white" />
               <g transform="translate(120, 280) scale(0.55)" fill="black">
                 <ellipse cx="100" cy="120" rx="75" ry="38" />
                 <path d="M168,95 Q195,60 185,40 Q175,25 160,30 Q150,35 155,55 Q158,70 148,90 Z" />
@@ -108,61 +109,51 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
             </svg>
           )}
         </div>
-
-        <div style={{ flex: 1, whiteSpace: 'nowrap' }}>
-          <div style={{ fontSize: 9, fontWeight: 900, color: '#111', textTransform: 'uppercase', letterSpacing: '-0.2px' }}>Dawlada Hoose Ee Lascanod</div>
-          <div style={{ fontSize: 7.5, fontWeight: 800, color: '#111', marginTop: 1 }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
-          <div style={{ fontSize: 6.5, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase' }}>Kaadhka Dhalashada</div>
-        </div>
-
-        <div style={{ flex: 1, textAlign: 'right', whiteSpace: 'nowrap' }}>
-          <div style={{ fontSize: 7.5, fontWeight: 800, color: '#111', marginTop: 12 }}>{settings?.stateName?.toUpperCase() || 'WAQOOYI BARI'}</div>
-          <div style={{ fontSize: 6.5, fontWeight: 900, color: '#111', marginTop: 1, textTransform: 'uppercase' }}>Birth Certificate</div>
-        </div>
       </div>
 
       {/* Body */}
-      <div style={{ display: 'flex', padding: '5px 14px 10px', position: 'relative', zIndex: 10, height: 'calc(100% - 56px)' }}>
+      <div style={{ display: 'flex', padding: '4px 14px 10px', position: 'relative', zIndex: 10, height: 'calc(100% - 55px)' }}>
         
         {/* Text Details */}
-        <div style={{ flex: 1, paddingLeft: 16, display: 'flex', flexDirection: 'column', gap: 6, paddingTop: 4, minWidth: 0 }}>
+        <div style={{ flex: 1, paddingLeft: 12, display: 'flex', flexDirection: 'column', gap: 5, paddingTop: 4, minWidth: 0 }}>
           <div>
-            <div style={{ fontSize: 8, color: '#333', lineHeight: 1 }}>Tirsiga Aqoonsiga / ID Number</div>
-            <div style={{ fontSize: 12, fontWeight: 900, color: '#111', lineHeight: 1.2, letterSpacing: '0.02em' }}>{citizen.nationalIdNumber}</div>
+            <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Tirsiga Aqoonsiga / ID Number</div>
+            <div style={{ fontSize: 11, fontWeight: 900, color: '#000', lineHeight: 1.2, letterSpacing: '0.02em' }}>{citizen.nationalIdNumber}</div>
           </div>
           
           <div style={{ overflow: 'hidden' }}>
-            <div style={{ fontSize: 8, color: '#333', lineHeight: 1 }}>Magaca / Name</div>
-            <div style={{ fontSize: getDynamicFs(firstName, 10, 12), fontWeight: 700, color: '#111', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{firstName}</div>
-            <div style={{ fontSize: getDynamicFs(restName, 11, 15), fontWeight: 800, color: '#111', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{restName}</div>
+            <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Magaca / Name</div>
+            <div style={{ fontSize: getDynamicFs(firstName, 9, 12), fontWeight: 800, color: '#000', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{firstName}</div>
+            <div style={{ fontSize: getDynamicFs(restName, 10, 15), fontWeight: 900, color: '#000', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{restName}</div>
           </div>
 
           <div>
-            <div style={{ fontSize: 8, color: '#333', lineHeight: 1 }}>Taar. Dhalashada / D.O.B</div>
-            <div style={{ fontSize: 10, fontWeight: 800, color: '#111', lineHeight: 1.2 }}>{format(new Date(citizen.dateOfBirth), 'dd-MM-yyyy')}</div>
+            <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Taar. Dhalashada / D.O.B</div>
+            <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1.2 }}>{format(new Date(citizen.dateOfBirth), 'dd-MM-yyyy')}</div>
           </div>
 
           <div>
-            <div style={{ fontSize: 8, color: '#333', lineHeight: 1 }}>Taar. La Bixiyey / Date of Issue</div>
-            <div style={{ fontSize: 10, fontWeight: 800, color: '#111', lineHeight: 1.2 }}>{format(new Date(citizen.issueDate), 'dd-MM-yyyy')}</div>
+            <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Taar. La Bixiyey / Date of Issue</div>
+            <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1.2 }}>{format(new Date(citizen.issueDate), 'dd-MM-yyyy')}</div>
           </div>
 
           <div>
-            <div style={{ fontSize: 8, color: '#333', lineHeight: 1 }}>Jinsiga / Gender</div>
-            <div style={{ fontSize: 10, fontWeight: 800, color: '#111', lineHeight: 1.2 }}>{citizen.gender === 'Male' ? 'Lab / Male' : 'Dhedig / Female'}</div>
+            <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Jinsiga / Gender</div>
+            <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1.2 }}>{citizen.gender === 'Male' ? 'Lab / Male' : 'Dhedig / Female'}</div>
           </div>
         </div>
 
         {/* Right Side: Photo */}
-        <div style={{ flexShrink: 0, paddingLeft: 10 }}>
+        <div style={{ flexShrink: 0, paddingLeft: 8 }}>
           {citizen.photo ? (
              <img src={citizen.photo} alt="Citizen" style={{ 
-               width: 85, height: 110, objectFit: 'cover', objectPosition: 'center', 
-               mixBlendMode: 'multiply',
-               filter: 'contrast(1.05)'
+               width: 78, height: 100, objectFit: 'cover', objectPosition: 'center', 
+               border: '2px solid rgba(0,0,0,0.8)', /* Solid black border for crispness */
+               borderRadius: '6px',
+               backgroundColor: '#fff' /* Solid white background behind photo */
              }} />
           ) : (
-             <div style={{ width: 85, height: 110, background: 'rgba(255,255,255,0.4)', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, color: '#333', fontWeight: 'bold' }}>
+             <div style={{ width: 78, height: 100, background: '#e2e8f0', border: '2px solid rgba(0,0,0,0.8)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, color: '#333', fontWeight: 'bold' }}>
                {citizen.fullName.charAt(0)}
              </div>
           )}
@@ -174,16 +165,16 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
 
 function CardBack({ citizen, settings }: { citizen: Citizen, settings?: AppSettings | null }) {
   return (
-    <div style={{
-      width: 350, height: 220,
+    <div className="id-card-render" style={{
+      width: 324, height: 204, // Exact CR80 size in 96dpi (3.375" x 2.125")
       background: '#f4f7f6',
       borderRadius: 10,
       overflow: 'hidden',
       position: 'relative',
-      boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
       color: '#111',
       fontFamily: '"Arial", sans-serif',
       boxSizing: 'border-box',
+      border: '1px solid rgba(0,0,0,0.05)',
     }}>
       {/* Pattern */}
       <div style={{
@@ -191,39 +182,39 @@ function CardBack({ citizen, settings }: { citizen: Citizen, settings?: AppSetti
         backgroundImage: 'repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 0, transparent 10px)',
       }} />
 
-      <div style={{ padding: '30px 20px 15px', display: 'flex', gap: 20 }}>
+      <div style={{ padding: '25px 20px 15px', display: 'flex', gap: 15 }}>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
            <div>
-             <div style={{ fontSize: 9, color: '#555' }}>{settings?.stateName || 'Waqooyi Bari'} National ID Management System</div>
-             <div style={{ fontSize: 8, color: '#777', marginTop: 2 }}>This card is the property of the Government of {settings?.stateName || 'Waqooyi Bari'}. If found, please return to the nearest police station.</div>
+             <div style={{ fontSize: 8.5, color: '#333', fontWeight: 800 }}>{settings?.stateName || 'Waqooyi Bari'} National ID Management System</div>
+             <div style={{ fontSize: 7, color: '#555', marginTop: 2, fontWeight: 600 }}>This card is the property of the Government of {settings?.stateName || 'Waqooyi Bari'}. If found, please return to the nearest police station.</div>
            </div>
 
            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 5 }}>
              <div>
-               <div style={{ fontSize: 8, color: '#555', lineHeight: 1 }}>Father's Name</div>
-               <div style={{ fontSize: 10, fontWeight: 'bold', lineHeight: 1, marginTop: 2 }}>{citizen.fatherName}</div>
+               <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Father's Name</div>
+               <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1, marginTop: 2 }}>{citizen.fatherName}</div>
              </div>
              <div>
-               <div style={{ fontSize: 8, color: '#555', lineHeight: 1 }}>Mother's Name</div>
-               <div style={{ fontSize: 10, fontWeight: 'bold', lineHeight: 1, marginTop: 2 }}>{citizen.motherName}</div>
+               <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Mother's Name</div>
+               <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1, marginTop: 2 }}>{citizen.motherName}</div>
              </div>
              <div>
-               <div style={{ fontSize: 8, color: '#555', lineHeight: 1 }}>District</div>
-               <div style={{ fontSize: 10, fontWeight: 'bold', lineHeight: 1, marginTop: 2 }}>{citizen.district}</div>
+               <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>District</div>
+               <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1, marginTop: 2 }}>{citizen.district}</div>
              </div>
              <div>
-               <div style={{ fontSize: 8, color: '#555', lineHeight: 1 }}>Expiry Date</div>
-               <div style={{ fontSize: 10, fontWeight: 'bold', color: '#b30000', lineHeight: 1, marginTop: 2 }}>{format(new Date(citizen.expiryDate), 'dd-MM-yyyy')}</div>
+               <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600 }}>Expiry Date</div>
+               <div style={{ fontSize: 9.5, fontWeight: 800, color: '#b30000', lineHeight: 1, marginTop: 2 }}>{format(new Date(citizen.expiryDate), 'dd-MM-yyyy')}</div>
              </div>
            </div>
         </div>
 
         {/* QR Code */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: 'white', padding: '4px', border: '1px solid #ccc', borderRadius: '4px', display: 'flex' }}>
+          <div style={{ background: 'white', padding: '4px', border: '2px solid #000', borderRadius: '4px', display: 'flex' }}>
             <QRCodeSVG 
               value={`https://siyaad-livid.vercel.app/verify/${citizen.nationalIdNumber}`} 
-              size={60} 
+              size={55} 
               level="H" 
             />
           </div>
@@ -478,6 +469,7 @@ export default function IdCardPreview() {
       <AnimatePresence>
         {selected && (
           <motion.div 
+            className="no-print"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '1rem' }}
             onClick={(e) => { if (e.target === e.currentTarget) setSelected(null); }}
@@ -518,6 +510,14 @@ export default function IdCardPreview() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Print Only Section for Crisp ID Print - Moved outside fixed modal to ensure it prints perfectly */}
+      {selected && (
+        <div className="print-only print-card-layout" style={{ display: 'none' }}>
+          <CardFront citizen={selected} settings={settings} />
+          <CardBack citizen={selected} settings={settings} />
+        </div>
+      )}
     </motion.div>
   );
 }

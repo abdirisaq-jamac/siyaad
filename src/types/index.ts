@@ -36,6 +36,7 @@ export interface AppSettings {
   primaryColor: string;
   accentColor: string;
   officialSignatureName?: string;
+  officialSignatureUrl?: string | null;
 }
 
 export interface DashboardStats {

@@ -218,7 +218,7 @@ export default function CitizensList() {
 
   return (
     <motion.div initial="hidden" animate="visible" variants={containerVariants}>
-      <motion.div variants={itemVariants} className="page-header">
+      <motion.div variants={itemVariants} className="page-header" style={{ marginBottom: '0.75rem' }}>
         <div>
           <div className="page-title">{t('Citizens List') || 'Citizens List'}</div>
           <div className="page-subtitle">{sorted.length} {t('of')} {citizens.length} {t('citizens found')}</div>
@@ -233,68 +233,116 @@ export default function CitizensList() {
         </div>
       </motion.div>
 
-      <motion.div variants={itemVariants} className="glass-card" style={{ padding: '1.25rem', marginBottom: '1.5rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
-        <div style={{ position: 'relative', flex: 1, minWidth: '250px' }}>
-          <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-          <input 
-            type="text" 
-            placeholder={t('Search by name, ID, phone, district…') || 'Search by name, ID, phone, district…'}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="form-input"
-            style={{ paddingLeft: '2.8rem' }}
-          />
-        </div>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="form-input" style={{ width: 'auto', minWidth: '150px' }}>
-          <option value="All">{t('All Statuses') || 'All Statuses'}</option>
-          <option value="Active">{t('Active') || 'Active'}</option>
-          <option value="Pending">{t('Pending') || 'Pending'}</option>
-          <option value="Rejected">{t('Rejected') || 'Rejected'}</option>
-        </select>
-        <div style={{ position: 'relative' }} ref={filterRef}>
-          <button className={`btn-secondary ${showFilters ? 'active' : ''}`} onClick={() => setShowFilters(!showFilters)}>
-            <Filter size={18} /> {t('Advanced Filters') || 'Advanced Filters'}
-          </button>
-          <AnimatePresence>
-            {showFilters && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} style={{ position: 'absolute', top: '100%', right: 0, marginTop: '0.5rem', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '1.25rem', zIndex: 50, minWidth: '340px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <h3 style={{ margin: 0, fontSize: '0.95rem' }}>{t('Filters')}</h3>
-                  <button type="button" onClick={() => { setStatusFilter('All'); setGenderFilter('All'); setDistrictFilter('All'); setOccupationFilter('All'); setMaritalFilter('All'); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}>{t('Clear All')}</button>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                  <select className="form-input" value={genderFilter} onChange={e => setGenderFilter(e.target.value)}>{['All','Male','Female'].map(g => <option key={g} value={g}>{t(g) || g}</option>)}</select>
-                  <select className="form-input" value={districtFilter} onChange={e => setDistrictFilter(e.target.value)}><option value="All">{t('All Districts')}</option>{allDistricts.map(d => <option key={d} value={d}>{d}</option>)}</select>
-                  <select className="form-input" value={occupationFilter} onChange={e => setOccupationFilter(e.target.value)}><option value="All">{t('All Occupations')}</option>{allOccupations.map(o => <option key={o} value={o}>{o}</option>)}</select>
-                  <select className="form-input" value={maritalFilter} onChange={e => setMaritalFilter(e.target.value)}><option value="All">{t('All Marital Statuses')}</option>{['Single', 'Married', 'Divorced', 'Widowed'].map(m => <option key={m} value={m}>{t(m) || m}</option>)}</select>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{t('Rows per page:') || 'Rows per page:'}</span>
-          <select className="form-input" style={{ width: 'auto' }} value={itemsPerPage} onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}>
-            {[10, 15, 20, 25, 30, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
+      <motion.div variants={itemVariants} className="glass-card" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
+        {/* Row 1: Search + Status + Filters */}
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '1rem' }}>
+          <div style={{ position: 'relative', flex: 1, minWidth: '250px' }}>
+            <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <input
+              type="text"
+              placeholder={t('Search by name, ID, phone, district…') || 'Search by name, ID, phone, district…'}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="form-input"
+              style={{ paddingLeft: '2.8rem' }}
+            />
+          </div>
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="form-input" style={{ width: 'auto', minWidth: '150px' }}>
+            <option value="All">{t('All Statuses') || 'All Statuses'}</option>
+            <option value="Active">{t('Active') || 'Active'}</option>
+            <option value="Pending">{t('Pending') || 'Pending'}</option>
+            <option value="Rejected">{t('Rejected') || 'Rejected'}</option>
           </select>
+          <div style={{ position: 'relative' }} ref={filterRef}>
+            <button className={`btn-secondary ${showFilters ? 'active' : ''}`} onClick={() => setShowFilters(!showFilters)}>
+              <Filter size={18} /> {t('Advanced Filters') || 'Advanced Filters'}
+            </button>
+            <AnimatePresence>
+              {showFilters && (
+                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} style={{ position: 'absolute', top: '100%', right: 0, marginTop: '0.5rem', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '1.25rem', zIndex: 50, minWidth: '340px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <h3 style={{ margin: 0, fontSize: '0.95rem' }}>{t('Filters')}</h3>
+                    <button type="button" onClick={() => { setStatusFilter('All'); setGenderFilter('All'); setDistrictFilter('All'); setOccupationFilter('All'); setMaritalFilter('All'); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}>{t('Clear All')}</button>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                    <select className="form-input" value={genderFilter} onChange={e => setGenderFilter(e.target.value)}>{['All','Male','Female'].map(g => <option key={g} value={g}>{t(g) || g}</option>)}</select>
+                    <select className="form-input" value={districtFilter} onChange={e => setDistrictFilter(e.target.value)}><option value="All">{t('All Districts')}</option>{allDistricts.map(d => <option key={d} value={d}>{d}</option>)}</select>
+                    <select className="form-input" value={occupationFilter} onChange={e => setOccupationFilter(e.target.value)}><option value="All">{t('All Occupations')}</option>{allOccupations.map(o => <option key={o} value={o}>{o}</option>)}</select>
+                    <select className="form-input" value={maritalFilter} onChange={e => setMaritalFilter(e.target.value)}><option value="All">{t('All Marital Statuses')}</option>{['Single', 'Married', 'Divorced', 'Widowed'].map(m => <option key={m} value={m}>{t(m) || m}</option>)}</select>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: 'auto' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{t('Rows:') || 'Rows:'}</span>
+            <select className="form-input" style={{ width: 'auto', padding: '0.4rem 0.6rem', fontSize: '0.85rem' }} value={itemsPerPage} onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}>
+              {[10, 15, 20, 25, 30, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
+            </select>
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{t('Sort by:') || 'Sort by:'}</span>
-          <select className="form-input" style={{ width: 'auto' }} value={sortField} onChange={(e) => handleSortSelect(e.target.value)}>
-            <option value="">{t('None') || 'None'}</option>
-            <option value="name">{t('Name') || 'Name'}</option>
+
+        {/* Row 2: Sort Bar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', whiteSpace: 'nowrap' }}>
+            Sort By:
+          </span>
+          <select
+            className="form-input"
+            value={sortField}
+            onChange={e => handleSortSelect(e.target.value)}
+            style={{ width: 'auto', minWidth: 160, padding: '0.38rem 0.75rem', fontSize: '0.875rem', fontWeight: 600 }}
+          >
+            <option value="">— Default —</option>
+            <option value="name">{t('Name') || 'Full Name'}</option>
             <option value="id">{t('National ID') || 'National ID'}</option>
-            <option value="district">{t('District') || 'District'}</option>
-            <option value="phone">{t('Phone') || 'Phone'}</option>
-            <option value="status">{t('Status') || 'Status'}</option>
             <option value="registered">{t('Registration Date') || 'Registration Date'}</option>
+            <option value="district">{t('District') || 'District'}</option>
+            <option value="status">{t('Status') || 'Status'}</option>
             <option value="gender">{t('Gender') || 'Gender'}</option>
           </select>
           {sortField && (
-            <button className="btn-secondary" style={{ padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }} onClick={() => setSortDir(d => d === 'asc' ? 'desc' : 'asc')}>
-              {sortDir === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-              {sortDir === 'asc' ? (t('Asc') || 'Asc') : (t('Desc') || 'Desc')}
-            </button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setSortDir(d => d === 'asc' ? 'desc' : 'asc')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '0.4rem',
+                padding: '0.38rem 0.85rem',
+                borderRadius: '8px',
+                border: '1.5px solid var(--primary-color)',
+                background: 'var(--primary-color)',
+                color: '#fff',
+                fontWeight: 700,
+                fontSize: '0.82rem',
+                cursor: 'pointer',
+                transition: 'all 0.18s ease',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {sortDir === 'asc' ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+              {sortDir === 'asc' ? 'Ascending' : 'Descending'}
+            </motion.button>
+          )}
+          {sortField && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => { setSortField(''); setSortDir('asc'); }}
+              style={{
+                padding: '0.38rem 0.75rem',
+                borderRadius: '8px',
+                border: '1.5px solid var(--border-color)',
+                background: 'transparent',
+                color: 'var(--text-muted)',
+                fontWeight: 600,
+                fontSize: '0.82rem',
+                cursor: 'pointer',
+                transition: 'all 0.18s ease',
+              }}
+            >
+              Clear
+            </motion.button>
           )}
         </div>
       </motion.div>
@@ -315,27 +363,47 @@ export default function CitizensList() {
               </tr>
             </thead>
             <tbody>
-              {currentItems.map((citizen) => (
-                <tr key={citizen.id}>
-                  <td><input type="checkbox" checked={selectedCitizens.has(citizen.id)} onChange={(e) => handleSelectOne(citizen.id, e.target.checked)} /></td>
-                  <td>{citizen.photo ? <img src={citizen.photo} alt="" style={{ width: 40, height: 40, borderRadius: '50%' }} /> : <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#ccc' }} />}</td>
-                  <td>
-                    <div style={{ fontWeight: 600, color: 'var(--text-main)' }}>{citizen.fullName}</div>
-                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>{t(citizen.gender) || citizen.gender} • {t(citizen.maritalStatus) || citizen.maritalStatus}</div>
-                  </td>
-                  <td><code>{citizen.nationalIdNumber}</code></td>
-                  <td><div>{citizen.phone}</div><div style={{ fontSize: '0.8rem' }}>{citizen.district}</div></td>
-                  <td><span className={citizen.status === 'Active' ? 'badge-active' : citizen.status === 'Pending' ? 'badge-pending' : 'badge-rejected'}>{t(citizen.status) || citizen.status}</span></td>
-                  <td>{format(new Date(citizen.registrationDate), 'dd MMM yyyy')}</td>
-                  <td style={{ textAlign: 'right' }}>
-                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                      <button onClick={() => navigate(`/citizens/${citizen.id}`)}><Eye size={16} /></button>
-                      {(currentUser?.role === 'Super Admin' || currentUser?.permissions?.editCitizen) && <button onClick={() => navigate(`/citizens/${citizen.id}/edit`)}><Edit size={16} /></button>}
-                      {(currentUser?.role === 'Super Admin' || currentUser?.permissions?.deleteCitizen) && <button onClick={() => setConfirmDelete(citizen.id)}><Trash2 size={16} /></button>}
+              {loading ? (
+                <tr>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{ width: 40, height: 40, border: '3px solid var(--border-color)', borderTop: '3px solid var(--primary-color)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                      <div style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 500 }}>{t('Loading Citizens...') || 'Loading Citizens...'}</div>
                     </div>
                   </td>
                 </tr>
-              ))}
+              ) : currentItems.length === 0 ? (
+                <tr>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-muted)' }}>
+                    <div style={{ background: 'var(--bg-main)', width: 64, height: 64, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
+                      <Search size={28} style={{ opacity: 0.5, color: 'var(--primary-color)' }} />
+                    </div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: '0.5rem' }}>{t('No citizens found') || 'No citizens found'}</div>
+                  </td>
+                </tr>
+              ) : (
+                currentItems.map((citizen) => (
+                  <tr key={citizen.id}>
+                    <td><input type="checkbox" checked={selectedCitizens.has(citizen.id)} onChange={(e) => handleSelectOne(citizen.id, e.target.checked)} /></td>
+                    <td>{citizen.photo ? <img src={citizen.photo} alt="" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} /> : <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#ccc' }} />}</td>
+                    <td>
+                      <div style={{ fontWeight: 600, color: 'var(--text-main)' }}>{citizen.fullName}</div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>{t(citizen.gender) || citizen.gender} • {t(citizen.maritalStatus) || citizen.maritalStatus}</div>
+                    </td>
+                    <td><code>{citizen.nationalIdNumber}</code></td>
+                    <td><div>{citizen.phone}</div><div style={{ fontSize: '0.8rem' }}>{citizen.district}</div></td>
+                    <td><span className={citizen.status === 'Active' ? 'badge-active' : citizen.status === 'Pending' ? 'badge-pending' : 'badge-rejected'}>{t(citizen.status) || citizen.status}</span></td>
+                    <td>{format(new Date(citizen.registrationDate), 'dd MMM yyyy')}</td>
+                    <td style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                        <button onClick={() => navigate(`/citizens/${citizen.id}`)}><Eye size={16} /></button>
+                        {(currentUser?.role === 'Super Admin' || currentUser?.permissions?.editCitizen) && <button onClick={() => navigate(`/citizens/${citizen.id}/edit`)}><Edit size={16} /></button>}
+                        {(currentUser?.role === 'Super Admin' || currentUser?.permissions?.deleteCitizen) && <button onClick={() => setConfirmDelete(citizen.id)}><Trash2 size={16} /></button>}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

@@ -21,12 +21,12 @@ export async function compressImage(base64: string, maxKB = 200): Promise<string
       const ctx = canvas.getContext('2d')!;
       ctx.drawImage(img, 0, 0, width, height);
 
-      // Try decreasing quality until under maxKB
+      // Try decreasing quality until under maxKB, using WebP to preserve transparency
       let quality = 0.8;
-      let result = canvas.toDataURL('image/jpeg', quality);
+      let result = canvas.toDataURL('image/webp', quality);
       while (result.length > maxKB * 1024 && quality > 0.1) {
         quality -= 0.1;
-        result = canvas.toDataURL('image/jpeg', quality);
+        result = canvas.toDataURL('image/webp', quality);
       }
       resolve(result);
     };

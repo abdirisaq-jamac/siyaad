@@ -351,19 +351,43 @@ export default function CitizenDetails() {
     pdf.setTextColor(100, 116, 139);
     pdf.text('Citizen Signature', margin + 40, sigY + 5, { align: 'center' });
 
-    // Official signature: read from localStorage (most reliable) then fallback to settings
+    // Official signature — Supabase is the source of truth for cross-device sync;
+    // localStorage is only a local fallback.
     const officialName = (
-      localStorage.getItem('officialSignatureName')?.trim() ||
       activeSettings?.officialSignatureName?.trim() ||
-      'Authorized Official Signature'
+      localStorage.getItem('officialSignatureName')?.trim() ||
+      ''
     );
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(15, 23, 42);
-    pdf.text(officialName, pageW - margin - 40, sigY + 5, { align: 'center' });
-    if (officialName !== 'Authorized Official Signature') {
+    const signatureUrl = (
+      activeSettings?.officialSignatureUrl?.trim() ||
+      localStorage.getItem('officialSignatureUrl')?.trim() ||
+      null
+    );
+
+    if (signatureUrl) {
+      try {
+        const sigImg = await loadImage(signatureUrl);
+        // Draw the image centered over the right signature line
+        // Line center is pageW - margin - 40. Width 40, Height 18
+        pdf.addImage(sigImg, 'PNG', pageW - margin - 60, sigY - 18, 40, 18);
+      } catch (e) {}
+    }
+
+    if (officialName) {
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(15, 23, 42);
+      pdf.text(officialName, pageW - margin - 40, sigY + 5, { align: 'center' });
+      
+      pdf.setFontSize(8.5);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(100, 116, 139);
-      pdf.text('Authorized Official', pageW - margin - 40, sigY + 10, { align: 'center' });
+      pdf.text('Authorized Official', pageW - margin - 40, sigY + 9.5, { align: 'center' });
+    } else {
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(15, 23, 42);
+      pdf.text('Authorized Official Signature', pageW - margin - 40, sigY + 5, { align: 'center' });
     }
     
     y = sigY;
