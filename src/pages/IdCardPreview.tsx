@@ -168,6 +168,9 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
               <img src={settings.officialSignatureUrl} alt="Signature" style={{
                 height: 18, maxWidth: 84, objectFit: 'contain', display: 'block', margin: '0 auto',
               }} />
+              <div style={{
+                height: 1, background: '#111', marginTop: 3, opacity: 0.6,
+              }} />
             </div>
           )}
         </div>
