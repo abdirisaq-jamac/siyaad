@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createRoot } from 'react-dom/client';
+import type { Root } from 'react-dom/client';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Printer, Download, RotateCcw, CreditCard, Search, FileText } from 'lucide-react';
@@ -289,9 +291,29 @@ export default function IdCardPreview() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filtered.slice(indexOfFirstItem, indexOfLastItem);
 
+  async function captureFace(front: boolean): Promise<HTMLCanvasElement | null> {
+    if (!selected) return null;
+    // Render the selected face standalone (no 3D flip transform) into an
+    // offscreen node so html2canvas captures it cleanly.
+    const container = document.createElement('div');
+    container.style.position = 'fixed';
+    container.style.left = '-9999px';
+    container.style.top = '0';
+    container.style.pointerEvents = 'none';
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    root.render(front ? <CardFront citizen={selected} settings={settings} /> : <CardBack citizen={selected} settings={settings} />);
+    await new Promise(r => setTimeout(r, 300));
+    const canvas = await html2canvas(container, { scale: 3, backgroundColor: null, useCORS: true });
+    root.unmount();
+    document.body.removeChild(container);
+    return canvas;
+  }
+
   async function handleDownload() {
-    if (!cardRef.current || !selected) return;
-    const canvas = await html2canvas(cardRef.current, { scale: 3, backgroundColor: null });
+    if (!selected) return;
+    const canvas = await captureFace(!showBack);
+    if (!canvas) return;
     const a = document.createElement('a');
     a.href = canvas.toDataURL('image/png');
     a.download = `${selected.nationalIdNumber}-id-card.png`;
@@ -302,37 +324,19 @@ export default function IdCardPreview() {
     if (!selected) return;
     setPdfLoading(true);
     try {
-      const container = document.createElement('div');
-      container.style.position = 'fixed';
-      container.style.left = '-9999px';
-      container.style.top = '0';
-      document.body.appendChild(container);
-
-      const frontDiv = document.createElement('div');
-      container.appendChild(frontDiv);
-      
-      const wasShowingBack = showBack;
-      
-      if (wasShowingBack) setShowBack(false);
-      await new Promise(r => setTimeout(r, 300));
-      const frontCanvas = await html2canvas(cardRef.current!, { scale: 3, backgroundColor: null, useCORS: true });
-      
-      setShowBack(true);
-      await new Promise(r => setTimeout(r, 300));
-      const backCanvas = await html2canvas(cardRef.current!, { scale: 3, backgroundColor: null, useCORS: true });
-      
-      setShowBack(wasShowingBack);
-      document.body.removeChild(container);
+      const frontCanvas = await captureFace(true);
+      const backCanvas = await captureFace(false);
+      if (!frontCanvas || !backCanvas) return;
 
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [90, 58] });
-      
+
       const frontImg = frontCanvas.toDataURL('image/png');
       pdf.addImage(frontImg, 'PNG', 2, 2, 86, 54);
-      
+
       pdf.addPage([90, 58], 'landscape');
       const backImg = backCanvas.toDataURL('image/png');
       pdf.addImage(backImg, 'PNG', 2, 2, 86, 54);
-      
+
       pdf.save(`${selected.nationalIdNumber}-id-card.pdf`);
     } catch (err) {
       console.error('PDF generation failed:', err);
