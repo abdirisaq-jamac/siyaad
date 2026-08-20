@@ -131,7 +131,7 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
             </div>
             <div>
               <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600, marginBottom: 1 }}>Jinsiga / Gender</div>
-              <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1.1 }}>{citizen.gender === 'Male' ? 'Lab' : 'Dhedig'}</div>
+              <div style={{ fontSize: 9.5, fontWeight: 800, color: '#000', lineHeight: 1.1 }}>{citizen.gender === 'Male' ? 'Lab / Male' : 'Dhedig / Female'}</div>
             </div>
           </div>
 
