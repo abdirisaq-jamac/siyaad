@@ -15,9 +15,10 @@ function getDynamicFs(text: string, defaultSize: number, maxLength: number) {
   if (!text) return defaultSize;
   const len = text.length;
   if (len <= maxLength) return defaultSize;
-  // Fit the full name on one line: uppercase bold chars are ~0.62 * fontSize wide.
+  // Fit the full name across up to two lines without crossing into the photo:
+  // uppercase bold chars are ~0.62 * fontSize wide, name area is ~190px per line.
   const availWidth = 190; // px available for the name on the card
-  const fs = availWidth / (len * 0.62);
+  const fs = (availWidth * 2) / (len * 0.62);
   return Math.max(Math.min(fs, defaultSize), defaultSize * 0.5);
 }
 
@@ -123,7 +124,12 @@ function CardFront({ citizen, settings }: { citizen: Citizen, settings?: AppSett
           
           <div>
             <div style={{ fontSize: 7, color: '#333', lineHeight: 1, fontWeight: 600, marginBottom: 1 }}>Magaca / Name</div>
-            <div style={{ fontSize: getDynamicFs(citizen.fullName, 9.5, 20), fontWeight: 900, color: '#000', lineHeight: 1.1, textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'visible' }}>{citizen.fullName}</div>
+            <div style={{
+              fontSize: getDynamicFs(citizen.fullName, 9.5, 20),
+              fontWeight: 900, color: '#000', lineHeight: 1.1, textTransform: 'uppercase',
+              whiteSpace: 'normal', overflowWrap: 'break-word', wordBreak: 'break-word',
+              display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+            }}>{citizen.fullName}</div>
           </div>
 
           <div style={{ display: 'flex', gap: 12 }}>
